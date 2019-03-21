@@ -100,9 +100,11 @@ services:
         - INSTALL_IMAGE_OPTIMIZERS=${PHP_FPM_INSTALL_IMAGE_OPTIMIZERS}
         - INSTALL_IMAGEMAGICK=${PHP_FPM_INSTALL_IMAGEMAGICK}
         - INSTALL_TIDEWAYS_XHPROF=${PHP_FPM_INSTALL_TIDEWAYS_XHPROF}
+        - INSTALL_SSMTP=${PHP_FPM_INSTALL_SSMTP}
     volumes:
       - docker-sync:${DESTINATION_PATH}:nocopy # will be mounted on to the value of DESTINATION_PATH
       - ./php-fpm/php${PHP_VERSION}.ini:/usr/local/etc/php/php.ini
+      - ./xhgui-config.php:/usr/local/src/xhgui/config/config.php
     expose:
       - "9000"
     ports:
@@ -114,6 +116,11 @@ services:
       - "dockerhost:${DOCKER_HOST_IP}"
     environment:
       - PHP_IDE_CONFIG=${PHP_IDE_CONFIG}
+#      - XHGUI_CONFIG_DIR=${XHGUI_CONFIG_DIR}
+#      - XHGUI_MONGO_URI=${XHGUI_MONGO_URI}
+#      - XHGUI_MONGO_DB=${XHGUI_MONGO_DB}
+#      - XHGUI_PROFILING_RATIO=${XHGUI_PROFILING_RATIO}
+#      - XHGUI_PROFILING=${XHGUI_PROFILING}
     networks:
       - backend
 
@@ -149,29 +156,15 @@ services:
   postfix:
     build:
       context: ./postfix
-#      args:
-#        - DOMAIN=${POSTFIX_DOMAIN}
-#        - HOSTNAMES=${POSTFIX_HOSTNAMES}
-#        - MESSAGE_SIZE_LIMIT=${POSTFIX_MESSAGE_SIZE_LIMIT}
-#        - RELAYHOST=${POSTFIX_RELAYHOST}
-#        - RECIPIENT_DELIMITER=${POSTFIX_RECIPIENT_DELIMITER}
-#        - FRONT_ADDRESS=${POSTFIX_FRONT_ADDRESS}
-#        - POD_ADDRESS_RANGE=${POSTFIX_POD_ADDRESS_RANGE}
-#        - REJECT_UNLISTED_RECIPIENT=${POSTFIX_REJECT_UNLISTED_RECIPIENT}
+    expose:
+      - 25
     ports:
       - "${POSTFIX_SMTP_PORT}:25"
     environment:
-      - FRONT_ADDRESS=${POSTFIX_FRONT_ADDRESS}
-      - ADMIN_ADDRESS=${POSTFIX_FRONT_ADDRESS}
-      - HOST_ANTISPAM=${POSTFIX_HOST_ANTISPAM}
-      - HOST_LMTP=${POSTFIX_FRONT_ADDRESS}
-      - DOMAIN=${POSTFIX_DOMAIN}
-      - HOSTNAMES=${POSTFIX_HOSTNAMES}
-      - MESSAGE_SIZE_LIMIT=${POSTFIX_MESSAGE_SIZE_LIMIT}
-      - RELAYHOST=${POSTFIX_RELAYHOST}
-      - RECIPIENT_DELIMITER=${POSTFIX_RECIPIENT_DELIMITER}
-      - POD_ADDRESS_RANGE=${POSTFIX_POD_ADDRESS_RANGE}
-      - REJECT_UNLISTED_RECIPIENT=${POSTFIX_REJECT_UNLISTED_RECIPIENT}
+      - SMTP_SERVER=
+      - SMTP_USERNAME=
+      - SMTP_PASSWORD=
+      - SERVER_HOSTNAME=${POSTFIX_HOSTNAMES}
     networks:
       - backend
 
@@ -185,6 +178,18 @@ services:
 #      - "${REDIS_PORT}:6379"
 #    networks:
 #      - backend
+
+### Memcached ############################################
+#    memcached:
+#      build: ./memcached
+#      volumes:
+#        - ${DATA_PATH_HOST}/memcached:/var/lib/memcached
+#      ports:
+#        - "${MEMCACHED_HOST_PORT}:11211"
+#      depends_on:
+#        - php-fpm
+#      networks:
+#        - backend
 
 ### Varnish ##########################################
   proxy:

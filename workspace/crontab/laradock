@@ -1,1 +1,3 @@
-* * * * * laradock php /var/www/artisan schedule:run >> /dev/null 2>&1
+* * * * * laradock php /var/www/demo/bin/magento cron:run | grep -v "Ran jobs by schedule" >> /var/www/demo/var/log/magento.cron.log
+* * * * * laradock php /var/www/demo/update/cron.php >> /var/www/demo/var/log/update.cron.log
+* * * * * laradock php /var/www/demo/bin/magento setup:cron:run >> //var/www/demo/var/log/setup.cron.log

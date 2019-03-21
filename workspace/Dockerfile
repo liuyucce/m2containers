@@ -260,6 +260,20 @@ RUN if [ ${INSTALL_PHPDBG} = true ]; then \
 ;fi
 
 ###########################################################################
+# mcrypt:
+###########################################################################
+USER root
+
+ARG PHP_VERSION=${PHP_VERSION}
+
+RUN if [ "$(printf '%s\n' "7.2.0" "${PHP_VERSION}" | sort -V | head -n1)" = "7.2.0" ]; then \
+    apt-get install libmcrypt-dev libreadline-dev && \
+    printf "\n" | pecl install mcrypt-1.0.2 && \
+    echo "extension=mcrypt.so" > /etc/php/7.2/mods-available/mcrypt.ini && \
+    ln -s /etc/php/7.2/mods-available/mcrypt.ini /etc/php/7.2/cli/conf.d/20-mcrypt.ini \
+;fi
+
+###########################################################################
 # Blackfire:
 ###########################################################################
 

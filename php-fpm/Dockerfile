@@ -97,7 +97,7 @@ RUN if [ ${INSTALL_XDEBUG} = true ]; then \
   if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
     pecl install xdebug-2.5.5; \
   else \
-    pecl install xdebug; \
+    pecl install xdebug-2.6.1; \
   fi && \
   docker-php-ext-enable xdebug \
 ;fi
@@ -143,7 +143,7 @@ ARG INSTALL_PHPREDIS=false
 
 RUN if [ ${INSTALL_PHPREDIS} = true ]; then \
     # Install Php Redis Extension
-    printf "\n" | pecl install -o -f redis \
+    printf "\n" | pecl -q install -o -f redis \
     &&  rm -rf /tmp/pear \
     &&  docker-php-ext-enable redis \
 ;fi
@@ -454,6 +454,19 @@ RUN if [ ${INSTALL_IMAGEMAGICK} = true ]; then \
     apt-get install -y libmagickwand-dev imagemagick && \
     pecl install imagick && \
     docker-php-ext-enable imagick \
+;fi
+
+###########################################################################
+# mcrypt:
+###########################################################################
+USER root
+
+ARG PHP_VERSION=${PHP_VERSION}
+
+RUN if [ "$(printf '%s\n' "7.2.0" "${PHP_VERSION}" | sort -V | head -n1)" = "7.2.0" ]; then \
+    apt-get install libmcrypt-dev libreadline-dev && \
+    printf "\n" | pecl install mcrypt-1.0.2 && \
+    echo "extension=mcrypt.so" >  /usr/local/etc/php/conf.d/docker-php-ext-mcrypt.ini \
 ;fi
 
 ###########################################################################
