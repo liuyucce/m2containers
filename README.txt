@@ -1,0 +1,25 @@
+Docker development environment for Magento 2
+
+To use this environment on your local env, make sure you are using Mac OS 10.14.2 or above/Linux, at least 8G memory and Core i5 processor.
+
+The environment config file is /.env, most variables including website domains, project path, container ports mapping and PHP version etc. can be changed in this file.
+
+This environment supports PHP 7.0/7.1/7.2 at the moment.
+
+It will mount your user local ~/.ssh keys to the workspace container. Be careful to not share your built containers with others.
+
+This environment does not use database in container for the performance optimization of Mac OS.
+
+This environment disables memcache and Redis services by default. Services can be enabled by editing docker-compoer.yml file.
+
+Varnish is configured to only serve https requests for the purpose of mimicking live traffic, and gives developer direct access to nginx via http at the same time.
+
+Magento 2 multi-websites can be enabled in /nginx/conf_m2/magento2.conf.
+
+Website domains should  also be configured in /nginx/sites/app.conf.
+
+Cron job path is configured in /workspace/crontab/laradock.
+
+Variables should always be only configured in .env file, this is to be implemented in the "To Do:" list.
+
+Tideways profiler feature is still under progress.
