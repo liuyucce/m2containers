@@ -14,6 +14,7 @@ services:
       context: ./workspace
       args:
         - PHP_VERSION=${PHP_VERSION}
+        - PROJECT_ROOT_NAME=${WORKSPACE_PROJECT_ROOT_NAME}
         - INSTALL_XDEBUG=${WORKSPACE_INSTALL_XDEBUG}
         - INSTALL_BLACKFIRE=${INSTALL_BLACKFIRE}
         - INSTALL_SOAP=${WORKSPACE_INSTALL_SOAP}
@@ -55,15 +56,8 @@ services:
     volumes:
       - docker-sync:${DESTINATION_PATH}:nocopy # will be mounted on to the value of DESTINATION_PATH
       - ~/.ssh:/home/laradock/.ssh
-      - ./xhgui-config.php:/usr/local/src/xhgui/config/config.php
     extra_hosts:
       - "dockerhost:${DOCKER_HOST_IP}"
-#    environment:
-#      - XHGUI_CONFIG_DIR=${XHGUI_CONFIG_DIR}
-#      - XHGUI_MONGO_URI=${XHGUI_MONGO_URI}
-#      - XHGUI_MONGO_DB=${XHGUI_MONGO_DB}
-#      - XHGUI_PROFILING_RATIO=${XHGUI_PROFILING_RATIO}
-#      - XHGUI_PROFILING=${XHGUI_PROFILING}
     ports:
       - "${WORKSPACE_SSH_PORT}:22"
     tty: true
@@ -104,23 +98,16 @@ services:
     volumes:
       - docker-sync:${DESTINATION_PATH}:nocopy # will be mounted on to the value of DESTINATION_PATH
       - ./php-fpm/php${PHP_VERSION}.ini:/usr/local/etc/php/php.ini
-      - ./xhgui-config.php:/usr/local/src/xhgui/config/config.php
     expose:
       - "9000"
     ports:
       - "${PHP_FPM_SSH_PORT}:22"
     depends_on:
       - workspace
-      - xhgui
     extra_hosts:
       - "dockerhost:${DOCKER_HOST_IP}"
     environment:
       - PHP_IDE_CONFIG=${PHP_IDE_CONFIG}
-#      - XHGUI_CONFIG_DIR=${XHGUI_CONFIG_DIR}
-#      - XHGUI_MONGO_URI=${XHGUI_MONGO_URI}
-#      - XHGUI_MONGO_DB=${XHGUI_MONGO_DB}
-#      - XHGUI_PROFILING_RATIO=${XHGUI_PROFILING_RATIO}
-#      - XHGUI_PROFILING=${XHGUI_PROFILING}
     networks:
       - backend
 
@@ -191,6 +178,42 @@ services:
 #      networks:
 #        - backend
 
+### Percona ################################################
+#    percona:
+#      build:
+#        context: ./percona
+#      environment:
+#        - MYSQL_DATABASE=${PERCONA_DATABASE}
+#        - MYSQL_USER=${PERCONA_USER}
+#        - MYSQL_PASSWORD=${PERCONA_PASSWORD}
+#        - MYSQL_ROOT_PASSWORD=${PERCONA_ROOT_PASSWORD}
+#      volumes:
+#        - ${DATA_PATH_HOST}/percona:/var/lib/mysql
+#        - ${PERCONA_ENTRYPOINT_INITDB}:/docker-entrypoint-initdb.d
+#      ports:
+#        - "${PERCONA_PORT}:3306"
+#      networks:
+#        - backend
+
+### RabbitMQ #############################################
+    rabbitmq:
+      build: ./rabbitmq
+      ports:
+        - "${RABBITMQ_NODE_HOST_PORT}:5672"
+        - "${RABBITMQ_MANAGEMENT_HTTP_HOST_PORT}:15672"
+        - "${RABBITMQ_MANAGEMENT_HTTPS_HOST_PORT}:15671"
+      privileged: true
+      environment:
+        - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
+        - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
+      hostname: laradock-rabbitmq
+      volumes:
+        - ${DATA_PATH_HOST}/rabbitmq:/var/lib/rabbitmq
+      depends_on:
+        - php-fpm
+      networks:
+        - backend
+
 ### Varnish ##########################################
   proxy:
     build: ./varnish
@@ -227,35 +250,37 @@ services:
     networks:
       - frontend
 
-### ElasticSearch ########################################
-  # elasticsearch:
-  #   build: ./elasticsearch
-  #   volumes:
-  #     - elasticsearch:/usr/share/elasticsearch/data
-  #   environment:
-  #     - cluster.name=laradock-cluster
-  #     - bootstrap.memory_lock=true
-  #     - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-  #   ulimits:
-  #     memlock:
-  #       soft: -1
-  #       hard: -1
-  #   ports:
-  #     - "${ELASTICSEARCH_HOST_HTTP_PORT}:9200"
-  #     - "${ELASTICSEARCH_HOST_TRANSPORT_PORT}:9300"
-  #   depends_on:
-  #     - php-fpm
-  #   networks:
-  #     - frontend
-  #     - backend
+### MongoDB ##############################################
+#    mongo:
+#      build: ./mongo
+#      ports:
+#        - "${MONGODB_PORT}:27017"
+#      volumes:
+#        - ${DATA_PATH_HOST}/mongo:/data/db
+#      networks:
+#        - backend
 
-### XhGui Container ##################################
-  xhgui:
-    build:
-      context: ./xhgui
-    # I need to access xhgui
-    ports:
-      - "8000:80"
+### ElasticSearch ########################################
+#   elasticsearch:
+#     build: ./elasticsearch
+#     volumes:
+#       - elasticsearch:/usr/share/elasticsearch/data
+#     environment:
+#       - cluster.name=laradock-cluster
+#       - bootstrap.memory_lock=true
+#       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+#     ulimits:
+#       memlock:
+#         soft: -1
+#         hard: -1
+#     ports:
+#       - "${ELASTICSEARCH_HOST_HTTP_PORT}:9200"
+#       - "${ELASTICSEARCH_HOST_TRANSPORT_PORT}:9300"
+#     depends_on:
+#       - php-fpm
+#     networks:
+#       - frontend
+#       - backend
 
 ### Networks Setup ############################################
 networks:
@@ -265,7 +290,7 @@ networks:
     driver: "bridge"
 ### Volumes Setup #############################################
 volumes:
-  #mysql:
+#  mysql:
 #  redis:
 #    driver: "local"
   docker-sync:

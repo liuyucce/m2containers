@@ -16,10 +16,11 @@ Varnish is configured to only serve https requests for the purpose of mimicking 
 
 Magento 2 multi-websites can be enabled in /nginx/conf_m2/magento2.conf.
 
-Website domains should  also be configured in /nginx/sites/app.conf.
+Website domains should also be configured in /nginx/sites/app.conf.
+
+Reverse proxy can have domains configured in /reverse-proxy/sites/app.conf
+
+SSL have DNS configured in ssl/openssl.cnf 
 
 Cron job path is configured in /workspace/crontab/laradock.
 
-Variables should always be only configured in .env file, this is to be implemented in the "To Do:" list.
-
-Tideways profiler feature is still under progress.

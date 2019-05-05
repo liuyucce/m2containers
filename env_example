@@ -2,28 +2,32 @@
 # General Setup
 ###########################################################
 
-SYNC_NAME=dockermservice
-SSL_SUBJECT=mservice.local
-SSL_DNS=b2b.mservice.local,nz.mservice.local,nz.b2b.mservice.local
+SYNC_NAME=dockerdemo
+SSL_SUBJECT=demo.local
+SSL_DNS=b2b.demo.local,nz.demo.local
 PHP_FPM_SSH_PORT=9022
+
+### Paths #################################################
+# Choose storage path on your machine. For all storage systems
+DATA_PATH_HOST=~/.laradock/data
 
 # Path inside of container where the APP_PATH will be mounted,
 # This var can also be used as workdir value for docker
-DESTINATION_PATH=/var/www/mservice
+DESTINATION_PATH=/var/www/demo
 
 # Nginx additional paths
 NGINX_SSL_PATH=./ssl/
 NGINX_CONF_M2_PATH=./nginx/conf_m2/
 
 ### Application Path ###################################################################################################
-# Point to your code, will be available at `/var/www/mservice`.
+# Point to your code, will be available at `/var/www/demo`.
 
-APPLICATION=/Users/Yuchen/workspace/mservice/
+APPLICATION=/Users/acidgreen/workspace/demo/
 
 ### PHP Version ########################################################################################################
 # Select a PHP version of the Workspace and PHP-FPM containers (Does not apply to HHVM). Accepted values: 71 - 70 - 56
 
-PHP_VERSION=7.0
+PHP_VERSION=7.1
 
 ### PHP Interpreter ####################################################################################################
 # Select the PHP Interpreter. Accepted values: hhvm - php-fpm
@@ -71,6 +75,7 @@ CHANGE_SOURCE=false
 
 ### WORKSPACE ##########################################################################################################
 
+WORKSPACE_PROJECT_ROOT_NAME=demo
 WORKSPACE_INSTALL_XDEBUG=true
 WORKSPACE_INSTALL_LDAP=false
 WORKSPACE_INSTALL_SOAP=true
@@ -92,7 +97,7 @@ WORKSPACE_INSTALL_DEPLOYER=false
 WORKSPACE_INSTALL_LINUXBREW=false
 WORKSPACE_INSTALL_MC=false
 WORKSPACE_INSTALL_SYMFONY=false
-WORKSPACE_INSTALL_PYTHON=false
+WORKSPACE_INSTALL_PYTHON=true
 WORKSPACE_INSTALL_IMAGE_OPTIMIZERS=false
 WORKSPACE_INSTALL_IMAGEMAGICK=true
 WORKSPACE_INSTALL_TERRAFORM=false
@@ -106,6 +111,7 @@ WORKSPACE_YARN_VERSION=latest
 WORKSPACE_TIMEZONE=UTC
 WORKSPACE_SSH_PORT=2222
 WORKSPACE_INSTALL_TIDEWAYS_XHPROF=true
+WORKSPACE_INSTALL_SSMTP=true
 
 ### PHP_FPM ############################################################################################################
 
@@ -131,6 +137,7 @@ PHP_FPM_INSTALL_IMAGE_OPTIMIZERS=false
 PHP_FPM_INSTALL_IMAGEMAGICK=true
 PHP_FPM_INSTALL_PG_CLIENT=false
 PHP_FPM_INSTALL_TIDEWAYS_XHPROF=true
+PHP_FPM_INSTALL_SSMTP=true
 
 ### PHP_WORKER #########################################################################################################
 
@@ -149,29 +156,13 @@ NGINX_PHP_UPSTREAM_PORT=9000
 
 REVERSE_PROXY_SITES_PATH=./reverse-proxy/sites/
 
-### APACHE #############################################################################################################
-
-APACHE_HOST_HTTP_PORT=80
-APACHE_HOST_HTTPS_PORT=443
-APACHE_HOST_LOG_PATH=./logs/apache2
-APACHE_SITES_PATH=./apache2/sites
-APACHE_PHP_UPSTREAM_CONTAINER=php-fpm
-APACHE_PHP_UPSTREAM_PORT=9000
-APACHE_PHP_UPSTREAM_TIMEOUT=60
-
-### MYSQL ##############################################################################################################
-
-MYSQL_VERSION=8.0
-MYSQL_DATABASE=default
-MYSQL_USER=default
-MYSQL_PASSWORD=secret
-MYSQL_PORT=3306
-MYSQL_ROOT_PASSWORD=root
-MYSQL_ENTRYPOINT_INITDB=./mysql/docker-entrypoint-initdb.d
-
 ### REDIS ##############################################################################################################
 
 REDIS_PORT=6379
+
+### MEMCACHED ##########################################################################################################
+
+MEMCACHED_HOST_PORT=11211
 
 ### Percona ############################################################################################################
 
@@ -181,28 +172,6 @@ PERCONA_PASSWORD=secret
 PERCONA_PORT=3306
 PERCONA_ROOT_PASSWORD=root
 PERCONA_ENTRYPOINT_INITDB=./percona/docker-entrypoint-initdb.d
-
-### MSSQL ##############################################################################################################
-
-MSSQL_DATABASE=homestead
-MSSQL_PASSWORD=yourStrong(!)Password
-MSSQL_PORT=1433
-
-### MARIADB ############################################################################################################
-
-MARIADB_DATABASE=default
-MARIADB_USER=default
-MARIADB_PASSWORD=secret
-MARIADB_PORT=3306
-MARIADB_ROOT_PASSWORD=root
-MARIADB_ENTRYPOINT_INITDB=./mariadb/docker-entrypoint-initdb.d
-
-### POSTGRES ###########################################################################################################
-
-POSTGRES_DB=default
-POSTGRES_USER=default
-POSTGRES_PASSWORD=secret
-POSTGRES_PORT=5432
 
 ### RABBITMQ ###########################################################################################################
 
@@ -221,33 +190,6 @@ ELASTICSEARCH_HOST_TRANSPORT_PORT=9300
 
 KIBANA_HTTP_PORT=5601
 
-### MEMCACHED ##########################################################################################################
-
-MEMCACHED_HOST_PORT=11211
-
-### BEANSTALKD CONSOLE #################################################################################################
-
-BEANSTALKD_CONSOLE_BUILD_PATH=./beanstalkd-console
-BEANSTALKD_CONSOLE_CONTAINER_NAME=beanstalkd-console
-BEANSTALKD_CONSOLE_HOST_PORT=2080
-
-### BEANSTALKD #########################################################################################################
-
-BEANSTALKD_HOST_PORT=11300
-
-### SELENIUM ###########################################################################################################
-
-SELENIUM_PORT=4444
-
-### MINIO ##############################################################################################################
-
-MINIO_PORT=9000
-
-### ADMINER ############################################################################################################
-
-ADM_PORT=8080
-ADM_INSTALL_MSSQL=false
-
 ### PHP MY ADMIN #######################################################################################################
 
 # Accepted values: mariadb - mysql
@@ -263,14 +205,17 @@ PMA_PORT=8080
 
 ### POSTFIX ############################################################################################################
 
-POSTFIX_DOMAIN=/etc/mailname
-POSTFIX_HOSTNAMES=postfix
+POSTFIX_DOMAIN=demo.local
+POSTFIX_HOSTNAMES=postfix.demo.local
 POSTFIX_MESSAGE_SIZE_LIMIT=50000000
 POSTFIX_RELAYHOST=
 POSTFIX_RECIPIENT_DELIMITER=+
-POSTFIX_FRONT_ADDRESS=127.0.0.1
-#POSTFIX_HOST_LMTP=
-#POSTFIX_HOST_ANTISPAM=
+POSTFIX_FRONT_ADDRESS=
+POSTFIX_POD_ADDRESS_RANGE=
+POSTFIX_REJECT_UNLISTED_RECIPIENT=
+POSTFIX_HOST_LMTP=
+POSTFIX_HOST_ANTISPAM=
+POSTFIX_SMTP_PORT=25
 
 ### VARNISH ############################################################################################################
 
@@ -293,63 +238,15 @@ VARNISH_PROXY2_CACHE_SIZE=128m
 VARNISH_PROXY2_BACKEND_HOST=apache
 VARNISH_PROXY2_SERVER=SERVER2
 
-### XHGUI ############################################################################################################
-XHGUI_CONFIG_DIR=/usr/local/src/xhgui/config/
-XHGUI_MONGO_URI=xhgui:27017
-XHGUI_MONGO_DB=xhprof
-XHGUI_PROFILING_RATIO=100
-XHGUI_PROFILING=false
-
-### HAPROXY ############################################################################################################
-
-HAPROXY_HOST_HTTP_PORT=8085
-
 ### JENKINS ############################################################################################################
 
 JENKINS_HOST_HTTP_PORT=8090
 JENKINS_HOST_SLAVE_AGENT_PORT=50000
 JENKINS_HOME=./jenkins/jenkins_home
 
-### GRAFANA ############################################################################################################
-
-GRAFANA_PORT=3000
-
-### BLACKFIRE ##########################################################################################################
-
-# Create an account on blackfire.io. Don't enable blackfire and xDebug at the same time.
-# visit https://blackfire.io/docs/24-days/06-installation#install-probe-debian for more info.
-
-INSTALL_BLACKFIRE=false
-BLACKFIRE_CLIENT_ID=<client_id>
-BLACKFIRE_CLIENT_TOKEN=<client_token>
-BLACKFIRE_SERVER_ID=<server_id>
-BLACKFIRE_SERVER_TOKEN=<server_token>
-
-### AEROSPIKE ##########################################################################################################
-
-AEROSPIKE_SERVICE_PORT=3000
-AEROSPIKE_FABRIC_PORT=3001
-AEROSPIKE_HEARTBEAT_PORT=3002
-AEROSPIKE_INFO_PORT=3003
-
-### RETHINKDB ##########################################################################################################
-
-RETHINKDB_PORT=8090
-
 ### MONGODB ############################################################################################################
 
 MONGODB_PORT=27017
-
-### CADDY ##############################################################################################################
-
-CADDY_HOST_HTTP_PORT=80
-CADDY_HOST_HTTPS_PORT=443
-CADDY_HOST_LOG_PATH=./logs/caddy
-CADDY_CUSTOM_CADDYFILE=./caddy/Caddyfile
-
-### LARAVEL ECHO SERVER ################################################################################################
-
-LARAVEL_ECHO_SERVER_PORT=6001
 
 ### DOCKER-SYNC ################################################################################################
 
