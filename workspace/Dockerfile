@@ -52,6 +52,11 @@ RUN apt-get update -yqq && \
 # base image (https://github.com/Laradock/workspace).
 #
 
+USER root
+
+RUN apt-get install iputils-ping && \
+    apt-get install telnet
+
 #
 #--------------------------------------------------------------------------
 # Optional Software's Installation
