@@ -152,10 +152,10 @@ RUN echo "" >> ~/.bashrc && \
 
 USER root
 
-ARG DESTINATION_PATH=${DESTINATION_PATH}
+ARG APP_CODE_PATH_CONTAINER=${APP_CODE_PATH_CONTAINER}
 
 COPY ./crontab /etc/cron.d
-RUN sed -i "s/\/var\/www\/demo/${DESTINATION_PATH}/g" /etc/cron.d/laradock
+RUN sed -i "s/\/var\/www\/demo/${APP_CODE_PATH_CONTAINER}/g" /etc/cron.d/laradock
 RUN chmod -R 644 /etc/cron.d
 
 ###########################################################################

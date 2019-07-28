@@ -1,10 +1,14 @@
 version: "2"
 
 options:
-  verbose: true
+  verbose: false 
 syncs:
   #IMPORTANT: ensure this name is unique and does not match your other application container name
-  ${SYNC_NAME}-docker-sync: # tip: add -sync and you keep consistent names als a convention
-    src: '${APPLICATION}'
-    sync_excludes: [ ${SYNC_NAME}, nbproject]
+  applications-docker-sync: # tip: add -sync and you keep consistent names als a convention
+    compose-dev-file-path: 'docker-compose.sync.yml' # docker-compose override file
+
+    src: '${APP_CODE_PATH_HOST}'
     sync_userid: 1000
+    sync_strategy: '${DOCKER_SYNC_STRATEGY}'
+
+    sync_excludes: [ ${SYNC_NAME}, nbproject]
