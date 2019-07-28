@@ -1,11 +1,5 @@
 version: '3.1'
 
-### Networks Setup ############################################
-networks:
-  frontend:
-    driver: ${NETWORKS_DRIVER}
-  backend:
-    driver: ${NETWORKS_DRIVER}
 ### Volumes Setup #############################################
 volumes:
 #  percona:
@@ -67,14 +61,8 @@ services:
     volumes:
       - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}${APP_CODE_CONTAINER_FLAG} # will be mounted on to the value of APP_CODE_PATH_CONTAINER
       - ~/.ssh:/home/laradock/.ssh
-    extra_hosts:
-      - "dockerhost:${DOCKER_HOST_IP}"
-    ports:
-      - "${WORKSPACE_SSH_PORT}:22"
     tty: true
-    networks:
-      - frontend
-      - backend
+    network_mode: "host"
 
 ### PHP-FPM Container #######################################
   php-fpm:
@@ -109,18 +97,13 @@ services:
     volumes:
       - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}${APP_CODE_CONTAINER_FLAG} # will be mounted on to the value of APP_CODE_PATH_CONTAINER
       - ./php-fpm/php${PHP_VERSION}.ini:/usr/local/etc/php/php.ini
-    expose:
-      - "9000"
-    ports:
-      - "${PHP_FPM_SSH_PORT}:22"
     depends_on:
       - workspace
     extra_hosts:
       - "dockerhost:${DOCKER_HOST_IP}"
     environment:
       - PHP_IDE_CONFIG=${PHP_IDE_CONFIG}
-    networks:
-      - backend
+    network_mode: "host"
 
 ### SSL ##################################
   ssl:
@@ -140,18 +123,14 @@ services:
         - PHP_UPSTREAM_PORT=${NGINX_PHP_UPSTREAM_PORT}
     volumes:
       - ${NGINX_SSL_PATH}:/etc/nginx/ssl
-      - ${APP_CODE_PATH_HOST}${APP_CODE_PATH_CONTAINER}${APP_CODE_CONTAINER_FLAG} # will be mounted on to the value of APP_CODE_PATH_CONTAINER
+      - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}${APP_CODE_CONTAINER_FLAG} # will be mounted on to the value of APP_CODE_PATH_CONTAINER
       - ${NGINX_HOST_LOG_PATH}:/var/log/nginx
       - ${NGINX_SITES_PATH}:/etc/nginx/sites-available
       - ${NGINX_CONF_M2_PATH}:/etc/nginx/conf_m2
-    ports:
-      - "${NGINX_HOST_HTTP_PORT}:80"
     depends_on:
       - php-fpm
       - ssl
-    networks:
-      - frontend
-      - backend
+    network_mode: "host"
 
 ### Apache Server ########################################
 #    apache2:
@@ -179,37 +158,27 @@ services:
   postfix:
     build:
       context: ./postfix
-    expose:
-      - 25
-    ports:
-      - "${POSTFIX_SMTP_PORT}:25"
+    network_mode: "host"
     environment:
       - SMTP_SERVER=
       - SMTP_USERNAME=
       - SMTP_PASSWORD=
       - SERVER_HOSTNAME=${POSTFIX_HOSTNAMES}
-    networks:
-      - backend
+    network_mode: "host"
 
 ### Redis Container #########################################
   redis:
     build: ./redis
     volumes:
       - ${DATA_PATH_HOST}/redis:/data
-    ports:
-      - "${REDIS_PORT}:6379"
-    networks:
-      - backend
+    network_mode: "host"
 
 ### Memcached ############################################
   memcached:
     build: ./memcached
     volumes:
       - ${DATA_PATH_HOST}/memcached:/var/lib/memcached
-    ports:
-      - "${MEMCACHED_HOST_PORT}:11211"
-    networks:
-      - backend
+    network_mode: "host"
 
 ### Percona ################################################
 #    percona:
@@ -231,10 +200,6 @@ services:
 ### RabbitMQ #############################################
   rabbitmq:
     build: ./rabbitmq
-    ports:
-      - "${RABBITMQ_NODE_HOST_PORT}:5672"
-      - "${RABBITMQ_MANAGEMENT_HTTP_HOST_PORT}:15672"
-      - "${RABBITMQ_MANAGEMENT_HTTPS_HOST_PORT}:15671"
     privileged: true
     environment:
       - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
@@ -244,16 +209,11 @@ services:
       - ${DATA_PATH_HOST}/rabbitmq:/var/lib/rabbitmq
     depends_on:
       - php-fpm
-    networks:
-      - backend
+    network_mode: "host"
 
 ### Varnish ##########################################
   proxy:
     build: ./varnish
-    ports:
-      - "${VARNISH_PORT}:6081"
-    expose:
-      - 6082
     environment:
       - VARNISH_CONFIG=${VARNISH_CONFIG}
       - CACHE_SIZE=${VARNISH_PROXY1_CACHE_SIZE}
@@ -264,8 +224,7 @@ services:
       - VARNISH_SERVER=${VARNISH_PROXY1_SERVER}
     depends_on:
       - nginx
-    networks:
-      - frontend
+    network_mode: "host"
 
 ### Reverse Proxy Server Container ##################################
   reverse-proxy:
@@ -275,13 +234,10 @@ services:
       - ${NGINX_SSL_PATH}:/etc/nginx/ssl
       - ${NGINX_HOST_LOG_PATH}:/var/log/nginx
       - ${REVERSE_PROXY_SITES_PATH}:/etc/nginx/sites-available
-    ports:
-      - "${NGINX_HOST_HTTPS_PORT}:443"
     depends_on:
       - proxy
       - ssl
-    networks:
-      - frontend
+    network_mode: "host"
 
 ### Blackfire ########################################
 #    blackfire:
@@ -297,12 +253,9 @@ services:
 ### MongoDB ##############################################
   mongo:
     build: ./mongo
-    ports:
-      - "${MONGODB_PORT}:27017"
     volumes:
       - ${DATA_PATH_HOST}/mongo:/data/db
-    networks:
-      - backend
+    network_mode: "host"
 
 ### ElasticSearch ########################################
   elasticsearch:
@@ -319,11 +272,6 @@ services:
       memlock:
         soft: -1
         hard: -1
-    ports:
-      - "${ELASTICSEARCH_HOST_HTTP_PORT}:9200"
-      - "${ELASTICSEARCH_HOST_TRANSPORT_PORT}:9300"
     depends_on:
       - php-fpm
-    networks:
-      - frontend
-      - backend
+    network_mode: "host"

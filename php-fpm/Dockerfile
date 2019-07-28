@@ -14,7 +14,8 @@
 
 ARG PHP_VERSION=${PHP_VERSION}
 
-FROM laradock/php-fpm:2.2-${PHP_VERSION}
+#FROM laradock/php-fpm:2.2-${PHP_VERSION}
+FROM letsdockerize/laradock-php-fpm:2.4-${PHP_VERSION}
 
 LABEL maintainer="Mahmoud Zalt <mahmoud@zalt.me>"
 
@@ -97,7 +98,7 @@ RUN if [ ${INSTALL_XDEBUG} = true ]; then \
   if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
     pecl install xdebug-2.5.5; \
   else \
-    pecl install xdebug-2.6.1; \
+    pecl install xdebug-2.7.2; \
   fi && \
   docker-php-ext-enable xdebug \
 ;fi
@@ -257,7 +258,7 @@ RUN if [ ${INSTALL_MEMCACHED} = true ]; then \
     if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
       curl -L -o /tmp/memcached.tar.gz "https://github.com/php-memcached-dev/php-memcached/archive/2.2.0.tar.gz"; \
     else \
-      curl -L -o /tmp/memcached.tar.gz "https://github.com/php-memcached-dev/php-memcached/archive/php7.tar.gz"; \
+      curl -L -o /tmp/memcached.tar.gz "https://github.com/php-memcached-dev/php-memcached/archive/master.tar.gz"; \
     fi \
     && mkdir -p memcached \
     && tar -C memcached -zxvf /tmp/memcached.tar.gz --strip 1 \

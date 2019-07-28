@@ -14,7 +14,8 @@
 
 ARG PHP_VERSION=${PHP_VERSION}
 
-FROM laradock/workspace:2.2-${PHP_VERSION}
+#FROM laradock/workspace:2.2-${PHP_VERSION}
+FROM letsdockerize/laradock-workspace:2.4-${PHP_VERSION}
 
 LABEL maintainer="Mahmoud Zalt <mahmoud@zalt.me>"
 
@@ -54,8 +55,8 @@ RUN apt-get update -yqq && \
 
 USER root
 
-RUN apt-get install iputils-ping && \
-    apt-get install telnet
+RUN apt-get install -y iputils-ping && \
+    apt-get install -y telnet
 
 #
 #--------------------------------------------------------------------------
@@ -155,7 +156,6 @@ USER root
 ARG APP_CODE_PATH_CONTAINER=${APP_CODE_PATH_CONTAINER}
 
 COPY ./crontab /etc/cron.d
-RUN sed -i "s/\/var\/www\/demo/${APP_CODE_PATH_CONTAINER}/g" /etc/cron.d/laradock
 RUN chmod -R 644 /etc/cron.d
 
 ###########################################################################
@@ -244,8 +244,8 @@ RUN if [ ${INSTALL_XDEBUG} = true ]; then \
     if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
       pecl install xdebug-2.5.5; \
     else \
-      pecl install xdebug-2.6.1 && \
-      echo "zend_extension=/usr/lib/php/20170718/xdebug.so" > /etc/php/${PHP_VERSION}/cli/conf.d/20-xdebug.ini \
+      pecl install xdebug-2.7.2 && \
+      echo "zend_extension=/usr/lib/php/20180731/xdebug.so" > /etc/php/7.3/cli/conf.d/20-xdebug.ini \
     ;fi \
 fi
 
@@ -278,10 +278,10 @@ USER root
 ARG PHP_VERSION=${PHP_VERSION}
 
 RUN if [ "$(printf '%s\n' "7.2.0" "${PHP_VERSION}" | sort -V | head -n1)" = "7.2.0" ]; then \
-    apt-get install libmcrypt-dev libreadline-dev && \
+    apt-get install -y libmcrypt-dev libreadline-dev && \
     printf "\n" | pecl install mcrypt-1.0.2 && \
-    echo "extension=mcrypt.so" > /etc/php/7.2/mods-available/mcrypt.ini && \
-    ln -s /etc/php/7.2/mods-available/mcrypt.ini /etc/php/7.2/cli/conf.d/20-mcrypt.ini \
+    echo "extension=mcrypt.so" > /etc/php/${PHP_VERSION}/mods-available/mcrypt.ini && \
+    ln -s /etc/php/${PHP_VERSION}/mods-available/mcrypt.ini /etc/php/${PHP_VERSION}/cli/conf.d/20-mcrypt.ini \
 ;fi
 
 ###########################################################################
@@ -298,7 +298,7 @@ RUN if [ ${INSTALL_XDEBUG} = false -a ${INSTALL_BLACKFIRE} = true ]; then \
     curl -L https://packagecloud.io/gpg.key | apt-key add - && \
     echo "deb http://packages.blackfire.io/debian any main" | tee /etc/apt/sources.list.d/blackfire.list && \
     apt-get update -yqq && \
-    apt-get install blackfire-agent \
+    apt-get -y install blackfire-agent \
 ;fi
 
 ###########################################################################
@@ -364,7 +364,7 @@ ARG PHP_VERSION=${PHP_VERSION}
 
 RUN if [ ${INSTALL_PHPREDIS} = true ]; then \
     # Install Php Redis extension
-    printf "\n" | pecl -q install -o -f redis && \
+    printf "\n\n" | pecl -q install -o -f redis && \
     echo "extension=redis.so" >> /etc/php/${PHP_VERSION}/mods-available/redis.ini && \
     phpenmod redis \
 ;fi
@@ -399,7 +399,7 @@ ARG INSTALL_LIBPNG=false
 
 RUN if [ ${INSTALL_LIBPNG} = true ]; then \
     apt update && \
-    apt install libpng16-16 \
+    apt install -y libpng16-16 \
 ;fi
 
 ###########################################################################

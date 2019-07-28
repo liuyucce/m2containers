@@ -6,7 +6,12 @@ distinguished_name = req_distinguished_name
 basicConstraints = CA:FALSE
 keyUsage = nonRepudiation, digitalSignature, keyEncipherment
 extendedKeyUsage = clientAuth, serverAuth
+[ v3_ca ]
+basicConstraints = critical,CA:TRUE
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid:always,issuer:always
 subjectAltName = @alt_names
 [alt_names]
 DNS.1 = b2b.demo.local
-DNS.2 = demo.local
+DNS.2 = nz.demo.local
+DNS.3 = demo.local
