@@ -133,28 +133,26 @@ services:
     network_mode: "host"
 
 ### Apache Server ########################################
-#    apache2:
-#      build:
-#        context: ./apache2
-#        args:
-#          - PHP_UPSTREAM_CONTAINER=${APACHE_PHP_UPSTREAM_CONTAINER}
-#          - PHP_UPSTREAM_PORT=${APACHE_PHP_UPSTREAM_PORT}
-#          - PHP_UPSTREAM_TIMEOUT=${APACHE_PHP_UPSTREAM_TIMEOUT}
-#          - DOCUMENT_ROOT=${APACHE_DOCUMENT_ROOT}
-#      volumes:
-#        - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}${APP_CODE_CONTAINER_FLAG}
-#        - ${APACHE_HOST_LOG_PATH}:/var/log/apache2
-#        - ${APACHE_SITES_PATH}:/etc/apache2/sites-available
-#      ports:
-#        - "${APACHE_HOST_HTTP_PORT}:80"
-#        - "${APACHE_HOST_HTTPS_PORT}:443"
-#      depends_on:
-#        - php-fpm
-#      networks:
-#        - frontend
-#        - backend
-
-### Postfix Server Container ################################
+#  apache2:
+#    build:
+#      context: ./apache2
+#      args:
+#        - PHP_UPSTREAM_CONTAINER=${APACHE_PHP_UPSTREAM_CONTAINER}
+#        - PHP_UPSTREAM_PORT=${APACHE_PHP_UPSTREAM_PORT}
+#        - PHP_UPSTREAM_TIMEOUT=${APACHE_PHP_UPSTREAM_TIMEOUT}
+#        - DOCUMENT_ROOT=${APACHE_DOCUMENT_ROOT}
+#    volumes:
+#      - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}${APP_CODE_CONTAINER_FLAG}
+#      - ${APACHE_HOST_LOG_PATH}:/var/log/apache2
+#      - ${APACHE_SITES_PATH}:/etc/apache2/sites-available
+#    ports:
+#      - "${APACHE_HOST_HTTP_PORT}:80"
+#      - "${APACHE_HOST_HTTPS_PORT}:443"
+#    depends_on:
+#      - php-fpm
+#    network_mode: "host"
+#
+#### Postfix Server Container ################################
   postfix:
     build:
       context: ./postfix
@@ -223,7 +221,8 @@ services:
       - BACKEND_PORT=${VARNISH_BACKEND_PORT}
       - VARNISH_SERVER=${VARNISH_PROXY1_SERVER}
     depends_on:
-      - nginx
+      - apache2
+#      - nginx
     network_mode: "host"
 
 ### Reverse Proxy Server Container ##################################
