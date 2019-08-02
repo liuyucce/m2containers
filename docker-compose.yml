@@ -221,8 +221,8 @@ services:
       - BACKEND_PORT=${VARNISH_BACKEND_PORT}
       - VARNISH_SERVER=${VARNISH_PROXY1_SERVER}
     depends_on:
-      - apache2
-#      - nginx
+#      - apache2
+      - nginx
     network_mode: "host"
 
 ### Reverse Proxy Server Container ##################################
