@@ -241,11 +241,11 @@ ARG PHP_VERSION=${PHP_VERSION}
 RUN if [ ${INSTALL_XDEBUG} = true ]; then \
     # Load the xdebug extension only with phpunit commands
     # Install the xdebug extension
-    if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
-      pecl install xdebug-2.5.5; \
-    else \
-      pecl install xdebug-2.7.2 && \
-      echo "zend_extension=/usr/lib/php/20180731/xdebug.so" > /etc/php/7.3/cli/conf.d/20-xdebug.ini \
+    pecl install xdebug-2.7.2; \
+    if [ $(php -r "echo PHP_MINOR_VERSION;") = "2" ]; then \
+      echo "zend_extension=/usr/lib/php/20170718/xdebug.so" > /etc/php/${PHP_VERSION}/cli/conf.d/20-xdebug.ini; \
+    elif [ $(php -r "echo PHP_MINOR_VERSION;") = "3" ]; then \
+      echo "zend_extension=/usr/lib/php/20180731/xdebug.so" > /etc/php/${PHP_VERSION}/cli/conf.d/20-xdebug.ini \
     ;fi \
 fi
 

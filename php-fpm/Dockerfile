@@ -95,11 +95,7 @@ ARG INSTALL_XDEBUG=false
 
 RUN if [ ${INSTALL_XDEBUG} = true ]; then \
   # Install the xdebug extension
-  if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
-    pecl install xdebug-2.5.5; \
-  else \
-    pecl install xdebug-2.7.2; \
-  fi && \
+  pecl install xdebug-2.7.2; \
   docker-php-ext-enable xdebug \
 ;fi
 
