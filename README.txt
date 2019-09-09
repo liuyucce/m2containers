@@ -4,7 +4,7 @@ To use this environment on your local env, make sure you are using Mac OS 10.14.
 
 The environment config file is /.env, most variables including website domains, project path, container ports mapping and PHP version etc. can be changed in this file.
 
-This environment supports PHP 7.0/7.1/7.2 at the moment.
+This environment supports PHP 7.2/7.3 at the moment.
 
 It will mount your user local ~/.ssh keys to the workspace container. Be careful to not share your built containers with others.
 
@@ -16,7 +16,7 @@ Varnish is configured to only serve https requests for the purpose of mimicking 
 
 Magento 2 multi-websites can be enabled in /nginx/conf_m2/magento2.conf.
 
-Website domains should also be configured in /nginx/sites/app.conf.
+Website domains should also be configured in /nginx/sites/app.conf when using nginx server.
 
 Reverse proxy can have domains configured in /reverse-proxy/sites/app.conf
 
