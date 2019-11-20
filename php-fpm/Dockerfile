@@ -532,12 +532,6 @@ RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
     rm /var/log/lastlog /var/log/faillog
 
-# Create health_check.php file for varnish
-RUN mkdir -p /var/www/default \
-    && echo "<?php echo 'ok';" > /var/www/default/health_check.php \
-    && chown -R www-data:root /var/www/default \
-    && chmod -R 755 /var/www/default
-
 RUN usermod -u 1000 www-data
 
 WORKDIR /var/www
