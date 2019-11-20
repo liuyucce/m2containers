@@ -1,9 +1,14 @@
 ssl/default.crt
 ssl/default.csr
 ssl/default.key
+ssl/ca.pem
+ssl/ca-key.pem
 ssl/ca.srl
 ssl/cert.pem
 ssl/key.csr
 ssl/key.pem
 ssl/secret.yaml
 logs/nginx/error.log
+.docker-sync/daemon.pid
+.docker-sync/daemon.log
+xhgui/*
