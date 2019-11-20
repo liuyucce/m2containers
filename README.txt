@@ -24,5 +24,9 @@ SSL have DNS configured in ssl/openssl.cnf
 
 Import ssl/ca.pem as root certificate for https access.
 
+Xhgui profiling can be enabled by removing comment mark at  nginx/conf_m2/magento2.conf:169
+
+Xhgui sampling rate can be changed in xhgui/config/config.php:63
+
 Cron job path is configured in /workspace/crontab/laradock.
 
