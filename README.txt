@@ -22,5 +22,7 @@ Reverse proxy can have domains configured in /reverse-proxy/sites/app.conf
 
 SSL have DNS configured in ssl/openssl.cnf 
 
+Import ssl/ca.pem as root certificate for https access.
+
 Cron job path is configured in /workspace/crontab/laradock.
 
