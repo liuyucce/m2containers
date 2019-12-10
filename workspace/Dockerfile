@@ -816,6 +816,8 @@ USER root
 
 ARG INSTALL_TIDEWAYS_XHPROF=false
 
+WORKDIR "/tmp/"
+
 RUN if [ ${INSTALL_TIDEWAYS_XHPROF} = true ]; then \
     git clone https://github.com/tideways/php-profiler-extension.git && \
     cd php-profiler-extension && \
@@ -827,6 +829,21 @@ RUN if [ ${INSTALL_TIDEWAYS_XHPROF} = true ]; then \
 
 #Copy tideways_xhprof configuration for profiling
 COPY ./tideways_xhprof.ini /etc/php/${PHP_VERSION}/cli/conf.d/tideways_xhprof.ini
+
+###########################################################################
+# Sodium for temporary version issue:
+###########################################################################
+
+USER root
+
+WORKDIR "/tmp/"
+
+RUN curl -O https://download.libsodium.org/libsodium/releases/libsodium-1.0.18.tar.gz \
+  && tar xfvz libsodium-1.0.18.tar.gz \
+  && cd libsodium-1.0.18 \
+  && ./configure \
+  && make && make install \
+  && pecl install -f libsodium
 
 ###########################################################################
 # nasm

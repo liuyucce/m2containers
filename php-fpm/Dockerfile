@@ -470,6 +470,8 @@ RUN if [ "$(printf '%s\n' "7.2.0" "${PHP_VERSION}" | sort -V | head -n1)" = "7.2
 # SSMTP:
 ###########################################################################
 
+USER root
+
 ARG INSTALL_SSMTP=false
 
 RUN if [ ${INSTALL_SSMTP} = true ]; then \
@@ -480,7 +482,12 @@ RUN if [ ${INSTALL_SSMTP} = true ]; then \
 ###########################################################################
 # Tideways:
 ###########################################################################
+
+USER root
+
 ARG INSTALL_TIDEWAYS_XHPROF=false
+
+WORKDIR "/tmp/"
 
 RUN if [ ${INSTALL_TIDEWAYS_XHPROF} = true ]; then \
     apt-get install -y git && \
@@ -496,8 +503,25 @@ RUN if [ ${INSTALL_TIDEWAYS_XHPROF} = true ]; then \
 COPY ./tideways_xhprof.ini /usr/local/etc/php/conf.d/tideways_xhprof.ini
 
 ###########################################################################
+# Sodium for temporary version issue:
+###########################################################################
+
+USER root
+
+WORKDIR "/tmp/"
+
+RUN curl -O https://download.libsodium.org/libsodium/releases/libsodium-1.0.18.tar.gz \
+  && tar xfvz libsodium-1.0.18.tar.gz \
+  && cd libsodium-1.0.18 \
+  && ./configure \
+  && make && make install \
+  && pecl install -f libsodium
+
+###########################################################################
 # IMAP:
 ###########################################################################
+
+USER root
 
 ARG INSTALL_IMAP=false
 
