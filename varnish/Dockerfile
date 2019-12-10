@@ -7,6 +7,10 @@ ENV DEBIAN_FRONTEND noninteractive
 
 # Install Dependencies
 RUN apt-get update && apt-get install -y apt-utils && apt-get upgrade -y
+RUN apt-get install -y debian-archive-keyring curl gnupg apt-transport-https
+RUN curl -L https://packagecloud.io/varnishcache/varnish60lts/gpgkey | apt-key add -
+RUN . /etc/os-release && echo "deb https://packagecloud.io/varnishcache/varnish60lts/debian/ $VERSION_CODENAME main\ndeb-src https://packagecloud.io/varnishcache/varnish60lts/debian/ $VERSION_CODENAME main" > /etc/apt/sources.list.d/varnishcache_varnish60lts.list
+RUN apt-get update
 RUN mkdir /home/site && mkdir /home/site/cache
 RUN apt-get install -y varnish
 RUN rm -rf /var/lib/apt/lists/*
