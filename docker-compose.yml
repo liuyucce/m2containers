@@ -101,8 +101,6 @@ services:
       - ./xhgui:${XHGUI_CODE_PATH_CONTAINER}${APP_CODE_CONTAINER_FLAG}
       - ./varnish/health_check.php:${DEFAULT_PATH}/health_check.php
       - ./php-fpm/php${PHP_VERSION}.ini:/usr/local/etc/php/php.ini
-    depends_on:
-      - workspace
     extra_hosts:
       - "dockerhost:${DOCKER_HOST_IP}"
     environment:
