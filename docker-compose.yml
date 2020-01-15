@@ -60,7 +60,7 @@ services:
         - INSTALL_SSMTP=${WORKSPACE_INSTALL_SSMTP}
     volumes:
       - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}${APP_CODE_CONTAINER_FLAG} # will be mounted on to the value of APP_CODE_PATH_CONTAINER
-      - ./xhgui:${XHGUI_CODE_PATH_CONTAINER}${APP_CODE_CONTAINER_FLAG}
+      - ./xhgui:${XHGUI_CODE_PATH_CONTAINER}:cached
       - ./varnish/health_check.php:${DEFAULT_PATH}/health_check.php
       - ~/.ssh:/home/laradock/.ssh
     tty: true
@@ -98,7 +98,7 @@ services:
         - INSTALL_SSMTP=${PHP_FPM_INSTALL_SSMTP}
     volumes:
       - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}${APP_CODE_CONTAINER_FLAG} # will be mounted on to the value of APP_CODE_PATH_CONTAINER
-      - ./xhgui:${XHGUI_CODE_PATH_CONTAINER}${APP_CODE_CONTAINER_FLAG}
+      - ./xhgui:${XHGUI_CODE_PATH_CONTAINER}:cached
       - ./varnish/health_check.php:${DEFAULT_PATH}/health_check.php
       - ./php-fpm/php${PHP_VERSION}.ini:/usr/local/etc/php/php.ini
     extra_hosts:
@@ -126,7 +126,7 @@ services:
     volumes:
       - ${NGINX_SSL_PATH}:/etc/nginx/ssl
       - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}${APP_CODE_CONTAINER_FLAG} # will be mounted on to the value of APP_CODE_PATH_CONTAINER
-      - ./xhgui:${XHGUI_CODE_PATH_CONTAINER}${APP_CODE_CONTAINER_FLAG}
+      - ./xhgui:${XHGUI_CODE_PATH_CONTAINER}:cached
       - ./varnish/health_check.php:${DEFAULT_PATH}/health_check.php
       - ${NGINX_HOST_LOG_PATH}:/var/log/nginx
       - ${NGINX_SITES_PATH}:/etc/nginx/sites-available
@@ -147,7 +147,7 @@ services:
 #        - DOCUMENT_ROOT=${APACHE_DOCUMENT_ROOT}
 #    volumes:
 #      - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}${APP_CODE_CONTAINER_FLAG}
-#      - ./xhgui:${XHGUI_CODE_PATH_CONTAINER}${APP_CODE_CONTAINER_FLAG}
+#      - ./xhgui:${XHGUI_CODE_PATH_CONTAINER}:cached
 #      - ./varnish/health_check.php:${DEFAULT_PATH}/health_check.php
 #      - ${APACHE_HOST_LOG_PATH}:/var/log/apache2
 #      - ${APACHE_SITES_PATH}:/etc/apache2/sites-available
