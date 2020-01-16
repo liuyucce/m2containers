@@ -1,0 +1,121 @@
+version: '3.1'
+
+### Workspace Utilities Container ###########################
+  workspace:
+    volumes:
+      - docker-sync:${APP_CODE_PATH_CONTAINER}:nocopy # will be mounted on to the value of APP_CODE_PATH_CONTAINER
+      - ./xhgui:${XHGUI_CODE_PATH_CONTAINER}:delegated
+      - ./varnish/health_check.php:${DEFAULT_PATH}/health_check.php:delegated
+      - ~/.ssh:/home/laradock/.ssh:delegated
+    networks:
+      - frontend
+      - backend
+
+### PHP-FPM Container #######################################
+  php-fpm:
+    volumes:
+      - docker-sync:${APP_CODE_PATH_CONTAINER}:nocopy # will be mounted on to the value of APP_CODE_PATH_CONTAINER
+      - ./xhgui:${XHGUI_CODE_PATH_CONTAINER}:delegated
+      - ./varnish/health_check.php:${DEFAULT_PATH}/health_check.php:delegated
+      - ./php-fpm/php${PHP_VERSION}.ini:/usr/local/etc/php/php.ini:delegated
+    networks:
+      - backend
+
+### SSL ##################################
+  ssl:
+    volumes:
+      - ./ssl:/certs
+
+### Nginx Server Container ##################################
+  nginx:
+    volumes:
+      - docker-sync:${APP_CODE_PATH_CONTAINER}:nocopy # will be mounted on to the value of APP_CODE_PATH_CONTAINER
+      - ./xhgui:${XHGUI_CODE_PATH_CONTAINER}:delegated
+      - ./varnish/health_check.php:${DEFAULT_PATH}/health_check.php:delegated
+      - ${NGINX_SSL_PATH}:/etc/nginx/ssl:delegated
+      - ${NGINX_HOST_LOG_PATH}:/var/log/nginx:delegated
+      - ${NGINX_SITES_PATH}:/etc/nginx/sites-available:delegated
+      - ${NGINX_CONF_M2_PATH}:/etc/nginx/conf_m2:delegated
+    networks:
+      - frontend
+      - backend
+
+### Apache Server ########################################
+#  apache2:
+#    volumes:
+#      - docker-sync:${APP_CODE_PATH_CONTAINER}:nocopy
+#      - ./xhgui:${XHGUI_CODE_PATH_CONTAINER}:delegated
+#      - ./varnish/health_check.php:${DEFAULT_PATH}/health_check.php:delegated
+#      - ${APACHE_HOST_LOG_PATH}:/var/log/apache2:delegated
+#      - ${APACHE_SITES_PATH}:/etc/apache2/sites-available:delegated
+#    networks:
+#      - frontend
+#      - backend
+
+#### Postfix Server Container ################################
+  postfix:
+    networks:
+      - backend
+
+### Redis Container #########################################
+  redis:
+#    volumes:
+#      - ${DATA_PATH_HOST}/redis:/data:delegated
+    networks:
+      - backend
+
+### Memcached ############################################
+  memcached:
+#    volumes:
+#      - ${DATA_PATH_HOST}/memcached:/var/lib/memcached:delegated
+    networks:
+      - backend
+
+### Percona ################################################
+#  percona:
+#    volumes:
+#      - ${DATA_PATH_HOST}/percona:/var/lib/mysql:delegated
+#      - ${PERCONA_ENTRYPOINT_INITDB}:/docker-entrypoint-initdb.d:delegated
+#    networks:
+#      - backend
+
+### RabbitMQ #############################################
+  rabbitmq:
+#    volumes:
+#      - ${DATA_PATH_HOST}/rabbitmq:/var/lib/rabbitmq:delegated
+    networks:
+      - backend
+
+### Varnish ##########################################
+  proxy:
+    networks:
+      - frontend
+
+### Reverse Proxy Server Container ##################################
+  reverse-proxy:
+    volumes:
+      - ${NGINX_SSL_PATH}:/etc/nginx/ssl:delegated
+      - ${NGINX_HOST_LOG_PATH}:/var/log/nginx:delegated
+      - ${REVERSE_PROXY_SITES_PATH}:/etc/nginx/sites-available:delegated
+    networks:
+      - frontend
+
+### Blackfire ########################################
+#  blackfire:
+#    networks:
+#      - backend
+
+### MongoDB ##############################################
+  mongo:
+#    volumes:
+#      - ${DATA_PATH_HOST}/mongo:/data/db:delegated
+    networks:
+      - backend
+
+### ElasticSearch ########################################
+  elasticsearch:
+#    volumes:
+#      - elasticsearch:/usr/share/elasticsearch/data:delegated
+    networks:
+      - frontend
+      - backend
