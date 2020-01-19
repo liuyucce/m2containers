@@ -11,4 +11,4 @@ syncs:
     sync_userid: 1000
     sync_strategy: '${DOCKER_SYNC_STRATEGY}'
 
-    sync_excludes: [ ${SYNC_NAME}, nbproject]
+    sync_excludes: [ ${SYNC_NAME}, nbproject, '.git', '.gitignore', '.docker', '.idea', 'node_modules']
