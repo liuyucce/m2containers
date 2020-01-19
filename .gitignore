@@ -1,3 +1,4 @@
+.env
 ssl/default.crt
 ssl/default.csr
 ssl/default.key
