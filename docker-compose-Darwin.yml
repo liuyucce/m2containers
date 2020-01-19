@@ -1,9 +1,9 @@
 version: '3.1'
-
+services:
 ### Workspace Utilities Container ###########################
   workspace:
     volumes:
-      - docker-sync:${APP_CODE_PATH_CONTAINER}:nocopy # will be mounted on to the value of APP_CODE_PATH_CONTAINER
+      - applications-sync:${APP_CODE_PATH_CONTAINER}:nocopy # will be mounted on to the value of APP_CODE_PATH_CONTAINER
       - ./xhgui:${XHGUI_CODE_PATH_CONTAINER}:delegated
       - ./varnish/health_check.php:${DEFAULT_PATH}/health_check.php:delegated
       - ~/.ssh:/home/laradock/.ssh:delegated
@@ -16,7 +16,7 @@ version: '3.1'
 ### PHP-FPM Container #######################################
   php-fpm:
     volumes:
-      - docker-sync:${APP_CODE_PATH_CONTAINER}:nocopy # will be mounted on to the value of APP_CODE_PATH_CONTAINER
+      - applications-sync:${APP_CODE_PATH_CONTAINER}:nocopy # will be mounted on to the value of APP_CODE_PATH_CONTAINER
       - ./xhgui:${XHGUI_CODE_PATH_CONTAINER}:delegated
       - ./varnish/health_check.php:${DEFAULT_PATH}/health_check.php:delegated
       - ./php-fpm/php${PHP_VERSION}.ini:/usr/local/etc/php/php.ini:delegated
@@ -33,7 +33,7 @@ version: '3.1'
 ### Nginx Server Container ##################################
   nginx:
     volumes:
-      - docker-sync:${APP_CODE_PATH_CONTAINER}:nocopy # will be mounted on to the value of APP_CODE_PATH_CONTAINER
+      - applications-sync:${APP_CODE_PATH_CONTAINER}:nocopy # will be mounted on to the value of APP_CODE_PATH_CONTAINER
       - ./xhgui:${XHGUI_CODE_PATH_CONTAINER}:delegated
       - ./varnish/health_check.php:${DEFAULT_PATH}/health_check.php:delegated
       - ${NGINX_SSL_PATH}:/etc/nginx/ssl:delegated
@@ -50,7 +50,7 @@ version: '3.1'
 ### Apache Server ########################################
 #  apache2:
 #    volumes:
-#      - docker-sync:${APP_CODE_PATH_CONTAINER}:nocopy
+#      - applications-sync:${APP_CODE_PATH_CONTAINER}:nocopy
 #      - ./xhgui:${XHGUI_CODE_PATH_CONTAINER}:delegated
 #      - ./varnish/health_check.php:${DEFAULT_PATH}/health_check.php:delegated
 #      - ${APACHE_HOST_LOG_PATH}:/var/log/apache2:delegated
@@ -138,3 +138,15 @@ version: '3.1'
     networks:
       - frontend
       - backend
+
+volumes:
+  applications-sync:
+    external:
+      name: "${SYNC_NAME}-docker-sync"
+
+### Networks Setup ############################################
+networks:
+  frontend:
+    driver: "bridge"
+  backend:
+    driver: "bridge"

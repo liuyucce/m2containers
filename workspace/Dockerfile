@@ -252,7 +252,7 @@ USER root
 ARG PHP_VERSION=${PHP_VERSION}
 
 RUN if [ "$(printf '%s\n' "7.2.0" "${PHP_VERSION}" | sort -V | head -n1)" = "7.2.0" ]; then \
-    apt-get install -y libmcrypt-dev libreadline-dev && \
+    apt-get install -y php${PHP_VERSION}-dev libmcrypt-dev libreadline-dev && \
     printf "\n" | pecl install mcrypt-1.0.2 && \
     echo "extension=mcrypt.so" > /etc/php/${PHP_VERSION}/mods-available/mcrypt.ini && \
     ln -s /etc/php/${PHP_VERSION}/mods-available/mcrypt.ini /etc/php/${PHP_VERSION}/cli/conf.d/20-mcrypt.ini \
