@@ -1,5 +1,6 @@
 version: '3.1'
 
+services:
 ### Workspace Utilities Container ###########################
   workspace:
     volumes:
@@ -76,14 +77,6 @@ version: '3.1'
 
 ### Varnish ##########################################
   proxy:
-    network_mode: "host"
-
-### Reverse Proxy Server Container ##################################
-  reverse-proxy:
-    volumes:
-      - ${NGINX_SSL_PATH}:/etc/nginx/ssl
-      - ${NGINX_HOST_LOG_PATH}:/var/log/nginx
-      - ${REVERSE_PROXY_SITES_PATH}:/etc/nginx/sites-available
     network_mode: "host"
 
 ### Blackfire ########################################

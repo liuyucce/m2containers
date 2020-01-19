@@ -229,32 +229,6 @@ RUN if [ ${INSTALL_SUBVERSION} = true ]; then \
 ;fi
 
 
-###########################################################################
-# xDebug:
-###########################################################################
-
-USER root
-
-ARG INSTALL_XDEBUG=false
-ARG PHP_VERSION=${PHP_VERSION}
-
-RUN if [ ${INSTALL_XDEBUG} = true ]; then \
-    # Load the xdebug extension only with phpunit commands
-    # Install the xdebug extension
-    pecl install xdebug-2.7.2; \
-    if [ $(php -r "echo PHP_MINOR_VERSION;") = "2" ]; then \
-      echo "zend_extension=/usr/lib/php/20170718/xdebug.so" > /etc/php/${PHP_VERSION}/cli/conf.d/20-xdebug.ini; \
-    elif [ $(php -r "echo PHP_MINOR_VERSION;") = "3" ]; then \
-      echo "zend_extension=/usr/lib/php/20180731/xdebug.so" > /etc/php/${PHP_VERSION}/cli/conf.d/20-xdebug.ini \
-    ;fi \
-fi
-
-# ADD for REMOTE debugging
-COPY ./xdebug.ini /etc/php/${PHP_VERSION}/cli/conf.d/xdebug.ini
-
-RUN sed -i "s/xdebug.remote_autostart=1/xdebug.remote_autostart=0/" /etc/php/${PHP_VERSION}/cli/conf.d/xdebug.ini && \
-    sed -i "s/xdebug.remote_enable=0/xdebug.remote_enable=1/" /etc/php/${PHP_VERSION}/cli/conf.d/xdebug.ini && \
-    sed -i "s/xdebug.cli_color=0/xdebug.cli_color=1/" /etc/php/${PHP_VERSION}/cli/conf.d/xdebug.ini
 
 ###########################################################################
 # Phpdbg:
@@ -796,16 +770,81 @@ RUN if [ ${INSTALL_PG_CLIENT} = true ]; then \
 ;fi
 
 ###########################################################################
+# nasm
+###########################################################################
+
+USER root
+
+RUN apt-get update -yqq \
+    && apt-get -yqq install nasm 
+
+###########################################################################
+# Dusk Dependencies:
+###########################################################################
+
+USER root
+
+ARG CHROME_DRIVER_VERSION=stable
+ENV CHROME_DRIVER_VERSION ${CHROME_DRIVER_VERSION}
+ARG INSTALL_DUSK_DEPS=false
+
+RUN if [ ${INSTALL_DUSK_DEPS} = true ]; then \
+  apt-get -y install zip wget unzip xdg-utils \
+    libxpm4 libxrender1 libgtk2.0-0 libnss3 libgconf-2-4 xvfb \
+    gtk2-engines-pixbuf xfonts-cyrillic xfonts-100dpi xfonts-75dpi \
+    xfonts-base xfonts-scalable x11-apps \
+  && wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
+  && dpkg -i --force-depends google-chrome-stable_current_amd64.deb \
+  && apt-get -y -f install \
+  && dpkg -i --force-depends google-chrome-stable_current_amd64.deb \
+  && rm google-chrome-stable_current_amd64.deb \
+  && wget https://chromedriver.storage.googleapis.com/${CHROME_DRIVER_VERSION}/chromedriver_linux64.zip \
+  && unzip chromedriver_linux64.zip \
+  && mv chromedriver /usr/local/bin/ \
+  && rm chromedriver_linux64.zip \
+;fi
+
+###########################################################################
+# xDebug:
+###########################################################################
+
+USER root
+
+ARG INSTALL_XDEBUG=false
+ARG PHP_VERSION=${PHP_VERSION}
+
+RUN if [ ${INSTALL_XDEBUG} = true ]; then \
+    # Load the xdebug extension only with phpunit commands
+    # Install the xdebug extension
+    pecl install xdebug-2.9.1; \
+    if [ $(php -r "echo PHP_MINOR_VERSION;") = "1" ]; then \
+      echo "zend_extension=/usr/lib/php/20160303/xdebug.so" > /etc/php/${PHP_VERSION}/cli/conf.d/20-xdebug.ini; \
+    elif [ $(php -r "echo PHP_MINOR_VERSION;") = "2" ]; then \
+      echo "zend_extension=/usr/lib/php/20170718/xdebug.so" > /etc/php/${PHP_VERSION}/cli/conf.d/20-xdebug.ini; \
+    elif [ $(php -r "echo PHP_MINOR_VERSION;") = "3" ]; then \
+      echo "zend_extension=/usr/lib/php/20180731/xdebug.so" > /etc/php/${PHP_VERSION}/cli/conf.d/20-xdebug.ini \
+    ;fi \
+fi
+
+# ADD for REMOTE debugging
+COPY ./xdebug.ini /etc/php/${PHP_VERSION}/cli/conf.d/xdebug.ini
+
+RUN sed -i "s/xdebug.remote_autostart=1/xdebug.remote_autostart=0/" /etc/php/${PHP_VERSION}/cli/conf.d/xdebug.ini && \
+    sed -i "s/xdebug.remote_enable=0/xdebug.remote_enable=1/" /etc/php/${PHP_VERSION}/cli/conf.d/xdebug.ini && \
+    sed -i "s/xdebug.cli_color=0/xdebug.cli_color=1/" /etc/php/${PHP_VERSION}/cli/conf.d/xdebug.ini
+
+###########################################################################
 # SSMTP:
 ###########################################################################
 
 USER root
 
 ARG INSTALL_SSMTP=false
+ARG SSMTP_DOMAIN=${SSMTP_DOMAIN}
 
 RUN if [ ${INSTALL_SSMTP} = true ]; then \
     apt-get install -y ssmtp && \
-    sed -ri -e 's/^(mailhub=).*/\1postfix:25/' -e 's/^#(FromLineOverride)/\1/' /etc/ssmtp/ssmtp.conf \
+    sed -ri -e "s/^(mailhub=).*/\1${SSMTP_DOMAIN}:25/" -e "s/^#(FromLineOverride)/\1/" /etc/ssmtp/ssmtp.conf \
 ;fi
 
 ###########################################################################
@@ -844,41 +883,6 @@ RUN curl -O https://download.libsodium.org/libsodium/releases/libsodium-1.0.18.t
   && ./configure \
   && make && make install \
   && pecl install -f libsodium
-
-###########################################################################
-# nasm
-###########################################################################
-
-USER root
-
-RUN apt-get update -yqq \
-    && apt-get -yqq install nasm 
-
-###########################################################################
-# Dusk Dependencies:
-###########################################################################
-
-USER root
-
-ARG CHROME_DRIVER_VERSION=stable
-ENV CHROME_DRIVER_VERSION ${CHROME_DRIVER_VERSION}
-ARG INSTALL_DUSK_DEPS=false
-
-RUN if [ ${INSTALL_DUSK_DEPS} = true ]; then \
-  apt-get -y install zip wget unzip xdg-utils \
-    libxpm4 libxrender1 libgtk2.0-0 libnss3 libgconf-2-4 xvfb \
-    gtk2-engines-pixbuf xfonts-cyrillic xfonts-100dpi xfonts-75dpi \
-    xfonts-base xfonts-scalable x11-apps \
-  && wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
-  && dpkg -i --force-depends google-chrome-stable_current_amd64.deb \
-  && apt-get -y -f install \
-  && dpkg -i --force-depends google-chrome-stable_current_amd64.deb \
-  && rm google-chrome-stable_current_amd64.deb \
-  && wget https://chromedriver.storage.googleapis.com/${CHROME_DRIVER_VERSION}/chromedriver_linux64.zip \
-  && unzip chromedriver_linux64.zip \
-  && mv chromedriver /usr/local/bin/ \
-  && rm chromedriver_linux64.zip \
-;fi
 
 ###########################################################################
 # Check PHP version:

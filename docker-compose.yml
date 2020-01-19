@@ -20,6 +20,7 @@ services:
       context: ./workspace
       args:
         - PHP_VERSION=${PHP_VERSION}
+        - SSMTP_DOMAIN=${POSTFIX_SSMTP_DOMAIN}
         - INSTALL_XDEBUG=${WORKSPACE_INSTALL_XDEBUG}
         - INSTALL_BLACKFIRE=${INSTALL_BLACKFIRE}
         - INSTALL_SOAP=${WORKSPACE_INSTALL_SOAP}
@@ -66,6 +67,7 @@ services:
       context: ./php-fpm
       args:
         - PHP_VERSION=${PHP_VERSION}
+        - SSMTP_DOMAIN=${POSTFIX_SSMTP_DOMAIN}
         - INSTALL_XDEBUG=${PHP_FPM_INSTALL_XDEBUG}
         - INSTALL_BLACKFIRE=${INSTALL_BLACKFIRE}
         - INSTALL_SOAP=${PHP_FPM_INSTALL_SOAP}
@@ -184,14 +186,6 @@ services:
 #      - apache2
       - nginx
 
-### Reverse Proxy Server Container ##################################
-  reverse-proxy:
-    build:
-      context: ./reverse-proxy
-    depends_on:
-      - proxy
-      - ssl
-
 ### Blackfire ########################################
 #    blackfire:
 #      image: blackfire/blackfire
@@ -218,5 +212,3 @@ services:
       memlock:
         soft: -1
         hard: -1
-    depends_on:
-      - php-fpm
