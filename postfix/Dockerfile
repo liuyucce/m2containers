@@ -2,9 +2,14 @@
 FROM centos:latest
 MAINTAINER Juan Luis Baptiste juan.baptiste@gmail.com
 
-RUN yum install -y epel-release && yum update -y && \
+COPY etc/yum.repos.d/gf.repo /etc/yum.repos.d/
+COPY etc/pki/rpm-gpg/RPM-GPG-KEY-gf.el7 etc/pki/rpm-gpg/
+
+RUN yum clean all && \
+    yum makecache fast && \
+    yum install -y epel-release && yum update -y && \
     yum install -y cyrus-sasl cyrus-sasl-plain cyrus-sasl-md5 mailx \
-    perl supervisor postfix rsyslog \
+    perl supervisor postfix3 rsyslog \
     && rm -rf /var/cache/yum/* \
     && yum clean all
 RUN sed -i -e "s/^nodaemon=false/nodaemon=true/" /etc/supervisord.conf

@@ -24,8 +24,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 # always run apt update when start and after add new source list, then clean up at end.
 RUN apt-get update -yqq && \
-    apt-get install -y apt-utils && \
-    apt-get install -y vim && \
+    apt-get install -y apt-utils vim && \
     pecl channel-update pecl.php.net
 
 #
