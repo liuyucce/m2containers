@@ -38,4 +38,6 @@ To start project in Linux, run "docker-compose -f docker-compose.yml -f docker-c
 
 To start project in Mac, run sh sync up.
 
-
+xdebug enabled location:
+workspace /etc/php/7.3/cli/conf.d/20-xdebug.ini
+php-fpm /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini

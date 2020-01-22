@@ -818,11 +818,11 @@ RUN if [ ${INSTALL_XDEBUG} = true ]; then \
     # Install the xdebug extension
     pecl install xdebug-2.9.1; \
     if [ $(php -r "echo PHP_MINOR_VERSION;") = "1" ]; then \
-      echo "zend_extension=/usr/lib/php/20160303/xdebug.so" > /etc/php/${PHP_VERSION}/cli/conf.d/20-xdebug.ini; \
+      echo ";zend_extension=/usr/lib/php/20160303/xdebug.so" > /etc/php/${PHP_VERSION}/cli/conf.d/20-xdebug.ini; \
     elif [ $(php -r "echo PHP_MINOR_VERSION;") = "2" ]; then \
-      echo "zend_extension=/usr/lib/php/20170718/xdebug.so" > /etc/php/${PHP_VERSION}/cli/conf.d/20-xdebug.ini; \
+      echo ";zend_extension=/usr/lib/php/20170718/xdebug.so" > /etc/php/${PHP_VERSION}/cli/conf.d/20-xdebug.ini; \
     elif [ $(php -r "echo PHP_MINOR_VERSION;") = "3" ]; then \
-      echo "zend_extension=/usr/lib/php/20180731/xdebug.so" > /etc/php/${PHP_VERSION}/cli/conf.d/20-xdebug.ini \
+      echo ";zend_extension=/usr/lib/php/20180731/xdebug.so" > /etc/php/${PHP_VERSION}/cli/conf.d/20-xdebug.ini \
     ;fi \
 fi
 
