@@ -6,12 +6,12 @@ volumes:
 #    driver: ${VOLUMES_DRIVER}
   mongo:
     driver: ${VOLUMES_DRIVER}
-  elasticsearch:
-    driver: ${VOLUMES_DRIVER}
-  redis:
-    driver: ${VOLUMES_DRIVER}
-  memcached:
-    driver: ${VOLUMES_DRIVER}
+#  elasticsearch:
+#    driver: ${VOLUMES_DRIVER}
+#  redis:
+#    driver: ${VOLUMES_DRIVER}
+#  memcached:
+#    driver: ${VOLUMES_DRIVER}
 
 services:
 ### Workspace Utilities Container ###########################
