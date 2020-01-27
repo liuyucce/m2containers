@@ -4,10 +4,10 @@ version: '3.1'
 volumes:
 #  percona:
 #    driver: ${VOLUMES_DRIVER}
-  mongo:
-    driver: ${VOLUMES_DRIVER}
-#  elasticsearch:
+#  mongo:
 #    driver: ${VOLUMES_DRIVER}
+  elasticsearch:
+    driver: ${VOLUMES_DRIVER}
 #  redis:
 #    driver: ${VOLUMES_DRIVER}
 #  memcached:
