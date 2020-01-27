@@ -48,6 +48,8 @@ services:
 
 #### Postfix Server Container ################################
   postfix:
+    volumes:
+      - ./postfix/Maildir:/root/Maildir
     network_mode: "host"
 
 ### Redis Container #########################################

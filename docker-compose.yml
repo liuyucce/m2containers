@@ -138,7 +138,10 @@ services:
       - SMTP_SERVER=
       - SMTP_USERNAME=
       - SMTP_PASSWORD=
+      - SMTP_PORT=
+      - DOMAIN=${POSTFIX_DOMAIN}
       - SERVER_HOSTNAME=${POSTFIX_HOSTNAMES}
+      - MYNETWORKS=${POSTFIX_MYNETWORKS}
 
 ### Redis Container #########################################
   redis:

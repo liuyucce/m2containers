@@ -65,6 +65,8 @@ services:
   postfix:
     ports:
       - "${POSTFIX_SMTP_PORT}:25"
+    volumes:
+      - ./postfix/Maildir:/root/Maildir:delegated
     networks:
       - backend
 
