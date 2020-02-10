@@ -18,9 +18,7 @@ This environment does not use database in container for the performance optimiza
 
 Varnish is configured to only serve https requests for the purpose of mimicking live traffic, and gives developer direct access to nginx via http at the same time.
 
-SSL have DNS configured in ssl/openssl.cnf 
-
-Import ssl/ca.pem as root certificate for https access.
+Import ssl/certs/ca.pem as root certificate for https access.
 
 xDebug can be enabled by uncommenting in /etc/php/${PHP_VERSION}/cli/conf.d/20-xdebug.ini for workspace and /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini for php-fpm.
 
