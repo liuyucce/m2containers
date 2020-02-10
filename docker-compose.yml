@@ -99,7 +99,8 @@ services:
 
 ### SSL ##################################
   ssl:
-    image: paulczar/omgwtfssl
+    build:
+      context: ./ssl
     environment:
       - SSL_SUBJECT=${SSL_SUBJECT}
       - SSL_DNS=${SSL_DNS}

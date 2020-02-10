@@ -28,7 +28,7 @@ services:
 ### SSL ##################################
   ssl:
     volumes:
-      - ./ssl:/certs
+      - ./ssl/certs:/certs
 
 ### Nginx Server Container ##################################
   nginx:
