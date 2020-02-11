@@ -20,7 +20,7 @@ Varnish is configured to only serve https requests for the purpose of mimicking 
 
 Import ssl/certs/ca.pem as root certificate for https access.
 
-xDebug can be enabled by uncommenting in /etc/php/${PHP_VERSION}/cli/conf.d/20-xdebug.ini for workspace and /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini for php-fpm.
+xDebug can be enabled by uncommenting in /etc/php/${PHP_VERSION}/cli/conf.d/20-xdebug.ini for workspace and /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini for php-fpm. Set "remote_host" in workspace/xdebug.ini to "localhost" for Linux and "host.docker.internal" for mac.
 
 Xhgui profiling can be enabled by removing comment mark at nginx/conf_m2/magento2.conf:169 and uncomment in /etc/php/${PHP_VERSION}/cli/conf.d/tideways_xhprof.ini for workspace as well as /usr/local/etc/php/conf.d/tideways_xhprof.ini for php-fpm.
 
