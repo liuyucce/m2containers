@@ -1,5 +1,5 @@
 #Dockerfile for a Postfix email relay service
-FROM centos:latest
+FROM centos:centos7
 MAINTAINER Juan Luis Baptiste juan.baptiste@gmail.com
 
 COPY etc/yum.repos.d/gf.repo /etc/yum.repos.d/
