@@ -193,15 +193,6 @@ services:
 #      - apache2
       - nginx
 
-### Blackfire ########################################
-#    blackfire:
-#      image: blackfire/blackfire
-#      environment:
-#        - BLACKFIRE_SERVER_ID=${BLACKFIRE_SERVER_ID}
-#        - BLACKFIRE_SERVER_TOKEN=${BLACKFIRE_SERVER_TOKEN}
-#      depends_on:
-#        - php-fpm
-
 ### MongoDB ##############################################
   mongo:
     build: ./mongo
@@ -228,10 +219,3 @@ services:
           - ELK_VERSION=${ELK_VERSION}
       depends_on:
         - elasticsearch
-
-### Jenkins ###################################################
-    jenkins:
-      build: ./jenkins
-      environment:
-        JAVA_OPTS: "-Djava.awt.headless=true"
-      privileged: true

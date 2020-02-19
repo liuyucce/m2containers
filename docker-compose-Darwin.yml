@@ -116,11 +116,6 @@ services:
     networks:
       - frontend
 
-### Blackfire ########################################
-#  blackfire:
-#    networks:
-#      - backend
-
 ### MongoDB ##############################################
   mongo:
 #    volumes:
@@ -145,18 +140,6 @@ services:
   kibana:
     ports:
       - "${KIBANA_HTTP_PORT}:5601"
-    networks:
-      - frontend
-      - backend
-
-### Jenkins ###################################################
-  jenkins:
-    ports:
-      - "${JENKINS_HOST_SLAVE_AGENT_PORT}:50000"
-      - "${JENKINS_HOST_HTTP_PORT}:8080"
-    volumes:
-      - ${JENKINS_HOME}:/var/jenkins_home:delegated
-      - /var/run/docker.sock:/var/run/docker.sock:delegated
     networks:
       - frontend
       - backend
