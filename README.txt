@@ -16,7 +16,7 @@ It will mount your user local ~/.ssh keys to the workspace container. Be careful
 
 This environment does not use database in container for the performance optimization of Mac OS.
 
-Varnish is configured to only serve https requests for the purpose of mimicking live traffic, and gives developer direct access to nginx via http at the same time.
+Varnish is configured to only serve https requests for the purpose of mimicking live traffic, and gives developer direct access to nginx via http at the same time. When use on MacOS, remember to add workspace and php-fpm to "acl purge" domains. To install geoip2 module, you have to put your maxmind AccountID and LicenseKey in varnish/etc/GeoIP.conf before building the proxy image.
 
 Import ssl/certs/ca.pem as root certificate for https access.
 

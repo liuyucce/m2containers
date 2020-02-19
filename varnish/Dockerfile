@@ -1,7 +1,5 @@
 FROM debian:latest
 
-LABEL maintainer="ZeroC0D3 Team<zeroc0d3.team@gmail.com>"
-
 # Set Environment Variables
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -9,8 +7,7 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && apt-get install -y apt-utils && apt-get upgrade -y
 RUN apt-get install -y debian-archive-keyring curl gnupg apt-transport-https
 RUN curl -L https://packagecloud.io/varnishcache/varnish60lts/gpgkey | apt-key add -
-#RUN . /etc/os-release && echo "deb https://packagecloud.io/varnishcache/varnish60lts/debian/ $VERSION_CODENAME main\ndeb-src https://packagecloud.io/varnishcache/varnish60lts/debian/ $VERSION_CODENAME main" > /etc/apt/sources.list.d/varnishcache_varnish60lts.list
-RUN . /etc/os-release && echo "deb https://packagecloud.io/varnishcache/varnish60lts/debian/ stretch  main\ndeb-src https://packagecloud.io/varnishcache/varnish60lts/debian/ stretch main" > /etc/apt/sources.list.d/varnishcache_varnish60lts.list
+RUN . /etc/os-release && echo "deb https://packagecloud.io/varnishcache/varnish60lts/debian/ $VERSION_CODENAME main\ndeb-src https://packagecloud.io/varnishcache/varnish60lts/debian/ $VERSION_CODENAME main" > /etc/apt/sources.list.d/varnishcache_varnish60lts.list
 RUN apt-get update
 RUN mkdir /home/site && mkdir /home/site/cache
 RUN apt-get install -y varnish
@@ -42,11 +39,14 @@ RUN if [ ${INSTALL_GEOIP2} = true ]; then \
     cd /var/tmp && wget https://github.com/fgsch/libvmod-geoip2/archive/v1.2.1.tar.gz && \
     tar -zxf v1.2.1.tar.gz && cd libvmod-geoip2-1.2.1 && \
     export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig && \
-    ./autogen.sh && ./configure && make && make install && \
-    geoipupdate \
+    ./autogen.sh && ./configure && make && make install \
 ;fi
 
 COPY etc/GeoIP.conf /etc/GeoIP.conf
+
+RUN if [ ${INSTALL_GEOIP2} = true ]; then \
+    geoipupdate \
+;fi
 
 RUN chmod +x /etc/varnish/start.sh
 

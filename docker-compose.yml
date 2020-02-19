@@ -177,7 +177,10 @@ services:
 
 ### Varnish ##########################################
   proxy:
-    build: ./varnish
+    build:
+      context: ./varnish
+      args:
+        - INSTALL_GEOIP2=${VARNISH_INSTALL_GEOIP2}
     environment:
       - VARNISH_CONFIG=${VARNISH_CONFIG}
       - CACHE_SIZE=${VARNISH_PROXY_CACHE_SIZE}
@@ -186,7 +189,6 @@ services:
       - BACKEND_HOST=${VARNISH_PROXY_BACKEND_HOST}
       - BACKEND_PORT=${VARNISH_BACKEND_PORT}
       - VARNISH_SERVER=${VARNISH_PROXY_SERVER}
-      - INSTALL_GEOIP2=${VARNISH_INSTALL_GEOIP2}
     depends_on:
 #      - apache2
       - nginx

@@ -1,8 +1,9 @@
-# VCL version 5.0 is not supported so it should be 4.0 even though actually used Varnish version is 5
+# VCL version 5.0 is not supported so it should be 4.0 even though actually used Varnish version is 6
 vcl 4.0;
 
 import std;
-# The minimal Varnish version is 5.0
+
+# The minimal Varnish version is 6.0
 # For SSL offloading, pass the following header in your proxy server or load balancer: 'X-Forwarded-Proto: https'
 
 backend default {
@@ -10,7 +11,7 @@ backend default {
     .port = "${BACKEND_PORT}"; # Port Apache or whatever is listening
     .first_byte_timeout = 600s;
     .probe = {
-	.url = "/health_check.php";
+        .url = "/health_check.php";
         .timeout = 5s;
         .interval = 20s;
         .window = 10;
@@ -45,7 +46,7 @@ sub vcl_recv {
         return (synth(200, "Purged"));
     }
 
-	if (req.method != "GET" &&
+    if (req.method != "GET" &&
         req.method != "HEAD" &&
         req.method != "PUT" &&
         req.method != "POST" &&
@@ -71,7 +72,7 @@ sub vcl_recv {
         return (pass);
     }
 
- 	# Set initial grace period usage status
+    # Set initial grace period usage status
     set req.http.grace = "none";
 
     # normalize url in case of leading HTTP scheme and domain
@@ -90,25 +91,26 @@ sub vcl_recv {
         } elsif (req.http.Accept-Encoding ~ "deflate" && req.http.user-agent !~ "MSIE") {
             set req.http.Accept-Encoding = "deflate";
         } else {
-            # unkown algorithm
+            # unknown algorithm
             unset req.http.Accept-Encoding;
         }
     }
 
-	# Remove Google gclid parameters to minimize the cache objects
-    set req.url = regsuball(req.url,"\?gclid=[^&]+$",""); # strips when QS = "?gclid=AAA"
-    set req.url = regsuball(req.url,"\?gclid=[^&]+&","?"); # strips when QS = "?gclid=AAA&foo=bar"
-    set req.url = regsuball(req.url,"&gclid=[^&]+",""); # strips when QS = "?foo=bar&gclid=AAA" or QS = "?foo=bar&gclid=AAA&bar=baz"
+    # Remove all marketing get parameters to minimize the cache objects
+    if (req.url ~ "(\?|&)(gclid|cx|ie|cof|siteurl|zanpid|origin|fbclid|mc_[a-z]+|utm_[a-z]+|_bta_[a-z]+)=") {
+        set req.url = regsuball(req.url, "(gclid|cx|ie|cof|siteurl|zanpid|origin|fbclid|mc_[a-z]+|utm_[a-z]+|_bta_[a-z]+)=[-_A-z0-9+()%.]+&?", "");
+        set req.url = regsub(req.url, "[?|&]+$", "");
+    }
 
     # Static files caching
     if (req.url ~ "^/(pub/)?(media|static)/") {
         # Static files should not be cached by default
-        #return (pass);
+        return (pass);
 
         # But if you use a few locales and don't use CDN you can enable caching static files by commenting previous line (#return (pass);) and uncommenting next 3 lines
-        unset req.http.Https;
-        unset req.http.X-Forwarded-Proto;
-        unset req.http.Cookie;
+        #unset req.http.Https;
+        #unset req.http.X-Forwarded-Proto;
+        #unset req.http.Cookie;
     }
 
     return (hash);
@@ -131,6 +133,19 @@ sub vcl_hash {
         hash_data(req.http.X-Forwarded-Proto);
     }
     
+
+    if (req.url ~ "/graphql") {
+        call process_graphql_headers;
+    }
+}
+
+sub process_graphql_headers {
+    if (req.http.Store) {
+        hash_data(req.http.Store);
+    }
+    if (req.http.Content-Currency) {
+        hash_data(req.http.Content-Currency);
+    }
 }
 
 sub vcl_backend_response {
@@ -161,7 +176,6 @@ sub vcl_backend_response {
     }
 
     # validate if we need to cache it and prevent from setting cookie
-    # images, css and js are cacheable by default so we have to remove cookie also
     if (beresp.ttl > 0s && (bereq.method == "GET" || bereq.method == "HEAD")) {
         unset beresp.http.set-cookie;
     }
@@ -220,7 +234,7 @@ sub vcl_hit {
             return (deliver);
         } else {
             # Hit after TTL and grace expiration
-            return (miss);
+            return (restart);
         }
     } else {
         # server is not healthy, retrieve from cache

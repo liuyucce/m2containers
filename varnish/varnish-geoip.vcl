@@ -8,11 +8,11 @@ import geoip2;
 # For SSL offloading, pass the following header in your proxy server or load balancer: 'X-Forwarded-Proto: https'
 
 backend default {
-    .host = "127.0.0.1"; # IP or Hostname of backend
-    .port = "80"; # Port Apache or whatever is listening
+    .host = "${BACKEND_HOST}"; # IP or Hostname of backend
+    .port = "${BACKEND_PORT}"; # Port Apache or whatever is listening
     .first_byte_timeout = 600s;
     .probe = {
-    .url = "/health_check.php";
+        .url = "/health_check.php";
         .timeout = 5s;
         .interval = 20s;
         .window = 10;
