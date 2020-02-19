@@ -212,10 +212,10 @@ services:
         hard: -1
 
 ### Kibana ##############################################
-    kibana:
-      build:
-        context: ./kibana
-        args:
-          - ELK_VERSION=${ELK_VERSION}
-      depends_on:
-        - elasticsearch
+  kibana:
+    build:
+      context: ./kibana
+      args:
+        - ELK_VERSION=${ELK_VERSION}
+    depends_on:
+      - elasticsearch
