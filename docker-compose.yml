@@ -219,3 +219,19 @@ services:
       memlock:
         soft: -1
         hard: -1
+
+### Kibana ##############################################
+    kibana:
+      build:
+        context: ./kibana
+        args:
+          - ELK_VERSION=${ELK_VERSION}
+      depends_on:
+        - elasticsearch
+
+### Jenkins ###################################################
+    jenkins:
+      build: ./jenkins
+      environment:
+        JAVA_OPTS: "-Djava.awt.headless=true"
+      privileged: true
