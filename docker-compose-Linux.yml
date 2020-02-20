@@ -78,7 +78,7 @@ services:
     network_mode: "host"
 
 ### Varnish ##########################################
-  proxy:
+  varnish:
     network_mode: "host"
 
 ### MongoDB ##############################################
