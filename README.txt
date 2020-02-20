@@ -23,6 +23,7 @@ Import ssl/certs/ca.pem as root certificate for https access.
 xDebug can be enabled by uncommenting in /etc/php/${PHP_VERSION}/cli/conf.d/20-xdebug.ini for workspace and /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini for php-fpm. Set "remote_host" in workspace/xdebug.ini to "localhost" for Linux and "host.docker.internal" for mac.
 
 Xhgui profiling can be enabled by removing comment mark at nginx/conf_m2/magento2.conf:169 and uncomment in /etc/php/${PHP_VERSION}/cli/conf.d/tideways_xhprof.ini for workspace as well as /usr/local/etc/php/conf.d/tideways_xhprof.ini for php-fpm.
+When using on Mac, change the host domain in php-fpm/xhgui.config.php, xhgui/config/config.php and workspace/xhgui.config.php.
 
 Xhgui sampling rate can be changed in xhgui/config/config.php:63
 
@@ -36,3 +37,5 @@ Cron job path is configured in /workspace/crontab/laradock.
 
 On Linux, if any volume write permission issue occurs, try changing the owner of data directory ${DATA_PATH_HOST}  to current user like:
 sudo chown -R $(id -u):$(id -g) ~/.laradock/data
+
+Elasticsearch is not performing well on Mac. Disable elasticsearch and kibana if they are using too much system resources.
