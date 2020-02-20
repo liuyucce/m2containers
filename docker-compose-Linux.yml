@@ -54,14 +54,14 @@ services:
 
 ### Redis Container #########################################
   redis:
-    volumes:
-      - ${DATA_PATH_HOST}/redis:/data
+#    volumes:
+#      - ${DATA_PATH_HOST}/redis:/data
     network_mode: "host"
 
 ### Memcached ############################################
   memcached:
-    volumes:
-      - ${DATA_PATH_HOST}/memcached:/var/lib/memcached
+#    volumes:
+#      - ${DATA_PATH_HOST}/memcached:/var/lib/memcached
     network_mode: "host"
 
 ### Percona ################################################
@@ -73,8 +73,8 @@ services:
 
 ### RabbitMQ #############################################
   rabbitmq:
-    volumes:
-      - ${DATA_PATH_HOST}/rabbitmq:/var/lib/rabbitmq
+#    volumes:
+#      - ${DATA_PATH_HOST}/rabbitmq:/var/lib/rabbitmq
     network_mode: "host"
 
 ### Varnish ##########################################
@@ -83,14 +83,14 @@ services:
 
 ### MongoDB ##############################################
   mongo:
-    volumes:
-      - ${DATA_PATH_HOST}/mongo:/data/db
+#    volumes:
+#      - ${DATA_PATH_HOST}/mongo:/data/db
     network_mode: "host"
 
 ### ElasticSearch ########################################
   elasticsearch:
-    volumes:
-      - ${DATA_PATH_HOST}/elasticsearch:/usr/share/elasticsearch/data
+#    volumes:
+#      - ${DATA_PATH_HOST}/elasticsearch:/usr/share/elasticsearch/data
     network_mode: "host"
 
 ### Kibana ##############################################
