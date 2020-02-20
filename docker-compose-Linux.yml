@@ -90,7 +90,7 @@ services:
 ### ElasticSearch ########################################
   elasticsearch:
     volumes:
-      - elasticsearch:/usr/share/elasticsearch/data
+      - ${DATA_PATH_HOST}/elasticsearch:/usr/share/elasticsearch/data
     network_mode: "host"
 
 ### Kibana ##############################################

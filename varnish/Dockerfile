@@ -1,4 +1,4 @@
-FROM debian:latest
+FROM debian:stretch
 
 # Set Environment Variables
 ENV DEBIAN_FRONTEND noninteractive

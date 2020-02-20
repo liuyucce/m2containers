@@ -1,13 +1,13 @@
 version: '3.1'
 
 ### Volumes Setup #############################################
-volumes:
+#volumes:
 #  percona:
 #    driver: ${VOLUMES_DRIVER}
 #  mongo:
 #    driver: ${VOLUMES_DRIVER}
-  elasticsearch:
-    driver: ${VOLUMES_DRIVER}
+#  elasticsearch:
+#    driver: ${VOLUMES_DRIVER}
 #  redis:
 #    driver: ${VOLUMES_DRIVER}
 #  memcached:
@@ -199,7 +199,10 @@ services:
 
 ### ElasticSearch ########################################
   elasticsearch:
-    build: ./elasticsearch
+    build:
+      context: ./elasticsearch
+      args:
+        - ELK_VERSION=${ELK_VERSION}
     environment:
       - cluster.name=laradock-cluster
       - node.name=laradock-node

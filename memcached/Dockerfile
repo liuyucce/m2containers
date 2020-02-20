@@ -1,6 +1,4 @@
-FROM memcached:latest
-
-LABEL maintainer="Mahmoud Zalt <mahmoud@zalt.me>"
+FROM memcached:1.5.22
 
 CMD ["memcached"]
 

@@ -128,7 +128,7 @@ services:
 ### ElasticSearch ########################################
   elasticsearch:
 #    volumes:
-#      - elasticsearch:/usr/share/elasticsearch/data:delegated
+#      - ${DATA_PATH_HOST}/elasticsearch:/usr/share/elasticsearch/data:delegated
     ports:
       - "${ELASTICSEARCH_HOST_HTTP_PORT}:9200"
       - "${ELASTICSEARCH_HOST_TRANSPORT_PORT}:9300"
