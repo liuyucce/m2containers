@@ -67,17 +67,17 @@ sub vcl_recv {
         return (pass);
     }
 
-    # Bypass shopping cart, checkout and search requests
-    if (req.url ~ "/checkout" || req.url ~ "/catalogsearch") {
-        return (pass);
-    }
-
     # Bypass health check requests
     if (req.url ~ "/pub/health_check.php") {
         return (pass);
     }
 
     set req.http.X-Country-Code = country.lookup("country/iso_code", client.ip);
+
+    # Bypass shopping cart, checkout and search requests
+    if (req.url ~ "/checkout" || req.url ~ "/catalogsearch") {
+        return (pass);
+    }
 
     # Set initial grace period usage status
     set req.http.grace = "none";
