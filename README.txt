@@ -33,3 +33,6 @@ Website domains should also be configured in /nginx/sites/app.conf when using ng
 Magento 2 multi-websites can be enabled in /nginx/conf_m2/magento2.conf.
 
 Cron job path is configured in /workspace/crontab/laradock.
+
+On Linux, if any volume write permission issue occurs, try changing the owner of data directory ${DATA_PATH_HOST}  to current user like:
+sudo chown -R $(id -u):$(id -g) ~/.laradock/data
