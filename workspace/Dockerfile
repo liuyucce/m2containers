@@ -259,23 +259,6 @@ RUN if [ "$(printf '%s\n' "7.2.0" "${PHP_VERSION}" | sort -V | head -n1)" = "7.2
 ;fi
 
 ###########################################################################
-# Blackfire:
-###########################################################################
-
-ARG INSTALL_BLACKFIRE=false
-ARG BLACKFIRE_CLIENT_ID
-ENV BLACKFIRE_CLIENT_ID ${BLACKFIRE_CLIENT_ID}
-ARG BLACKFIRE_CLIENT_TOKEN
-ENV BLACKFIRE_CLIENT_TOKEN ${BLACKFIRE_CLIENT_TOKEN}
-
-RUN if [ ${INSTALL_XDEBUG} = false -a ${INSTALL_BLACKFIRE} = true ]; then \
-    curl -L https://packagecloud.io/gpg.key | apt-key add - && \
-    echo "deb http://packages.blackfire.io/debian any main" | tee /etc/apt/sources.list.d/blackfire.list && \
-    apt-get update -yqq && \
-    apt-get -y install blackfire-agent \
-;fi
-
-###########################################################################
 # ssh:
 ###########################################################################
 

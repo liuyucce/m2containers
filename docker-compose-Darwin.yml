@@ -40,6 +40,8 @@ services:
       - ${NGINX_HOST_LOG_PATH}:/var/log/nginx:delegated
       - ${NGINX_SITES_PATH}:/etc/nginx/sites-available:delegated
       - ${NGINX_CONF_M2_PATH}:/etc/nginx/conf_m2:delegated
+    depends_on:
+      - varnish
     ports:
       - "${NGINX_HOST_HTTP_PORT}:80"
       - "${NGINX_HOST_HTTPS_PORT}:443"
@@ -110,7 +112,7 @@ services:
       - backend
 
 ### Varnish ##########################################
-  proxy:
+  varnish:
     ports:
       - "${VARNISH_PORT}:6081"
     networks:
