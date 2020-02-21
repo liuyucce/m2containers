@@ -20,10 +20,11 @@ Varnish is configured to only serve https requests for the purpose of mimicking 
 
 Import ssl/certs/ca.pem as root certificate for https access.
 
-xDebug can be enabled by uncommenting in /etc/php/${PHP_VERSION}/cli/conf.d/20-xdebug.ini for workspace and /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini for php-fpm. Set "remote_host" in workspace/xdebug.ini to "localhost" for Linux and "host.docker.internal" for mac.
+xDebug can be enabled by uncommenting in ext-xdebug.ini in workspace and php-fpm. Set "remote_host" in workspace/xdebug.ini and php-fpm/xdebug.ini to "127.0.0.1" for Linux and "host.docker.internal" for mac. Note that after containers have been started up, you canot use vim but editors that won't create a new file after saving like nano to edit the config files to enable or disable xdebug.
 
-Xhgui profiling can be enabled by removing comment mark at nginx/conf_m2/magento2.conf:169 and uncomment in /etc/php/${PHP_VERSION}/cli/conf.d/tideways_xhprof.ini for workspace as well as /usr/local/etc/php/conf.d/tideways_xhprof.ini for php-fpm.
-When using on Mac, change the host domain in php-fpm/xhgui.config.php, xhgui/config/config.php and workspace/xhgui.config.php.
+Xhgui profiling can be enabled by removing comment mark at nginx/conf_m2/magento2.conf:169 and uncomment workspace/tideways_xhprof.ini or php-fpm/tideways_xhprof.ini to enable tideways module. Note that after containers have been started up, you canot use v
+im but editors that won't create a new file after saving like nano to edit the config files to enable or disable tideways.
+When using this project on Mac, remember to change the host domains in php-fpm/xhgui.config.php, xhgui/config/config.php and workspace/xhgui.config.php to "host.docker.internal".
 
 Xhgui sampling rate can be changed in xhgui/config/config.php:63
 
