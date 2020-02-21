@@ -16,11 +16,11 @@ It will mount your user local ~/.ssh keys to the workspace container. Be careful
 
 This environment does not use database in container for the performance optimization of Mac OS.
 
-Varnish is configured to only serve https requests for the purpose of mimicking live traffic, and gives developer direct access to nginx via http at the same time. When use on MacOS, remember to add workspace and php-fpm to "acl purge" domains. To install geoip2 module, you have to put your maxmind AccountID and LicenseKey in varnish/etc/GeoIP.conf before building the proxy image.
+Varnish is configured to only serve https requests for the purpose of mimicking live traffic, and gives developer direct access to nginx via http at the same time. When use on MacOS, remember to add workspace and php-fpm to "acl purge" domains via .env config file. To install geoip2 module, you have to put your maxmind AccountID and LicenseKey in varnish/etc/GeoIP.conf before building the proxy image.
 
 Import ssl/certs/ca.pem as root certificate for https access.
 
-xDebug can be enabled by uncommenting in ext-xdebug.ini in workspace and php-fpm. Set "remote_host" in workspace/xdebug.ini and php-fpm/xdebug.ini to "127.0.0.1" for Linux and "host.docker.internal" for mac. Note that after containers have been started up, you canot use vim but editors that won't create a new file after saving like nano to edit the config files to enable or disable xdebug.
+xDebug can be enabled by uncommenting in ext-xdebug.ini in workspace and php-fpm. Set "DOCKER_REMOTE_HOST" in .env file to "127.0.0.1" for Linux and "host.docker.internal" for mac. Note that after containers have been started up, you canot use vim but editors that won't create a new file after saving like nano to edit the ext-xdebug.ini files to enable or disable xdebug.
 
 Xhgui profiling can be enabled by removing comment mark at nginx/conf_m2/magento2.conf:169 and uncomment workspace/tideways_xhprof.ini or php-fpm/tideways_xhprof.ini to enable tideways module. Note that after containers have been started up, you canot use v
 im but editors that won't create a new file after saving like nano to edit the config files to enable or disable tideways.

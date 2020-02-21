@@ -56,6 +56,8 @@ services:
         - TZ=${WORKSPACE_TIMEZONE}
         - INSTALL_TIDEWAYS_XHPROF=${WORKSPACE_INSTALL_TIDEWAYS_XHPROF}
         - INSTALL_SSMTP=${WORKSPACE_INSTALL_SSMTP}
+    environment:
+      - REMOTE_HOST=${DOCKER_REMOTE_HOST}
     tty: true
 
 ### PHP-FPM Container #######################################
@@ -92,6 +94,7 @@ services:
       - "dockerhost:${DOCKER_HOST_IP}"
     environment:
       - PHP_IDE_CONFIG=${PHP_IDE_CONFIG}
+      - REMOTE_HOST=${DOCKER_REMOTE_HOST}
 
 ### SSL ##################################
   ssl:
@@ -184,7 +187,11 @@ services:
       - VARNISH_PORT=${VARNISH_PORT}
       - BACKEND_HOST=${VARNISH_BACKEND_HOST}
       - BACKEND_PORT=${VARNISH_BACKEND_PORT}
+      - PURGE_HOST_WORKSPACE=${VARNISH_PURGE_HOST_WORKSPACE}
+      - PURGE_HOST_PHP_FPM=${VARNISH_PURGE_HOST_PHP_FPM}
       - VARNISH_SERVER=${VARNISH_SERVER}
+    depends_on:
+      - php-fpm
 
 ### MongoDB ##############################################
   mongo:

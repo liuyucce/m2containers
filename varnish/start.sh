@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-for name in BACKEND_PORT BACKEND_HOST VARNISH_SERVER
+for name in BACKEND_PORT BACKEND_HOST VARNISH_SERVER PURGE_HOST_WORKSPACE PURGE_HOST_PHP_FPM
 do
     eval value=\$$name
     sed -i "s|\${${name}}|${value}|g" /etc/varnish/default.vcl

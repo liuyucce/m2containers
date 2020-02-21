@@ -446,6 +446,9 @@ RUN if [ ${INSTALL_XDEBUG} = true ]; then \
   docker-php-ext-enable xdebug \
 ;fi
 
+# Copy xdebug configuration for remote debugging
+COPY ./xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
+
 ###########################################################################
 # SSMTP:
 ###########################################################################

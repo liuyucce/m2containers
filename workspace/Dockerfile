@@ -802,6 +802,9 @@ RUN if [ ${INSTALL_XDEBUG} = true ]; then \
     pecl install xdebug-2.9.1; \
 fi
 
+# ADD for REMOTE debugging
+COPY ./xdebug.ini /etc/php/${PHP_VERSION}/cli/conf.d/xdebug.ini
+
 ###########################################################################
 # SSMTP:
 ###########################################################################
