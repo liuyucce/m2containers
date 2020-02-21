@@ -800,21 +800,7 @@ RUN if [ ${INSTALL_XDEBUG} = true ]; then \
     # Load the xdebug extension only with phpunit commands
     # Install the xdebug extension
     pecl install xdebug-2.9.1; \
-    if [ $(php -r "echo PHP_MINOR_VERSION;") = "1" ]; then \
-      echo ";zend_extension=/usr/lib/php/20160303/xdebug.so" > /etc/php/${PHP_VERSION}/cli/conf.d/20-xdebug.ini; \
-    elif [ $(php -r "echo PHP_MINOR_VERSION;") = "2" ]; then \
-      echo ";zend_extension=/usr/lib/php/20170718/xdebug.so" > /etc/php/${PHP_VERSION}/cli/conf.d/20-xdebug.ini; \
-    elif [ $(php -r "echo PHP_MINOR_VERSION;") = "3" ]; then \
-      echo ";zend_extension=/usr/lib/php/20180731/xdebug.so" > /etc/php/${PHP_VERSION}/cli/conf.d/20-xdebug.ini \
-    ;fi \
 fi
-
-# ADD for REMOTE debugging
-COPY ./xdebug.ini /etc/php/${PHP_VERSION}/cli/conf.d/xdebug.ini
-
-RUN sed -i "s/xdebug.remote_autostart=1/xdebug.remote_autostart=0/" /etc/php/${PHP_VERSION}/cli/conf.d/xdebug.ini && \
-    sed -i "s/xdebug.remote_enable=0/xdebug.remote_enable=1/" /etc/php/${PHP_VERSION}/cli/conf.d/xdebug.ini && \
-    sed -i "s/xdebug.cli_color=0/xdebug.cli_color=1/" /etc/php/${PHP_VERSION}/cli/conf.d/xdebug.ini
 
 ###########################################################################
 # SSMTP:
@@ -848,9 +834,6 @@ RUN if [ ${INSTALL_TIDEWAYS_XHPROF} = true ]; then \
     make && \
     make install \
 ;fi
-
-#Copy tideways_xhprof configuration for profiling
-COPY ./tideways_xhprof.ini /etc/php/${PHP_VERSION}/cli/conf.d/tideways_xhprof.ini
 
 ###########################################################################
 # Sodium for temporary version issue:

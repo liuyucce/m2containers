@@ -4,6 +4,9 @@ services:
   workspace:
     volumes:
       - applications-sync:${APP_CODE_PATH_CONTAINER}:nocopy # will be mounted on to the value of APP_CODE_PATH_CONTAINER
+      - ./workspace/xdebug.ini:/etc/php/${PHP_VERSION}/cli/conf.d/xdebug.ini:delegated
+      - ./workspace/ext-xdebug.ini:/etc/php/${PHP_VERSION}/cli/conf.d/20-xdebug.ini:delegated
+      - ./workspace/tideways_xhprof.ini:/etc/php/${PHP_VERSION}/cli/conf.d/tideways_xhprof.ini:delegated
       - ./xhgui:${XHGUI_CODE_PATH_CONTAINER}:delegated
       - ./varnish/health_check.php:${DEFAULT_PATH}/health_check.php:delegated
       - ~/.ssh:/home/laradock/.ssh:delegated
@@ -17,6 +20,9 @@ services:
   php-fpm:
     volumes:
       - applications-sync:${APP_CODE_PATH_CONTAINER}:nocopy # will be mounted on to the value of APP_CODE_PATH_CONTAINER
+      - ./php-fpm/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini:delegated
+      - ./php-fpm/ext-xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini:delegated
+      - ./php-fpm/tideways_xhprof.ini:/usr/local/etc/php/conf.d/tideways_xhprof.ini:delegated
       - ./xhgui:${XHGUI_CODE_PATH_CONTAINER}:delegated
       - ./varnish/health_check.php:${DEFAULT_PATH}/health_check.php:delegated
       - ./php-fpm/php${PHP_VERSION}.ini:/usr/local/etc/php/php.ini:delegated

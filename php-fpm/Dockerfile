@@ -446,13 +446,6 @@ RUN if [ ${INSTALL_XDEBUG} = true ]; then \
   docker-php-ext-enable xdebug \
 ;fi
 
-# Copy xdebug configuration for remote debugging
-COPY ./xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
-
-RUN sed -i "s/xdebug.remote_autostart=1/xdebug.remote_autostart=0/" /usr/local/etc/php/conf.d/xdebug.ini && \
-    sed -i "s/xdebug.remote_enable=0/xdebug.remote_enable=1/" /usr/local/etc/php/conf.d/xdebug.ini && \
-    sed -i "s/xdebug.cli_color=0/xdebug.cli_color=1/" /usr/local/etc/php/conf.d/xdebug.ini
-
 ###########################################################################
 # SSMTP:
 ###########################################################################
@@ -486,9 +479,6 @@ RUN if [ ${INSTALL_TIDEWAYS_XHPROF} = true ]; then \
     make && \
     make install \
 ;fi
-
-#Copy tideways_xhprof configuration for profiling
-COPY ./tideways_xhprof.ini /usr/local/etc/php/conf.d/tideways_xhprof.ini
 
 ###########################################################################
 # Sodium for temporary version issue:
