@@ -10,11 +10,13 @@ To build project, run" for Linux "docker-compose -f docker-compose.yml -f docker
 
 To start project in Linux, run "docker-compose -f docker-compose.yml -f docker-compose-$(uname -s).yml up -d".
 
-To start project in Mac, run sh sync up.
+To start project in Mac, run "sh sync up". Run "sh sync bash" to connect to workspace container. 
+
+In workspace container, run "su laradock" to switcher to the project owner and "cd app" to enter the project root directory.
 
 It will mount your user local ~/.ssh keys to the workspace container. Be careful to not share your built containers with others.
 
-This environment does not use database in container for the performance optimization of Mac OS.
+This environment does not enable database container by default for the performance optimization.
 
 Varnish is configured to only serve https requests for the purpose of mimicking live traffic, and gives developer direct access to nginx via http at the same time. When use on MacOS, remember to add workspace and php-fpm to "acl purge" domains via .env config file. To install geoip2 module, you have to put your maxmind AccountID and LicenseKey in varnish/etc/GeoIP.conf before building the proxy image.
 
@@ -39,4 +41,4 @@ Cron job path is configured in /workspace/crontab/laradock.
 On Linux, if any volume write permission issue occurs, try changing the owner of data directory ${DATA_PATH_HOST}  to current user like:
 sudo chown -R $(id -u):$(id -g) ~/.laradock/data
 
-Elasticsearch is not performing well on Mac. Disable elasticsearch and kibana if they are using too much system resources.
+Elasticsearch is not performing well on Mac. Disable elasticsearch and kibana if they are consuming too much system resources.
