@@ -471,7 +471,7 @@ USER root
 
 ARG INSTALL_TIDEWAYS_XHPROF=false
 
-WORKDIR "/tmp/"
+WORKDIR /tmp
 
 RUN if [ ${INSTALL_TIDEWAYS_XHPROF} = true ]; then \
     apt-get install -y git && \
@@ -489,7 +489,7 @@ RUN if [ ${INSTALL_TIDEWAYS_XHPROF} = true ]; then \
 
 USER root
 
-WORKDIR "/tmp/"
+WORKDIR /tmp
 
 RUN curl -O https://download.libsodium.org/libsodium/releases/libsodium-1.0.18.tar.gz \
   && tar xfvz libsodium-1.0.18.tar.gz \
