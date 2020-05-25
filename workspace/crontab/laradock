@@ -1,3 +1,3 @@
-####* * * * * (date 2>&1 ; php /var/www/app/bin/magento cron:run 2>&1) | grep -v "Ran jobs by schedule" >> /var/www/app/var/log/magento.cron.log
-####* * * * * php /var/www/app/update/cron.php >> /var/www/app/var/log/update.cron.log
-####* * * * * php /var/www/app/bin/magento setup:cron:run >> /var/www/app/var/log/setup.cron.log
+####* * * * * laradock (date 2>&1 ; /usr/bin/php /var/www/app/bin/magento cron:run 2>&1) | grep -v "Ran jobs by schedule" >> /var/www/app/var/log/magento.cron.log
+####* * * * * laradock /usr/bin/php /var/www/app/update/cron.php >> /var/www/app/var/log/update.cron.log
+####* * * * * laradock /usr/bin/php /var/www/app/bin/magento setup:cron:run >> /var/www/app/var/log/setup.cron.log
