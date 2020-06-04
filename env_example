@@ -212,7 +212,7 @@ ELASTICSEARCH_HOST_TRANSPORT_PORT=9300
 KIBANA_HTTP_PORT=5601
 
 ### POSTFIX ############################################################################################################
-
+# Use POSTFIX_SSMTP_DOMAIN=postfix for docker on Mac
 POSTFIX_SSMTP_DOMAIN=127.0.0.1
 POSTFIX_DOMAIN=demo.local
 POSTFIX_HOSTNAMES=email.demo.local
@@ -228,7 +228,7 @@ POSTFIX_HOST_LMTP=
 POSTFIX_HOST_ANTISPAM=
 
 ### VARNISH ############################################################################################################
-
+# Use VARNISH_BACKEND_HOST=nginx VARNISH_PURGE_HOST_WORKSPACE=workspace VARNISH_PURGE_HOST_PHP_FPM=php-fpm for docker on Mac
 VARNISH_CONFIG=/etc/varnish/default.vcl
 VARNISH_PORT=6081
 VARNISH_BACKEND_PORT=80
