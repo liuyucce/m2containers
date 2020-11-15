@@ -1,0 +1,283 @@
+version: '3.1'
+
+### Volumes Setup #############################################
+#volumes:
+#  percona:
+#    driver: ${VOLUMES_DRIVER}
+#  mongo:
+#    driver: ${VOLUMES_DRIVER}
+#  elasticsearch:
+#    driver: ${VOLUMES_DRIVER}
+#  redis:
+#    driver: ${VOLUMES_DRIVER}
+#  memcached:
+#    driver: ${VOLUMES_DRIVER}
+
+services:
+### Workspace Utilities Container ###########################
+  workspace:
+    build:
+      context: ./workspace
+      args:
+        - PHP_VERSION=${PHP_VERSION}
+        - SHELL_OH_MY_ZSH=${SHELL_OH_MY_ZSH}
+        - SHELL_OH_MY_ZSH_AUTOSUGESTIONS=${SHELL_OH_MY_ZSH_AUTOSUGESTIONS}
+        - SHELL_OH_MY_ZSH_ALIASES=${SHELL_OH_MY_ZSH_ALIASES}
+        - COMPOSER_AUTH=${WORKSPACE_COMPOSER_AUTH}
+        - COMPOSER_GLOBAL_INSTALL=${WORKSPACE_COMPOSER_GLOBAL_INSTALL}
+        - COMPOSER_REPO_PACKAGIST=${WORKSPACE_COMPOSER_REPO_PACKAGIST}
+        - PUID=${WORKSPACE_PUID}
+        - PGID=${WORKSPACE_PGID}
+        - INSTALL_MC=${WORKSPACE_INSTALL_MC}
+        - INSTALL_DUSK_DEPS=${WORKSPACE_INSTALL_DUSK_DEPS}
+        - CHROME_DRIVER_VERSION=${WORKSPACE_CHROME_DRIVER_VERSION}
+        - INSTALL_SSMTP=${WORKSPACE_INSTALL_SSMTP}
+        - SSMTP_DOMAIN=${POSTFIX_SSMTP_DOMAIN}
+        - INSTALL_NODE=${WORKSPACE_INSTALL_NODE}
+        - NODE_VERSION=${WORKSPACE_NODE_VERSION}
+        - NPM_REGISTRY=${WORKSPACE_NPM_REGISTRY}
+        - NVM_NODEJS_ORG_MIRROR=${WORKSPACE_NVM_NODEJS_ORG_MIRROR}
+        - INSTALL_PNPM=${WORKSPACE_INSTALL_PNPM}
+        - INSTALL_NPM_GULP=${WORKSPACE_INSTALL_NPM_GULP}
+        - INSTALL_NPM_BOWER=${WORKSPACE_INSTALL_NPM_BOWER}
+        - INSTALL_NPM_VUE_CLI=${WORKSPACE_INSTALL_NPM_VUE_CLI}
+        - INSTALL_NPM_ANGULAR_CLI=${WORKSPACE_INSTALL_NPM_ANGULAR_CLI}
+        - INSTALL_YARN=${WORKSPACE_INSTALL_YARN}
+        - YARN_VERSION=${WORKSPACE_YARN_VERSION}
+        - TZ=${WORKSPACE_TIMEZONE}
+    environment:
+      - REMOTE_HOST=${DOCKER_REMOTE_HOST}
+    tty: true
+    ports:
+      - "${WORKSPACE_SSH_PORT}:22"
+    networks:
+      - frontend
+      - backend
+
+### PHP-FPM Container #######################################
+  php-fpm:
+    build:
+      context: ./php-fpm
+      args:
+        - PHP_VERSION=${PHP_VERSION}
+        - SSMTP_DOMAIN=${POSTFIX_SSMTP_DOMAIN}
+        - INSTALL_XDEBUG=${PHP_FPM_INSTALL_XDEBUG}
+        - INSTALL_SOAP=${PHP_FPM_INSTALL_SOAP}
+        - INSTALL_MONGO=${PHP_FPM_INSTALL_MONGO}
+        - INSTALL_MSSQL=${PHP_FPM_INSTALL_MSSQL}
+        - INSTALL_ZIP_ARCHIVE=${PHP_FPM_INSTALL_ZIP_ARCHIVE}
+        - INSTALL_BCMATH=${PHP_FPM_INSTALL_BCMATH}
+        - INSTALL_PHPREDIS=${PHP_FPM_INSTALL_PHPREDIS}
+        - INSTALL_MEMCACHED=${PHP_FPM_INSTALL_MEMCACHED}
+        - INSTALL_OPCACHE=${PHP_FPM_INSTALL_OPCACHE}
+        - INSTALL_EXIF=${PHP_FPM_INSTALL_EXIF}
+        - INSTALL_AEROSPIKE=${PHP_FPM_INSTALL_AEROSPIKE}
+        - INSTALL_MYSQLI=${PHP_FPM_INSTALL_MYSQLI}
+        - INSTALL_PGSQL=${PHP_FPM_INSTALL_PGSQL}
+        - INSTALL_PG_CLIENT=${PHP_FPM_INSTALL_PG_CLIENT}
+        - INSTALL_TOKENIZER=${PHP_FPM_INSTALL_TOKENIZER}
+        - INSTALL_INTL=${PHP_FPM_INSTALL_INTL}
+        - INSTALL_GHOSTSCRIPT=${PHP_FPM_INSTALL_GHOSTSCRIPT}
+        - INSTALL_LDAP=${PHP_FPM_INSTALL_LDAP}
+    ports:
+      - "${PHP_FPM_SSH_PORT}:22"
+    networks:
+      - backend
+
+### SSL ##################################
+  ssl:
+    build:
+      context: ./ssl
+    environment:
+      - SSL_SUBJECT=${SSL_SUBJECT}
+      - SSL_DNS=${SSL_DNS}
+
+
+### Nginx Server Container ##################################
+  nginx:
+    build:
+      context: ./nginx
+      args:
+        - PHP_UPSTREAM_CONTAINER=${NGINX_PHP_UPSTREAM_CONTAINER}
+        - PHP_UPSTREAM_PORT=${NGINX_PHP_UPSTREAM_PORT}
+    depends_on:
+      - php-fpm
+      - ssl
+    ports:
+      - "${NGINX_HOST_HTTP_PORT}:80"
+      - "${NGINX_HOST_HTTPS_PORT}:443"
+    networks:
+      - frontend
+      - backend
+
+### Apache Server ########################################
+#  apache2:
+#    build:
+#      context: ./apache2
+#      args:
+#        - PHP_UPSTREAM_CONTAINER=${APACHE_PHP_UPSTREAM_CONTAINER}
+#        - PHP_UPSTREAM_PORT=${APACHE_PHP_UPSTREAM_PORT}
+#        - PHP_UPSTREAM_TIMEOUT=${APACHE_PHP_UPSTREAM_TIMEOUT}
+#        - DOCUMENT_ROOT=${APACHE_DOCUMENT_ROOT}
+#    ports:
+#      - "${APACHE_HOST_HTTP_PORT}:80"
+#      - "${APACHE_HOST_HTTPS_PORT}:443"
+#    depends_on:
+#      - php-fpm
+#    networks:
+#      - frontend
+#      - backend
+
+#### Postfix Server Container ################################
+  postfix:
+    build:
+      context: ./postfix
+    environment:
+      - SMTP_SERVER=
+      - SMTP_USERNAME=
+      - SMTP_PASSWORD=
+      - SMTP_PORT=
+      - DOMAIN=${POSTFIX_DOMAIN}
+      - SERVER_HOSTNAME=${POSTFIX_HOSTNAMES}
+      - MYNETWORKS=${POSTFIX_MYNETWORKS}
+    restart: on-failure:5
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100M"
+        max-file: "3"
+    ports:
+      - "${POSTFIX_SMTP_PORT}:25"
+    networks:
+      - backend
+
+### Redis Container #########################################
+  redis:
+    build: ./redis
+    ports:
+      - "${REDIS_PORT}:6379"
+    networks:
+      - backend
+
+### RabbitMQ #############################################
+  rabbitmq:
+    build: ./rabbitmq
+    privileged: true
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
+    hostname: laradock-rabbitmq
+    ports:
+      - "${RABBITMQ_NODE_HOST_PORT}:5672"
+      - "${RABBITMQ_MANAGEMENT_HTTP_HOST_PORT}:15672"
+      - "${RABBITMQ_MANAGEMENT_HTTPS_HOST_PORT}:15671"
+    depends_on:
+      - php-fpm
+    networks:
+      - backend
+
+### Varnish ##########################################
+  varnish:
+    build:
+      context: ./varnish
+      args:
+        - INSTALL_GEOIP2=${VARNISH_INSTALL_GEOIP2}
+    environment:
+      - VARNISH_CONFIG=${VARNISH_CONFIG}
+      - CACHE_SIZE=${VARNISH_CACHE_SIZE}
+      - VARNISHD_PARAMS=${VARNISHD_PARAMS}
+      - VARNISH_PORT=${VARNISH_PORT}
+      - BACKEND_HOST=${VARNISH_BACKEND_HOST}
+      - BACKEND_PORT=${VARNISH_BACKEND_PORT}
+      - PURGE_HOST_WORKSPACE=${VARNISH_PURGE_HOST_WORKSPACE}
+      - PURGE_HOST_PHP_FPM=${VARNISH_PURGE_HOST_PHP_FPM}
+      - VARNISH_SERVER=${VARNISH_SERVER}
+    ports:
+      - "${VARNISH_PORT}:6081"
+    depends_on:
+      - php-fpm
+    networks:
+      - frontend
+      - backend
+
+### MongoDB ##############################################
+  mongo:
+    build: ./mongo
+    ports:
+        - "${MONGODB_PORT}:27017"
+    networks:
+      - backend
+
+### Logrotate Container ####################################
+  logrotate:
+    image: tutum/logrotate:latest
+    restart: on-failure:5
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100M"
+        max-file: "3"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    networks:
+      - backend
+
+
+### Mailhog Container #####################################
+  mailhog:
+    image: mailhog/mailhog:latest
+    restart: on-failure:5
+    environment:
+      - MH_STORAGE=${MH_STORAGE}
+      - MH_MAILDIR_PATH=${MH_MAILDIR_PATH}
+    ports:
+      - 8025:8025
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100M"
+        max-file: "3"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    networks:
+      - frontend
+      - backend
+
+### SFTP Container #####################################
+  sftp:
+    container_name: sftp
+    image: balanceinternet/docker-sftp:6.6-1.0.5
+    restart: on-failure:5
+    ports:
+      - "2222:2222"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100M"
+        max-file: "3"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    networks:
+      - frontend
+
+### Networks Setup ############################################
+networks:
+  frontend:
+    driver: "bridge"
+  backend:
+    driver: "bridge"

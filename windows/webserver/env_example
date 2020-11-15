@@ -209,6 +209,7 @@ ELK_VERSION=6.8.6
 
 ELASTICSEARCH_HOST_HTTP_PORT=9200
 ELASTICSEARCH_HOST_TRANSPORT_PORT=9300
+ELASTICSEARCH_INSTALL_PHONETIC=false
 
 ### KIBANA #############################################################################################################
 

@@ -1,0 +1,136 @@
+version: '3.1'
+
+services:
+### Workspace Utilities Container ###########################
+  workspace:
+    extends:
+      file: ../../common/docker-compose.yml
+      service: workspace
+    volumes:
+      - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER} # will be mounted on to the value of APP_CODE_PATH_CONTAINER
+      - ./config/workspace/ext-xdebug.ini:/etc/php/${PHP_VERSION}/cli/conf.d/20-xdebug.ini
+      - ./config/workspace/ext-tideways_xhprof.ini:/etc/php/${PHP_VERSION}/cli/conf.d/tideways_xhprof.ini
+      - ../../common/xhgui:${XHGUI_CODE_PATH_CONTAINER}
+      - ../../common/config/varnish/health_check.php:${DEFAULT_PATH}/health_check.php
+      - ./volumes/shared:/mnt/web
+      - ./volumes/composer:/home/www/.composer
+      - ./volumes/ssh:/home/laradock/.ssh
+
+### PHP-FPM Container #######################################
+  php-fpm:
+    extends:
+      file: ../../common/docker-compose.yml
+      service: php-fpm
+    volumes:
+      - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER} # will be mounted on to the value of APP_CODE_PATH_CONTAINER
+      - ./config/php-fpm/ext-xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+      - ./config/php-fpm/ext-tideways_xhprof.ini:/usr/local/etc/php/conf.d/tideways_xhprof.ini
+      - ../../common/xhgui:${XHGUI_CODE_PATH_CONTAINER}
+      - ../../common/config/varnish/health_check.php:${DEFAULT_PATH}/health_check.php
+      - ./config/php-fpm/php${PHP_VERSION}.ini:/usr/local/etc/php/php.ini
+      - ./volumes/shared:/mnt/web
+      - ./volumes/composer:/home/www/.composer
+
+### SSL ##################################
+  ssl:
+    volumes:
+      - ./ssl/certs:/certs
+
+### Nginx Server Container ##################################
+  nginx:
+    extends:
+      file: ../../common/docker-compose.yml
+      service: nginx
+    volumes:
+      - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER} # will be mounted on to the value of APP_CODE_PATH_CONTAINER
+      - ${NGINX_SSL_PATH}:/etc/nginx/ssl
+      - ../../common/xhgui:${XHGUI_CODE_PATH_CONTAINER}
+      - ../../common/config/varnish/health_check.php:${DEFAULT_PATH}/health_check.php
+      - ${NGINX_HOST_LOG_PATH}:/var/log/nginx
+      - ${NGINX_SITES_PATH}:/etc/nginx/sites-available
+      - ${NGINX_CONF_M2_PATH}:/etc/nginx/conf_m2
+
+### Apache Server ########################################
+#  apache2:
+#    volumes:
+#      - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}
+#      - ./xhgui:${XHGUI_CODE_PATH_CONTAINER}
+#      - ./varnish/health_check.php:${DEFAULT_PATH}/health_check.php
+#      - ${APACHE_HOST_LOG_PATH}:/var/log/apache2
+#      - ${APACHE_SITES_PATH}:/etc/apache2/sites-available
+
+#### Postfix Server Container ################################
+  postfix:
+    volumes:
+      - ./postfix/Maildir:/root/Maildir
+
+### Redis Container #########################################
+  redis:
+#    volumes:
+#      - ${DATA_PATH_HOST}/redis:/data
+
+### RabbitMQ #############################################
+  rabbitmq:
+#    volumes:
+#      - ${DATA_PATH_HOST}/rabbitmq:/var/lib/rabbitmq
+
+### MongoDB ##############################################
+  mongo:
+#    volumes:
+#      - ${DATA_PATH_HOST}/mongo:/data/db
+
+### ElasticSearch ########################################
+  elasticsearch:
+    build:
+      context: ./elasticsearch
+      args:
+        - ELK_VERSION=${ELK_VERSION}
+        - INSTALL_PHONETIC=${ELASTICSEARCH_INSTALL_PHONETIC}
+    environment:
+      - cluster.name=laradock-cluster
+      - node.name=laradock-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+#      - cluster.initial_master_nodes=laradock-node
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+#    volumes:
+#      - ${DATA_PATH_HOST}/elasticsearch:/usr/share/elasticsearch/data
+    ports:
+      - "${ELASTICSEARCH_HOST_HTTP_PORT}:9200"
+      - "${ELASTICSEARCH_HOST_TRANSPORT_PORT}:9300"
+    networks:
+      - backend
+
+
+### Kibana ##############################################
+  kibana:
+    build:
+      context: ./kibana
+      args:
+        - ELK_VERSION=${ELK_VERSION}
+    ports:
+      - "${KIBANA_HTTP_PORT}:5601"
+    depends_on:
+      - elasticsearch
+    networks:
+      - frontend
+      - backend
+
+### Logrotate Container ####################################
+  logrotate:
+    extends:
+      file: ../../common/docker-compose.yml
+      service: logrotate
+    volumes:
+      - ../../common/config/logrotate/logrotate.conf:/etc/logrotate.conf
+
+### Mailhog Container #####################################
+  mailhog:
+    extends:
+      file: ../../common/docker-compose.yml
+      service: mailhog
+    volumes:
+      - ./volumes/email:/mnt/storage
