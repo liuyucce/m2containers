@@ -1,4 +1,4 @@
-version: '3.1'
+version: '2'
 
 services:
 ### Workspace Utilities Container ###########################
@@ -33,14 +33,15 @@ services:
 
 ### SSL ##################################
   ssl:
+    extends:
+      file: ../../common/docker-compose.yml
+      service: ssl
     volumes:
       - ./ssl/certs:/certs
 
 ### Nginx Server Container ##################################
   nginx:
-    extends:
-      file: ../../common/docker-compose.yml
-      service: nginx
+    image: yushin:nginx:latest
     volumes:
       - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER} # will be mounted on to the value of APP_CODE_PATH_CONTAINER
       - ${NGINX_SSL_PATH}:/etc/nginx/ssl
@@ -49,6 +50,9 @@ services:
       - ${NGINX_HOST_LOG_PATH}:/var/log/nginx
       - ${NGINX_SITES_PATH}:/etc/nginx/sites-available
       - ${NGINX_CONF_M2_PATH}:/etc/nginx/conf_m2
+    depends_on:
+      - php-fpm
+      - ssl
 
 ### Apache Server ########################################
 #  apache2:
@@ -58,31 +62,55 @@ services:
 #      - ./varnish/health_check.php:${DEFAULT_PATH}/health_check.php
 #      - ${APACHE_HOST_LOG_PATH}:/var/log/apache2
 #      - ${APACHE_SITES_PATH}:/etc/apache2/sites-available
+#    depends_on:
+#      - php-fpm
+
+### Varnish ##########################################
+  varnish:
+    extends:
+      file: ../../common/docker-compose.yml
+      service: varnish
+    depends_on:
+      - php-fpm
 
 #### Postfix Server Container ################################
   postfix:
+    extends:
+      file: ../../common/docker-compose.yml
+      service: postfix
     volumes:
       - ./postfix/Maildir:/root/Maildir
 
 ### Redis Container #########################################
   redis:
+    extends:
+      file: ../../common/docker-compose.yml
+      service: redis
 #    volumes:
 #      - ${DATA_PATH_HOST}/redis:/data
 
 ### RabbitMQ #############################################
   rabbitmq:
+    extends:
+      file: ../../common/docker-compose.yml
+      service: rabbitmq
 #    volumes:
 #      - ${DATA_PATH_HOST}/rabbitmq:/var/lib/rabbitmq
+    depends_on:
+      - php-fpm
 
 ### MongoDB ##############################################
   mongo:
+    extends:
+      file: ../../common/docker-compose.yml
+      service: mongo
 #    volumes:
 #      - ${DATA_PATH_HOST}/mongo:/data/db
 
 ### ElasticSearch ########################################
   elasticsearch:
     build:
-      context: ./elasticsearch
+      context: ./config/elasticsearch
       args:
         - ELK_VERSION=${ELK_VERSION}
         - INSTALL_PHONETIC=${ELASTICSEARCH_INSTALL_PHONETIC}
@@ -101,23 +129,18 @@ services:
     ports:
       - "${ELASTICSEARCH_HOST_HTTP_PORT}:9200"
       - "${ELASTICSEARCH_HOST_TRANSPORT_PORT}:9300"
-    networks:
-      - backend
 
 
 ### Kibana ##############################################
   kibana:
     build:
-      context: ./kibana
+      context: ./config/kibana
       args:
         - ELK_VERSION=${ELK_VERSION}
     ports:
       - "${KIBANA_HTTP_PORT}:5601"
     depends_on:
       - elasticsearch
-    networks:
-      - frontend
-      - backend
 
 ### Logrotate Container ####################################
   logrotate:

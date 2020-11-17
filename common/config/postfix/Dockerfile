@@ -1,5 +1,5 @@
 #Dockerfile for a Postfix email relay service
-FROM yushin:postfix
+FROM yushin/postfix:latest
 MAINTAINER Yuchen Liu
 
 COPY run.sh /

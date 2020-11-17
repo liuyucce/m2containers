@@ -35,7 +35,7 @@ ENV PGID ${PGID}
 RUN apt-get update -yqq && \
     groupadd -g ${PGID} laradock && \
     useradd -u ${PUID} -g laradock -m laradock -G docker_env && \
-    usermod -p "*" laradock
+    usermod -p "*" laradock -s /bin/bash
 
 #
 #--------------------------------------------------------------------------
@@ -67,7 +67,7 @@ USER root
 COPY ./aliases.sh /home/laradock/aliases.sh
 
 RUN sed -i 's/\r//' /home/laradock/aliases.sh && \
-    chown laradock:laradock /home/laradock/aliases.sh && \
+    chown laradock:laradock /home/laradock/aliases.sh
 
 USER laradock
 
@@ -156,6 +156,8 @@ RUN cp -rf /root/.ssh /home/laradock \
 # Node / NVM:
 ###########################################################################
 
+USER laradock
+
 # Check if NVM needs to be installed
 ARG NODE_VERSION=node
 ENV NODE_VERSION ${NODE_VERSION}
@@ -163,7 +165,6 @@ ARG INSTALL_NODE=false
 ARG INSTALL_NPM_GULP=false
 ARG INSTALL_NPM_BOWER=false
 ARG INSTALL_NPM_VUE_CLI=false
-ARG INSTALL_NPM_ANGULAR_CLI=false
 ARG NPM_REGISTRY
 ENV NPM_REGISTRY ${NPM_REGISTRY}
 ENV NVM_DIR /home/laradock/.nvm
@@ -189,9 +190,6 @@ RUN if [ ${INSTALL_NODE} = true ]; then \
         ;fi \
         && if [ ${INSTALL_NPM_VUE_CLI} = true ]; then \
         npm install -g @vue/cli \
-        ;fi \
-        && if [ ${INSTALL_NPM_ANGULAR_CLI} = true ]; then \
-        npm install -g @angular/cli \
         ;fi \
         && ln -s `npm bin --global` /home/laradock/.node-bin \
 ;fi
@@ -321,17 +319,16 @@ RUN if [ ${INSTALL_DUSK_DEPS} = true ]; then \
 ;fi
 
 ###########################################################################
-# SSMTP:
+# MSMTP:
 ###########################################################################
 
 USER root
 
-ARG INSTALL_SSMTP=false
-ARG SSMTP_DOMAIN=${SSMTP_DOMAIN}
+ARG INSTALL_MSMTP=true
+ARG MSMTP_DOMAIN=${MSMTP_DOMAIN}
 
-RUN if [ ${INSTALL_SSMTP} = true ]; then \
-    apt-get install -y ssmtp && \
-    sed -ri -e "s/^(mailhub=).*/\1${SSMTP_DOMAIN}:25/" -e "s/^#(FromLineOverride)/\1/" /etc/ssmtp/ssmtp.conf \
+RUN if [ ${INSTALL_MSMTP} = true ]; then \
+    apt install -y msmtp \
 ;fi
 
 ###########################################################################
@@ -356,8 +353,7 @@ ARG SHELL_OH_MY_ZSH_ALIASES=false
 
 USER laradock
 RUN if [ ${SHELL_OH_MY_ZSH} = true ]; then \
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh) --keep
--zshrc" && \
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh) --keep-zshrc" && \
     sed -i -r 's/^plugins=\(.*?\)$/plugins=(laravel5)/' /home/laradock/.zshrc && \
     echo '\n\
 bindkey "^[OB" down-line-or-search\n\
@@ -372,8 +368,7 @@ bindkey "^[[5~" up-line-or-history\n\
 bindkey "^[[6~" down-line-or-history\n\
 bindkey "^?" backward-delete-char\n' >> /home/laradock/.zshrc && \
   if [ ${SHELL_OH_MY_ZSH_AUTOSUGESTIONS} = true ]; then \
-    sh -c "git clone https://github.com/zsh-users/zsh-autosuggestions /home/laradock/.oh-my-zsh/custom/pl
-ugins/zsh-autosuggestions" && \
+    sh -c "git clone https://github.com/zsh-users/zsh-autosuggestions /home/laradock/.oh-my-zsh/custom/plugins/zsh-autosuggestions" && \
     sed -i 's~plugins=(~plugins=(zsh-autosuggestions ~g' /home/laradock/.zshrc && \
     sed -i '1iZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20' /home/laradock/.zshrc && \
     sed -i '1iZSH_AUTOSUGGEST_STRATEGY=(history completion)' /home/laradock/.zshrc && \
@@ -432,7 +427,7 @@ USER root
 # Clean up
 RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
-    rm /var/log/lastlog /var/log/faillog
+    rm -f /var/log/lastlog /var/log/faillog
 
 # Set default work directory
 WORKDIR /var/www

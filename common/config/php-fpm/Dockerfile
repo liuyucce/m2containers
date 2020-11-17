@@ -22,7 +22,7 @@ ARG PHP_VERSION
 ENV DEBIAN_FRONTEND noninteractive
 
 ###########################################################################
-# SSMTP:
+# MSMTP:
 ###########################################################################
 
 USER root
@@ -31,7 +31,7 @@ ARG INSTALL_MSMTP=true
 ARG MSMTP_DOMAIN=${MSMTP_DOMAIN}
 
 RUN if [ ${INSTALL_MSMTP} = true ]; then \
-    apt-get install -y msmtpi msmtp-mta \
+    apt update && apt install -y msmtp \
 ;fi
 
 ###########################################################################
