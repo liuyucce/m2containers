@@ -41,7 +41,9 @@ services:
 
 ### Nginx Server Container ##################################
   nginx:
-    image: yushin:nginx:latest
+    extends:
+      file: ../../common/docker-compose.yml
+      service: nginx
     volumes:
       - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER} # will be mounted on to the value of APP_CODE_PATH_CONTAINER
       - ${NGINX_SSL_PATH}:/etc/nginx/ssl
@@ -114,6 +116,7 @@ services:
       args:
         - ELK_VERSION=${ELK_VERSION}
         - INSTALL_PHONETIC=${ELASTICSEARCH_INSTALL_PHONETIC}
+        - INSTALL_ICU=${ELASTICSEARCH_INSTALL_ICU}
     environment:
       - cluster.name=laradock-cluster
       - node.name=laradock-node
@@ -148,7 +151,8 @@ services:
       file: ../../common/docker-compose.yml
       service: logrotate
     volumes:
-      - ../../common/config/logrotate/logrotate.conf:/etc/logrotate.conf
+      - ./config/logrotate/logrotate.conf:/etc/logrotate.conf
+      - ./volumes/shared/log:/log
 
 ### Mailhog Container #####################################
   mailhog:
@@ -157,3 +161,6 @@ services:
       service: mailhog
     volumes:
       - ./volumes/email:/mnt/storage
+    environment:
+      - MH_STORAGE=${MAILHOG_MH_STORAGE}
+      - MH_MAILDIR_PATH=${MAILHOG_MH_MAILDIR_PATH}

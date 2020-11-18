@@ -175,7 +175,8 @@ ELK_VERSION=6.8.6
 
 ELASTICSEARCH_HOST_HTTP_PORT=9200
 ELASTICSEARCH_HOST_TRANSPORT_PORT=9300
-ELASTICSEARCH_INSTALL_PHONETIC=false
+ELASTICSEARCH_INSTALL_PHONETIC=true
+ELASTICSEARCH_INSTALL_ICU=false
 
 ### KIBANA #############################################################################################################
 
@@ -213,6 +214,11 @@ VARNISH_INSTALL_GEOIP2=false
 ### MONGODB ############################################################################################################
 
 MONGODB_PORT=27017
+
+
+### MAILHOG  ##########################################################################################################
+MAILHOG_MH_STORAGE=maildir
+MAILHOG_MH_MAILDIR_PATH=/mnt/storag
 
 ### DOCKER-SYNC ################################################################################################
 
