@@ -331,6 +331,8 @@ RUN if [ ${INSTALL_MSMTP} = true ]; then \
     apt install -y msmtp \
 ;fi
 
+COPY ./config/workspace/etc/msmtprc /etc/msmtprc
+
 ###########################################################################
 # Check PHP version:
 ###########################################################################
