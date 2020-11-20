@@ -21,6 +21,9 @@ ARG PHP_VERSION
 # Set Environment Variables
 ENV DEBIAN_FRONTEND noninteractive
 
+# always run apt update when start and after add new source list, then clean up at end.
+RUN apt-get update -yqq
+
 ###########################################################################
 # MSMTP:
 ###########################################################################
@@ -28,11 +31,16 @@ ENV DEBIAN_FRONTEND noninteractive
 USER root
 
 ARG INSTALL_MSMTP=true
+ARG POSTFIX_SERVICE_URL=${POSTFIX_SERVICE_URL}
 ARG MSMTP_DOMAIN=${MSMTP_DOMAIN}
 
+COPY ./etc/msmtprc /etc/msmtprc
+
 RUN if [ ${INSTALL_MSMTP} = true ]; then \
-    apt update && apt install -y msmtp \
+    apt install -y msmtp-mta && \
+    sed -ri -e "s/demo.local/${MSMTP_DOMAIN}/" -e "s/postfix/${POSTFIX_SERVICE_URL}/" /etc/msmtprc \
 ;fi
+
 
 ###########################################################################
 # Check PHP version:

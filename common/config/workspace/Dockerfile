@@ -325,13 +325,15 @@ RUN if [ ${INSTALL_DUSK_DEPS} = true ]; then \
 USER root
 
 ARG INSTALL_MSMTP=true
+ARG POSTFIX_SERVICE_URL=${POSTFIX_SERVICE_URL}
 ARG MSMTP_DOMAIN=${MSMTP_DOMAIN}
 
-RUN if [ ${INSTALL_MSMTP} = true ]; then \
-    apt install -y msmtp \
-;fi
+COPY ./etc/msmtprc /etc/msmtprc
 
-COPY ./config/workspace/etc/msmtprc /etc/msmtprc
+RUN if [ ${INSTALL_MSMTP} = true ]; then \
+    apt install -y msmtp-mta && \
+    sed -ri -e "s/demo.local/${MSMTP_DOMAIN}/" -e "s/postfix/${POSTFIX_SERVICE_URL}/" /etc/msmtprc \
+;fi
 
 ###########################################################################
 # Check PHP version:
