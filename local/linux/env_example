@@ -184,7 +184,7 @@ KIBANA_HTTP_PORT=5601
 
 ### POSTFIX ############################################################################################################
 # Use POSTFIX_SSMTP_DOMAIN=postfix for docker on Mac
-POSTFIX_SSMTP_DOMAIN=127.0.0.1
+POSTFIX_SERVICE_URL=postfix
 POSTFIX_DOMAIN=demo.local
 POSTFIX_HOSTNAMES=email.demo.local
 POSTFIX_MESSAGE_SIZE_LIMIT=50000000

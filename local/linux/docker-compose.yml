@@ -12,7 +12,7 @@ services:
       - ./config/workspace/ext-tideways_xhprof.ini:/etc/php/${PHP_VERSION}/cli/conf.d/tideways_xhprof.ini
       - ../../common/xhgui:${XHGUI_CODE_PATH_CONTAINER}
       - ../../common/config/varnish/health_check.php:${DEFAULT_PATH}/health_check.php
-      - ./volumes/shared:/mnt/web
+      - ./volumes/shared/log/magento/:/var/www/app/var/log
       - ./volumes/composer:/home/www/.composer
       - ./volumes/ssh:/home/laradock/.ssh
 
@@ -25,10 +25,10 @@ services:
       - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER} # will be mounted on to the value of APP_CODE_PATH_CONTAINER
       - ./config/php-fpm/ext-xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
       - ./config/php-fpm/ext-tideways_xhprof.ini:/usr/local/etc/php/conf.d/tideways_xhprof.ini
+      - ./config/php-fpm/php${PHP_VERSION}.ini:/usr/local/etc/php/php.ini
       - ../../common/xhgui:${XHGUI_CODE_PATH_CONTAINER}
       - ../../common/config/varnish/health_check.php:${DEFAULT_PATH}/health_check.php
-      - ./config/php-fpm/php${PHP_VERSION}.ini:/usr/local/etc/php/php.ini
-      - ./volumes/shared:/mnt/web
+      - ./volumes/shared/log/magento/:/var/www/app/var/log
       - ./volumes/composer:/home/www/.composer
 
 ### SSL ##################################
@@ -37,7 +37,7 @@ services:
       file: ../../common/docker-compose.yml
       service: ssl
     volumes:
-      - ./ssl/certs:/certs
+      - ./volumes/ssl/certs:/certs
 
 ### Nginx Server Container ##################################
   nginx:
@@ -46,12 +46,12 @@ services:
       service: nginx
     volumes:
       - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER} # will be mounted on to the value of APP_CODE_PATH_CONTAINER
-      - ${NGINX_SSL_PATH}:/etc/nginx/ssl
       - ../../common/xhgui:${XHGUI_CODE_PATH_CONTAINER}
       - ../../common/config/varnish/health_check.php:${DEFAULT_PATH}/health_check.php
-      - ${NGINX_HOST_LOG_PATH}:/var/log/nginx
-      - ${NGINX_SITES_PATH}:/etc/nginx/sites-available
-      - ${NGINX_CONF_M2_PATH}:/etc/nginx/conf_m2
+      - ./config/nginx/sites/:/etc/nginx/sites-available
+      - ./config/nginx/conf_m2/:/etc/nginx/conf_m2
+      - ./volumes/ssl/certs/:/etc/nginx/ssl
+      - ./volumes/shared/log/nginx/:/var/log/nginx
     depends_on:
       - php-fpm
       - ssl
@@ -61,9 +61,9 @@ services:
 #    volumes:
 #      - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}
 #      - ./xhgui:${XHGUI_CODE_PATH_CONTAINER}
-#      - ./varnish/health_check.php:${DEFAULT_PATH}/health_check.php
-#      - ${APACHE_HOST_LOG_PATH}:/var/log/apache2
-#      - ${APACHE_SITES_PATH}:/etc/apache2/sites-available
+#      - ../../common/config/varnish/health_check.php:${DEFAULT_PATH}/health_check.php
+#      - ./config/apache/sites/:/etc/apache2/sites-available
+#      - ./volumes/shared/log/apache/:/var/log/apache2
 #    depends_on:
 #      - php-fpm
 
@@ -81,7 +81,7 @@ services:
       file: ../../common/docker-compose.yml
       service: postfix
     volumes:
-      - ./postfix/Maildir:/root/Maildir
+      - ./volumes/postfix/Maildir:/root/Maildir
 
 ### Redis Container #########################################
   redis:
