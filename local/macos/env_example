@@ -52,30 +52,10 @@ PHP_VERSION=7.3
 
 PHP_INTERPRETER=php-fpm
 
-### Docker Host IP #####################################################################################################
-# Enter your Docker Host IP (will be appended to /etc/hosts). Default is `10.0.75.1`
-
-DOCKER_HOST_IP=10.0.75.1
-
 ### Remote Remote Host #################################################################################################
 # IP or domain to access the docker host. Use localhost for Linux and host.docker.internal for Mac.
 
-DOCKER_REMOTE_HOST=127.0.0.1
-
-### Remote Interpreter #################################################################################################
-# Choose a Remote Interpreter entry matching name. Default is `laradock`
-
-PHP_IDE_CONFIG=serverName=laradock
-
-### Windows Path #######################################################################################################
-# A fix for Windows users, to ensure the application path works.
-
-COMPOSE_CONVERT_WINDOWS_PATHS=1
-
-### Environment ########################################################################################################
-# If you're in China, or you need to change sources, will be set CHANGE_SOURCE to true in .env.
-
-CHANGE_SOURCE=false
+DOCKER_REMOTE_HOST=host.docker.internal
 
 ########################################################################################################################
 # If you want to use "Oh My ZSH!" with Laravel autocomplete plugin, set SHELL_OH_MY_ZSH to true.
@@ -117,63 +97,38 @@ WORKSPACE_SSH_PORT=2222
 PHP_FPM_INSTALL_MSMTP=true
 PHP_FPM_MSMTP_DOMAIN=postfix
 
-### PHP_WORKER #########################################################################################################
-
-PHP_WORKER_INSTALL_PGSQL=false
-
 ### NGINX ##############################################################################################################
 
 NGINX_HOST_HTTP_PORT=80
 NGINX_HOST_HTTPS_PORT=443
-NGINX_HOST_LOG_PATH=./logs/nginx/
-NGINX_SITES_PATH=./nginx/sites/
 NGINX_PHP_UPSTREAM_CONTAINER=php-fpm
 NGINX_PHP_UPSTREAM_PORT=9000
-NGINX_SSL_PATH=./ssl/certs/
-NGINX_CONF_M2_PATH=./nginx/conf_m2/
+
+### VARNISH ############################################################################################################
+
+VARNISH_CONFIG=/etc/varnish/default.vcl
+VARNISH_PORT=6081
+VARNISH_BACKEND_PORT=80
+VARNISHD_PARAMS=-p default_ttl=3600 -p default_grace=3600
+VARNISH_CACHE_SIZE=128m
+VARNISH_BACKEND_HOST=nginx
+VARNISH_PURGE_HOST_WORKSPACE=workspace
+VARNISH_PURGE_HOST_PHP_FPM=php-fpm
+VARNISH_INSTALL_GEOIP2=false
 
 ### REDIS ##############################################################################################################
 
 REDIS_PORT=6379
 
-### MEMCACHED ##########################################################################################################
+### EMAIL SERVICE  ####################################################################################################
 
-MEMCACHED_HOST_PORT=11211
+EMAIL_SERVICE_URL=postfix
 
-### Percona ############################################################################################################
-
-PERCONA_DATABASE=homestead
-PERCONA_USER=homestead
-PERCONA_PASSWORD=secret
-PERCONA_PORT=3306
-PERCONA_ROOT_PASSWORD=root
-PERCONA_ENTRYPOINT_INITDB=./percona/docker-entrypoint-initdb.d
-
-### RABBITMQ ###########################################################################################################
-
-RABBITMQ_NODE_HOST_PORT=5672
-RABBITMQ_MANAGEMENT_HTTP_HOST_PORT=15672
-RABBITMQ_MANAGEMENT_HTTPS_HOST_PORT=15671
-RABBITMQ_DEFAULT_USER=guest
-RABBITMQ_DEFAULT_PASS=guest
-
-### ELK Stack #########################################################################################################
-ELK_VERSION=6.8.6
-
-### ELASTICSEARCH ######################################################################################################
-
-ELASTICSEARCH_HOST_HTTP_PORT=9200
-ELASTICSEARCH_HOST_TRANSPORT_PORT=9300
-ELASTICSEARCH_INSTALL_PHONETIC=true
-ELASTICSEARCH_INSTALL_ICU=false
-
-### KIBANA #############################################################################################################
-
-KIBANA_HTTP_PORT=5601
+### MAILHOG  ##########################################################################################################
+MAILHOG_MH_STORAGE=maildir
+MAILHOG_MH_MAILDIR_PATH=/mnt/storage
 
 ### POSTFIX ############################################################################################################
-# Use POSTFIX_SSMTP_DOMAIN=postfix for docker on Mac
-POSTFIX_SERVICE_URL=postfix
 POSTFIX_DOMAIN=demo.local
 POSTFIX_HOSTNAMES=email.demo.local
 POSTFIX_MESSAGE_SIZE_LIMIT=50000000
@@ -187,27 +142,32 @@ POSTFIX_REJECT_UNLISTED_RECIPIENT=
 POSTFIX_HOST_LMTP=
 POSTFIX_HOST_ANTISPAM=
 
-### VARNISH ############################################################################################################
-# Use VARNISH_BACKEND_HOST=nginx VARNISH_PURGE_HOST_WORKSPACE=workspace VARNISH_PURGE_HOST_PHP_FPM=php-fpm for docker on Mac
-VARNISH_CONFIG=/etc/varnish/default.vcl
-VARNISH_PORT=6081
-VARNISH_BACKEND_PORT=80
-VARNISHD_PARAMS=-p default_ttl=3600 -p default_grace=3600
-VARNISH_CACHE_SIZE=128m
-VARNISH_BACKEND_HOST=127.0.0.1
-VARNISH_PURGE_HOST_WORKSPACE=127.0.0.1
-VARNISH_PURGE_HOST_PHP_FPM=127.0.0.1
-VARNISH_SERVER=SERVER1
-VARNISH_INSTALL_GEOIP2=false
+### ELK Stack #########################################################################################################
+
+ELK_VERSION=6.8.6
+
+### ELASTICSEARCH ######################################################################################################
+
+ELASTICSEARCH_HOST_HTTP_PORT=9200
+ELASTICSEARCH_HOST_TRANSPORT_PORT=9300
+ELASTICSEARCH_INSTALL_PHONETIC=true
+ELASTICSEARCH_INSTALL_ICU=false
+
+### KIBANA #############################################################################################################
+
+KIBANA_HTTP_PORT=5601
+
+### RABBITMQ ###########################################################################################################
+
+RABBITMQ_NODE_HOST_PORT=5672
+RABBITMQ_MANAGEMENT_HTTP_HOST_PORT=15672
+RABBITMQ_MANAGEMENT_HTTPS_HOST_PORT=15671
+RABBITMQ_DEFAULT_USER=guest
+RABBITMQ_DEFAULT_PASS=guest
 
 ### MONGODB ############################################################################################################
 
 MONGODB_PORT=27017
-
-
-### MAILHOG  ##########################################################################################################
-MAILHOG_MH_STORAGE=maildir
-MAILHOG_MH_MAILDIR_PATH=/mnt/storag
 
 ### DOCKER-SYNC ################################################################################################
 

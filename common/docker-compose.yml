@@ -58,13 +58,36 @@ services:
       - SSL_SUBJECT=${SSL_SUBJECT}
       - SSL_DNS=${SSL_DNS}
 
-
 ### Nginx Server Container ##################################
   nginx:
     image: yushin/nginx:latest
     ports:
       - "${NGINX_HOST_HTTP_PORT}:80"
       - "${NGINX_HOST_HTTPS_PORT}:443"
+
+### Varnish ##########################################
+  varnish:
+    build:
+      context: ./config/varnish
+      args:
+        - INSTALL_GEOIP2=${VARNISH_INSTALL_GEOIP2}
+    environment:
+      - VARNISH_CONFIG=${VARNISH_CONFIG}
+      - CACHE_SIZE=${VARNISH_CACHE_SIZE}
+      - VARNISHD_PARAMS=${VARNISHD_PARAMS}
+      - VARNISH_PORT=${VARNISH_PORT}
+      - BACKEND_HOST=${VARNISH_BACKEND_HOST}
+      - BACKEND_PORT=${VARNISH_BACKEND_PORT}
+      - PURGE_HOST_WORKSPACE=${VARNISH_PURGE_HOST_WORKSPACE}
+      - PURGE_HOST_PHP_FPM=${VARNISH_PURGE_HOST_PHP_FPM}
+    ports:
+      - "${VARNISH_PORT}:6081"
+
+### Redis Container #########################################
+  redis:
+    build: ./config/redis
+    ports:
+      - "${REDIS_PORT}:6379"
 
 #### Postfix Server Container ################################
   postfix:
@@ -87,11 +110,24 @@ services:
     ports:
       - "${POSTFIX_SMTP_PORT}:25"
 
-### Redis Container #########################################
-  redis:
-    build: ./config/redis
+### Mailhog Container #####################################
+  mailhog:
+    image: mailhog/mailhog:latest
+    restart: on-failure:5
     ports:
-      - "${REDIS_PORT}:6379"
+      - 8025:8025
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100M"
+        max-file: "3"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
 
 ### RabbitMQ #############################################
   rabbitmq:
@@ -106,25 +142,6 @@ services:
       - "${RABBITMQ_MANAGEMENT_HTTP_HOST_PORT}:15672"
       - "${RABBITMQ_MANAGEMENT_HTTPS_HOST_PORT}:15671"
 
-### Varnish ##########################################
-  varnish:
-    build:
-      context: ./config/varnish
-      args:
-        - INSTALL_GEOIP2=${VARNISH_INSTALL_GEOIP2}
-    environment:
-      - VARNISH_CONFIG=${VARNISH_CONFIG}
-      - CACHE_SIZE=${VARNISH_CACHE_SIZE}
-      - VARNISHD_PARAMS=${VARNISHD_PARAMS}
-      - VARNISH_PORT=${VARNISH_PORT}
-      - BACKEND_HOST=${VARNISH_BACKEND_HOST}
-      - BACKEND_PORT=${VARNISH_BACKEND_PORT}
-      - PURGE_HOST_WORKSPACE=${VARNISH_PURGE_HOST_WORKSPACE}
-      - PURGE_HOST_PHP_FPM=${VARNISH_PURGE_HOST_PHP_FPM}
-      - VARNISH_SERVER=${VARNISH_SERVER}
-    ports:
-      - "${VARNISH_PORT}:6081"
-
 ### MongoDB ##############################################
   mongo:
     build: ./config/mongo
@@ -135,25 +152,6 @@ services:
   logrotate:
     image: tutum/logrotate:latest
     restart: on-failure:5
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "100M"
-        max-file: "3"
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-      nofile:
-        soft: 65536
-        hard: 65536
-
-### Mailhog Container #####################################
-  mailhog:
-    image: mailhog/mailhog:latest
-    restart: on-failure:5
-    ports:
-      - 8025:8025
     logging:
       driver: "json-file"
       options:
