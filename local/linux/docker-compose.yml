@@ -13,7 +13,7 @@ services:
       - ../../common/xhgui:${XHGUI_CODE_PATH_CONTAINER}
       - ../../common/config/varnish/health_check.php:${DEFAULT_PATH}/health_check.php
       - ./volumes/shared/log/magento/:/var/www/app/var/log
-      - ./volumes/composer:/home/www/.composer
+      - ./volumes/composer:/home/laradock/.composer
       - ./volumes/ssh:/home/laradock/.ssh
 
 ### PHP-FPM Container #######################################
@@ -29,7 +29,6 @@ services:
       - ../../common/xhgui:${XHGUI_CODE_PATH_CONTAINER}
       - ../../common/config/varnish/health_check.php:${DEFAULT_PATH}/health_check.php
       - ./volumes/shared/log/magento/:/var/www/app/var/log
-      - ./volumes/composer:/home/www/.composer
 
 ### SSL ##################################
   ssl:
@@ -55,17 +54,6 @@ services:
     depends_on:
       - php-fpm
       - ssl
-
-### Apache Server ########################################
-#  apache2:
-#    volumes:
-#      - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}
-#      - ./xhgui:${XHGUI_CODE_PATH_CONTAINER}
-#      - ../../common/config/varnish/health_check.php:${DEFAULT_PATH}/health_check.php
-#      - ./config/apache/sites/:/etc/apache2/sites-available
-#      - ./volumes/shared/log/apache/:/var/log/apache2
-#    depends_on:
-#      - php-fpm
 
 ### Varnish ##########################################
   varnish:

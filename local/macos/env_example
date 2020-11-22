@@ -132,17 +132,6 @@ NGINX_PHP_UPSTREAM_PORT=9000
 NGINX_SSL_PATH=./ssl/certs/
 NGINX_CONF_M2_PATH=./nginx/conf_m2/
 
-### APACHE ################################################
-
-APACHE_HOST_HTTP_PORT=80
-APACHE_HOST_HTTPS_PORT=443
-APACHE_HOST_LOG_PATH=./logs/apache2
-APACHE_SITES_PATH=./apache2/sites
-APACHE_PHP_UPSTREAM_CONTAINER=php-fpm
-APACHE_PHP_UPSTREAM_PORT=9000
-APACHE_PHP_UPSTREAM_TIMEOUT=60
-APACHE_DOCUMENT_ROOT=/var/www/app/
-
 ### REDIS ##############################################################################################################
 
 REDIS_PORT=6379
@@ -175,7 +164,8 @@ ELK_VERSION=6.8.6
 
 ELASTICSEARCH_HOST_HTTP_PORT=9200
 ELASTICSEARCH_HOST_TRANSPORT_PORT=9300
-ELASTICSEARCH_INSTALL_PHONETIC=false
+ELASTICSEARCH_INSTALL_PHONETIC=true
+ELASTICSEARCH_INSTALL_ICU=false
 
 ### KIBANA #############################################################################################################
 
@@ -183,7 +173,7 @@ KIBANA_HTTP_PORT=5601
 
 ### POSTFIX ############################################################################################################
 # Use POSTFIX_SSMTP_DOMAIN=postfix for docker on Mac
-POSTFIX_SSMTP_DOMAIN=127.0.0.1
+POSTFIX_SERVICE_URL=postfix
 POSTFIX_DOMAIN=demo.local
 POSTFIX_HOSTNAMES=email.demo.local
 POSTFIX_MESSAGE_SIZE_LIMIT=50000000
@@ -213,6 +203,11 @@ VARNISH_INSTALL_GEOIP2=false
 ### MONGODB ############################################################################################################
 
 MONGODB_PORT=27017
+
+
+### MAILHOG  ##########################################################################################################
+MAILHOG_MH_STORAGE=maildir
+MAILHOG_MH_MAILDIR_PATH=/mnt/storag
 
 ### DOCKER-SYNC ################################################################################################
 

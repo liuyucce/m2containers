@@ -11,8 +11,7 @@ services:
       - ./config/workspace/ext-tideways_xhprof.ini:/etc/php/${PHP_VERSION}/cli/conf.d/tideways_xhprof.ini:delegated
       - ../../common/xhgui:${XHGUI_CODE_PATH_CONTAINER}:delegated
       - ../../common/config/varnish/health_check.php:${DEFAULT_PATH}/health_check.php:delegated
-      - ./volumes/shared:/mnt/web:delegated
-      - ./volumes/composer:/home/www/.composer:delegated
+      - ./volumes/composer:/home/laradock/.composer:delegated
       - ./volumes/ssh:/home/laradock/.ssh:delegated
 
 ### PHP-FPM Container #######################################
@@ -24,16 +23,14 @@ services:
       - applications-sync:${APP_CODE_PATH_CONTAINER}:nocopy # will be mounted on to the value of APP_CODE_PATH_CONTAINER
       - ./config/php-fpm/ext-xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini:delegated
       - ./config/php-fpm/ext-tideways_xhprof.ini:/usr/local/etc/php/conf.d/tideways_xhprof.ini:delegated
+      - ./config/php-fpm/php${PHP_VERSION}.ini:/usr/local/etc/php/php.ini:delegated
       - ../../common/xhgui:${XHGUI_CODE_PATH_CONTAINER}:delegated
       - ../../common/varnish/health_check.php:${DEFAULT_PATH}/health_check.php:delegated
-      - ./config/php-fpm/php${PHP_VERSION}.ini:/usr/local/etc/php/php.ini:delegated
-      - ./volumes/shared:/mnt/web
-      - ./volumes/composer:/home/www/.composer
 
 ### SSL ##################################
   ssl:
     volumes:
-      - ./ssl/certs:/certs
+      - ./volumes/ssl/certs:/certs
 
 ### Nginx Server Container ##################################
   nginx:
@@ -42,31 +39,24 @@ services:
       service: nginx
     volumes:
       - applications-sync:${APP_CODE_PATH_CONTAINER}:nocopy # will be mounted on to the value of APP_CODE_PATH_CONTAINER
-      - ${NGINX_SSL_PATH}:/etc/nginx/ssl:delegated
       - ../../common/xhgui:${XHGUI_CODE_PATH_CONTAINER}:delegated
       - ../../common/varnish/health_check.php:${DEFAULT_PATH}/health_check.php:delegated
-      - ${NGINX_HOST_LOG_PATH}:/var/log/nginx:delegated
-      - ${NGINX_SITES_PATH}:/etc/nginx/sites-available:delegated
-      - ${NGINX_CONF_M2_PATH}:/etc/nginx/conf_m2:delegated
+      - ./config/nginx/sites/:/etc/nginx/sites-available
+      - ./config/nginx/conf_m2/:/etc/nginx/conf_m2
+      - ./volumes/ssl/certs/:/etc/nginx/ssl
 
-### Apache Server ########################################
-#  apache2:
-#    volumes:
-#      - applications-sync:${APP_CODE_PATH_CONTAINER}:nocopy
-#      - ./xhgui:${XHGUI_CODE_PATH_CONTAINER}:delegated
-#      - ./varnish/health_check.php:${DEFAULT_PATH}/health_check.php:delegated
-#      - ${APACHE_HOST_LOG_PATH}:/var/log/apache2:delegated
-#      - ${APACHE_SITES_PATH}:/etc/apache2/sites-available:delegated
-#    ports:
-#      - "${APACHE_HOST_HTTP_PORT}:80"
-#    networks:
-#      - frontend
-#      - backend
+### Varnish ##########################################
+  varnish:
+    extends:
+      file: ../../common/docker-compose.yml
+      service: varnish
+    depends_on:
+      - php-fpm
 
 #### Postfix Server Container ################################
   postfix:
     volumes:
-      - ./postfix/Maildir:/root/Maildir:delegated
+      - ./volumes/postfix/Maildir:/root/Maildir
 
 ### Redis Container #########################################
   redis:
@@ -83,21 +73,13 @@ services:
 #    volumes:
 #      - ${DATA_PATH_HOST}/mongo:/data/db:delegated
 
-### Logrotate Container ####################################
-  logrotate:
-    extends:
-      file: ../../common/docker-compose.yml
-      service: logrotate
-#    volumes:
-#      - ../../common/config/logrotate/logrotate.conf:/etc/logrotate.conf
-
 ### Mailhog Container #####################################
   mailhog:
     extends:
       file: ../../common/docker-compose.yml
       service: mailhog
-#    volumes:
-#      - ./volumes/email:/mnt/storage
+    volumes:
+      - ./volumes/email:/mnt/storage:delegated
 
 
 volumes:

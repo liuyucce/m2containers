@@ -66,21 +66,6 @@ services:
       - "${NGINX_HOST_HTTP_PORT}:80"
       - "${NGINX_HOST_HTTPS_PORT}:443"
 
-### Apache Server ########################################
-#  apache2:
-#    build:
-#      context: ./config/apache2
-#      args:
-#        - PHP_UPSTREAM_CONTAINER=${APACHE_PHP_UPSTREAM_CONTAINER}
-#        - PHP_UPSTREAM_PORT=${APACHE_PHP_UPSTREAM_PORT}
-#        - PHP_UPSTREAM_TIMEOUT=${APACHE_PHP_UPSTREAM_TIMEOUT}
-#    ports:
-#      - "${APACHE_HOST_HTTP_PORT}:80"
-#      - "${APACHE_HOST_HTTPS_PORT}:443"
-#    networks:
-#      - frontend
-#      - backend
-
 #### Postfix Server Container ################################
   postfix:
     build:
