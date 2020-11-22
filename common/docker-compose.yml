@@ -19,7 +19,7 @@ services:
         - INSTALL_DUSK_DEPS=${WORKSPACE_INSTALL_DUSK_DEPS}
         - CHROME_DRIVER_VERSION=${WORKSPACE_CHROME_DRIVER_VERSION}
         - INSTALL_MSMTP=${WORKSPACE_INSTALL_MSMTP}
-        - POSTFIX_SERVICE_URL=${POSTFIX_SERVICE_URL}
+        - EMAIL_SERVICE_URL=${EMAIL_SERVICE_URL}
         - MSMTP_DOMAIN=${POSTFIX_DOMAIN}
         - INSTALL_NODE=${WORKSPACE_INSTALL_NODE}
         - NODE_VERSION=${WORKSPACE_NODE_VERSION}
@@ -45,7 +45,7 @@ services:
       args:
         - PHP_VERSION=${PHP_VERSION}
         - INSTALL_MSMTP=${PHP_FPM_INSTALL_MSMTP}
-        - POSTFIX_SERVICE_URL=${POSTFIX_SERVICE_URL}
+        - EMAIL_SERVICE_URL=${EMAIL_SERVICE_URL}
         - MSMTP_DOMAIN=${POSTFIX_DOMAIN}
     ports:
       - "${PHP_FPM_SSH_PORT}:22"
@@ -94,13 +94,14 @@ services:
     build:
       context: ./config/postfix
     environment:
-      - SMTP_SERVER=
-      - SMTP_USERNAME=
-      - SMTP_PASSWORD=
-      - SMTP_PORT=
+      - SMTP_SERVER=${POSTFIX_SMTP_SERVER}
+      - SMTP_USERNAME=${POSTFIX_SMTP_USERNAME}
+      - SMTP_PASSWORD=${POSTFIX_SMTP_PASSWORD}
+      - SMTP_PORT=${POSTFIX_SMTP_PORT}
       - DOMAIN=${POSTFIX_DOMAIN}
       - SERVER_HOSTNAME=${POSTFIX_HOSTNAMES}
       - MYNETWORKS=${POSTFIX_MYNETWORKS}
+      - ENABLE_MAILHOG=${ENABLE_MAILHOG}
     restart: on-failure:5
     logging:
       driver: "json-file"
@@ -108,7 +109,7 @@ services:
         max-size: "100M"
         max-file: "3"
     ports:
-      - "${POSTFIX_SMTP_PORT}:25"
+      - "${POSTFIX_PORT}:25"
 
 ### Mailhog Container #####################################
   mailhog:

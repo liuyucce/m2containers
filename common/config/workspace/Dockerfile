@@ -325,13 +325,13 @@ RUN if [ ${INSTALL_DUSK_DEPS} = true ]; then \
 USER root
 
 ARG INSTALL_MSMTP=true
-ARG POSTFIX_SERVICE_URL=${POSTFIX_SERVICE_URL}
+ARG EMAIL_SERVICE_URL=${EMAIL_SERVICE_URL}
 ARG MSMTP_DOMAIN=${MSMTP_DOMAIN}
 
 COPY ./etc/msmtprc /etc/msmtprc
 
 RUN if [ ${INSTALL_MSMTP} = true ]; then \
-    sed -ri -e "s/demo.local/${MSMTP_DOMAIN}/" -e "s/postfix/${POSTFIX_SERVICE_URL}/" /etc/msmtprc \
+    sed -ri -e "s/demo.local/${MSMTP_DOMAIN}/" -e "s/postfix/${EMAIL_SERVICE_URL}/" /etc/msmtprc \
 ;fi
 
 ###########################################################################

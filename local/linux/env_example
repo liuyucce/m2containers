@@ -21,7 +21,7 @@ XHGUI_CODE_PATH_CONTAINER=/var/www/xhgui
 DEFAULT_PATH=/var/www/default
 
 # Choose storage path on your machine. For all storage systems
-DATA_PATH_HOST=~/.laradock/data
+DATA_PATH_HOST=./volumes/shared
 
 ### Drivers ################################################
 
@@ -123,6 +123,7 @@ REDIS_PORT=6379
 ### EMAIL SERVICE  ####################################################################################################
 
 EMAIL_SERVICE_URL=postfix
+ENABLE_MAILHOG=true
 
 ### MAILHOG  ##########################################################################################################
 MAILHOG_MH_STORAGE=maildir
@@ -133,14 +134,11 @@ POSTFIX_DOMAIN=demo.local
 POSTFIX_HOSTNAMES=email.demo.local
 POSTFIX_MESSAGE_SIZE_LIMIT=50000000
 POSTFIX_MYNETWORKS=192.168.0.0/16,172.0.0.0/8,127.0.0.0/8
-POSTFIX_SMTP_PORT=25
-POSTFIX_RELAYHOST=
-POSTFIX_RECIPIENT_DELIMITER=+
-POSTFIX_FRONT_ADDRESS=
-POSTFIX_POD_ADDRESS_RANGE=
-POSTFIX_REJECT_UNLISTED_RECIPIENT=
-POSTFIX_HOST_LMTP=
-POSTFIX_HOST_ANTISPAM=
+POSTFIX_SMTP_SERVER=mailhog
+POSTFIX_SMTP_PORT=1025
+POSTFIX_SMTP_USERNAME=
+POSTFIX_SMTP_PASSWORD=
+POSTFIX_PORT=25
 
 ### ELK Stack #########################################################################################################
 
