@@ -1,5 +1,4 @@
-version: '2'
-
+version: '3.1'
 services:
 ### Workspace Utilities Container ###########################
   workspace:
@@ -10,9 +9,9 @@ services:
       - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER} # will be mounted on to the value of APP_CODE_PATH_CONTAINER
       - ./config/workspace/ext-xdebug.ini:/etc/php/${PHP_VERSION}/cli/conf.d/20-xdebug.ini
       - ./config/workspace/ext-tideways_xhprof.ini:/etc/php/${PHP_VERSION}/cli/conf.d/tideways_xhprof.ini
+      - ./config/workspace/etc/msmtprc:/etc/msmtprc
       - ../../common/xhgui:${XHGUI_CODE_PATH_CONTAINER}
       - ../../common/config/varnish/health_check.php:${DEFAULT_PATH}/health_check.php
-      - ./volumes/shared/log/magento/:/var/www/app/var/log
       - ./volumes/composer:/home/laradock/.composer
       - ./volumes/ssh:/home/laradock/.ssh
 
@@ -26,15 +25,12 @@ services:
       - ./config/php-fpm/ext-xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
       - ./config/php-fpm/ext-tideways_xhprof.ini:/usr/local/etc/php/conf.d/tideways_xhprof.ini
       - ./config/php-fpm/php${PHP_VERSION}.ini:/usr/local/etc/php/php.ini
+      - ./config/php-fpm/etc/msmtprc:/etc/msmtprc
       - ../../common/xhgui:${XHGUI_CODE_PATH_CONTAINER}
-      - ../../common/config/varnish/health_check.php:${DEFAULT_PATH}/health_check.php
-      - ./volumes/shared/log/magento/:/var/www/app/var/log
+      - ../../common/varnish/health_check.php:${DEFAULT_PATH}/health_check.php
 
 ### SSL ##################################
   ssl:
-    extends:
-      file: ../../common/docker-compose.yml
-      service: ssl
     volumes:
       - ./volumes/ssl/certs:/certs
 
@@ -46,14 +42,10 @@ services:
     volumes:
       - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER} # will be mounted on to the value of APP_CODE_PATH_CONTAINER
       - ../../common/xhgui:${XHGUI_CODE_PATH_CONTAINER}
-      - ../../common/config/varnish/health_check.php:${DEFAULT_PATH}/health_check.php
+      - ../../common/varnish/health_check.php:${DEFAULT_PATH}/health_check.php
       - ./config/nginx/sites/:/etc/nginx/sites-available
       - ./config/nginx/conf_m2/:/etc/nginx/conf_m2
       - ./volumes/ssl/certs/:/etc/nginx/ssl
-      - ./volumes/shared/log/nginx/:/var/log/nginx
-    depends_on:
-      - php-fpm
-      - ssl
 
 ### Varnish ##########################################
   varnish:
@@ -63,48 +55,15 @@ services:
     depends_on:
       - php-fpm
 
-#### Postfix Server Container ################################
-  postfix:
-    extends:
-      file: ../../common/docker-compose.yml
-      service: postfix
-    volumes:
-      - ./volumes/postfix/Maildir:/root/Maildir
-
 ### Redis Container #########################################
   redis:
-    extends:
-      file: ../../common/docker-compose.yml
-      service: redis
 #    volumes:
 #      - ${DATA_PATH_HOST}/redis:/data
 
-### RabbitMQ #############################################
-  rabbitmq:
-    extends:
-      file: ../../common/docker-compose.yml
-      service: rabbitmq
-#    volumes:
-#      - ${DATA_PATH_HOST}/rabbitmq:/var/lib/rabbitmq
-    depends_on:
-      - php-fpm
-
-### MongoDB ##############################################
-  mongo:
-    extends:
-      file: ../../common/docker-compose.yml
-      service: mongo
-#    volumes:
-#      - ${DATA_PATH_HOST}/mongo:/data/db
-
-### Logrotate Container ####################################
-  logrotate:
-    extends:
-      file: ../../common/docker-compose.yml
-      service: logrotate
+#### Postfix Server Container ################################
+  postfix:
     volumes:
-      - ./config/logrotate/logrotate.conf:/etc/logrotate.conf
-      - ./volumes/shared/log:/log
+      - ./volumes/postfix/Maildir:/root/Maildir
 
 ### Mailhog Container #####################################
   mailhog:
@@ -113,6 +72,13 @@ services:
       service: mailhog
     volumes:
       - ./volumes/email:/mnt/storage
-    environment:
-      - MH_STORAGE=${MAILHOG_MH_STORAGE}
-      - MH_MAILDIR_PATH=${MAILHOG_MH_MAILDIR_PATH}
+
+### RabbitMQ #############################################
+  rabbitmq:
+#    volumes:
+#      - ${DATA_PATH_HOST}/rabbitmq:/var/lib/rabbitmq
+
+### MongoDB ##############################################
+  mongo:
+#    volumes:
+#      - ${DATA_PATH_HOST}/mongo:/data/db

@@ -142,7 +142,7 @@ RUN echo "" >> ~/.bashrc && \
 
 USER root
 
-COPY ./crontab /etc/cron.d
+COPY ./etc/cron.d/crontab /etc/cron.d
 RUN chmod -R 644 /etc/cron.d
 
 ###########################################################################
@@ -283,7 +283,7 @@ ENV PATH $PATH:/home/laradock/.yarn/bin
 
 USER root
 
-COPY mc/config.json /root/.mc/config.json
+COPY ./mc/config.json /root/.mc/config.json
 
 ARG INSTALL_MC=false
 
@@ -331,7 +331,6 @@ ARG MSMTP_DOMAIN=${MSMTP_DOMAIN}
 COPY ./etc/msmtprc /etc/msmtprc
 
 RUN if [ ${INSTALL_MSMTP} = true ]; then \
-    apt install -y msmtp-mta && \
     sed -ri -e "s/demo.local/${MSMTP_DOMAIN}/" -e "s/postfix/${POSTFIX_SERVICE_URL}/" /etc/msmtprc \
 ;fi
 

@@ -886,6 +886,18 @@ RUN curl -O https://download.libsodium.org/libsodium/releases/libsodium-1.0.18.t
   && pecl install -f libsodium
 
 ###########################################################################
+# MSMTP:
+###########################################################################
+
+USER root
+
+ARG INSTALL_MSMTP=true
+
+RUN if [ ${INSTALL_MSMTP} = true ]; then \
+    apt install -y msmtp-mta \
+;fi
+
+###########################################################################
 # Check PHP version:
 ###########################################################################
 

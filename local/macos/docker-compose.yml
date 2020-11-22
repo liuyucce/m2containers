@@ -9,6 +9,7 @@ services:
       - applications-sync:${APP_CODE_PATH_CONTAINER}:nocopy # will be mounted on to the value of APP_CODE_PATH_CONTAINER
       - ./config/workspace/ext-xdebug.ini:/etc/php/${PHP_VERSION}/cli/conf.d/20-xdebug.ini:delegated
       - ./config/workspace/ext-tideways_xhprof.ini:/etc/php/${PHP_VERSION}/cli/conf.d/tideways_xhprof.ini:delegated
+      - ./config/workspace/etc/msmtprc:/etc/msmtprc:delegated
       - ../../common/xhgui:${XHGUI_CODE_PATH_CONTAINER}:delegated
       - ../../common/config/varnish/health_check.php:${DEFAULT_PATH}/health_check.php:delegated
       - ./volumes/composer:/home/laradock/.composer:delegated
@@ -24,6 +25,7 @@ services:
       - ./config/php-fpm/ext-xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini:delegated
       - ./config/php-fpm/ext-tideways_xhprof.ini:/usr/local/etc/php/conf.d/tideways_xhprof.ini:delegated
       - ./config/php-fpm/php${PHP_VERSION}.ini:/usr/local/etc/php/php.ini:delegated
+      - ./config/php-fpm/etc/msmtprc:/etc/msmtprc:delegated
       - ../../common/xhgui:${XHGUI_CODE_PATH_CONTAINER}:delegated
       - ../../common/varnish/health_check.php:${DEFAULT_PATH}/health_check.php:delegated
 
@@ -53,15 +55,23 @@ services:
     depends_on:
       - php-fpm
 
+### Redis Container #########################################
+  redis:
+#    volumes:
+#      - ${DATA_PATH_HOST}/redis:/data:delegated
+
 #### Postfix Server Container ################################
   postfix:
     volumes:
       - ./volumes/postfix/Maildir:/root/Maildir
 
-### Redis Container #########################################
-  redis:
-#    volumes:
-#      - ${DATA_PATH_HOST}/redis:/data:delegated
+### Mailhog Container #####################################
+  mailhog:
+    extends:
+      file: ../../common/docker-compose.yml
+      service: mailhog
+    volumes:
+      - ./volumes/email:/mnt/storage:delegated
 
 ### RabbitMQ #############################################
   rabbitmq:
@@ -73,23 +83,7 @@ services:
 #    volumes:
 #      - ${DATA_PATH_HOST}/mongo:/data/db:delegated
 
-### Mailhog Container #####################################
-  mailhog:
-    extends:
-      file: ../../common/docker-compose.yml
-      service: mailhog
-    volumes:
-      - ./volumes/email:/mnt/storage:delegated
-
-
 volumes:
   applications-sync:
     external:
       name: "${SYNC_NAME}-docker-sync"
-
-### Networks Setup ############################################
-networks:
-  frontend:
-    driver: "bridge"
-  backend:
-    driver: "bridge"
