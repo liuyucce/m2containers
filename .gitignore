@@ -1,8 +1,6 @@
 *.swp
 .env
-local/linux/volumes/ssl/certs/*
-local/linux/volumes/shared/log/nginx/*
-local/linux/volumes/shared/log/magento/*
+local/linux/volumes/*
 local/macos/.docker-sync/daemon.pid
 local/macos/.docker-sync/daemon.log
 common/xhgui/*
