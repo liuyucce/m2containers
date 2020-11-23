@@ -16,6 +16,8 @@ services:
       - ./volumes/shared/log/magento/:/var/www/app/var/log
       - ./volumes/composer:/home/laradock/.composer
       - ./volumes/ssh:/home/laradock/.ssh
+    extra_hosts:
+      - "host.docker.internal:${DOCKER_HOST_IP}"
 
 ### PHP-FPM Container #######################################
   php-fpm:
@@ -31,6 +33,8 @@ services:
       - ../../common/xhgui:${XHGUI_CODE_PATH_CONTAINER}
       - ../../common/config/varnish/health_check.php:${DEFAULT_PATH}/health_check.php
       - ./volumes/shared/log/magento/:/var/www/app/var/log
+    extra_hosts:
+      - "host.docker.internal:${DOCKER_HOST_IP}"
 
 ### SSL ##################################
   ssl:

@@ -60,7 +60,11 @@ services:
 
 ### Nginx Server Container ##################################
   nginx:
-    image: yushin/nginx:latest
+    build:
+      context: ./config/nginx
+      args:
+        - PHP_UPSTREAM_CONTAINER=${NGINX_PHP_UPSTREAM_CONTAINER}
+        - PHP_UPSTREAM_PORT=${NGINX_PHP_UPSTREAM_PORT}
     ports:
       - "${NGINX_HOST_HTTP_PORT}:80"
       - "${NGINX_HOST_HTTPS_PORT}:443"

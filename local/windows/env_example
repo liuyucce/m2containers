@@ -47,10 +47,10 @@ COMPOSE_PROJECT_NAME=demo
 
 PHP_VERSION=7.3
 
-### PHP Interpreter ####################################################################################################
-# Select the PHP Interpreter. Accepted values: hhvm - php-fpm
+### Docker Host IP #####################################################################################################
+# Enter your Docker Host IP (will be appended to /etc/hosts). Default is `172.17.0.1`
 
-PHP_INTERPRETER=php-fpm
+DOCKER_HOST_IP=172.17.0.1
 
 ### Remote Remote Host #################################################################################################
 # IP or domain to access the docker host. Use localhost for Linux and host.docker.internal for Mac.
