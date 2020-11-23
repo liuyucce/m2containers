@@ -1,4 +1,5 @@
-version: '3.1'
+version: '2'
+
 services:
 ### Workspace Utilities Container ###########################
   workspace:
@@ -33,6 +34,9 @@ services:
 
 ### SSL ##################################
   ssl:
+    extends:
+      file: ../../common/docker-compose.yml
+      service: ssl
     volumes:
       - ./volumes/ssl/certs:/certs
 
@@ -59,11 +63,17 @@ services:
 
 ### Redis Container #########################################
   redis:
+    extends:
+      file: ../../common/docker-compose.yml
+      service: redis
 #    volumes:
 #      - ${DATA_PATH_HOST}/redis:/data:delegated
 
 #### Postfix Server Container ################################
   postfix:
+    extends:
+      file: ../../common/docker-compose.yml
+      service: postfix
     volumes:
       - ./volumes/postfix/Maildir:/root/Maildir
 
@@ -77,13 +87,28 @@ services:
 
 ### RabbitMQ #############################################
   rabbitmq:
+    extends:
+      file: ../../common/docker-compose.yml
+      service: rabbitmq
 #    volumes:
 #      - ${DATA_PATH_HOST}/rabbitmq:/var/lib/rabbitmq:delegated
 
 ### MongoDB ##############################################
   mongo:
+    extends:
+      file: ../../common/docker-compose.yml
+      service: rabbitmq
 #    volumes:
 #      - ${DATA_PATH_HOST}/mongo:/data/db:delegated
+
+### Logrotate Container ####################################
+  logrotate:
+    extends:
+      file: ../../common/docker-compose.yml
+      service: logrotate
+    volumes:
+      - ./config/logrotate/logrotate.conf:/etc/logrotate.conf
+      - ./volumes/shared/log:/log
 
 volumes:
   applications-sync:
