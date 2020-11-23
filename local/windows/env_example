@@ -167,12 +167,4 @@ RABBITMQ_DEFAULT_PASS=guest
 
 MONGODB_PORT=27017
 
-### DOCKER-SYNC ################################################################################################
-
-# osx: 'native_osx' (default)
-# windows: 'unison'
-# linux: docker-sync not required
-
-DOCKER_SYNC_STRATEGY=native_osx
-
 ########################################################################################################################
