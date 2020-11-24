@@ -1,6 +1,8 @@
 *.swp
 .env
 local/linux/volumes/*
+local/windows/volumes/*
+local/macos/volumes/*
 local/macos/.docker-sync/daemon.pid
 local/macos/.docker-sync/daemon.log
 common/xhgui/*

@@ -11,8 +11,6 @@ services:
       - ./config/workspace/ext-xdebug.ini:/etc/php/${PHP_VERSION}/cli/conf.d/20-xdebug.ini
       - ./config/workspace/xdebug.ini:/etc/php/${PHP_VERSION}/cli/conf.d/xdebug.ini
       - ./config/workspace/ext-tideways_xhprof.ini:/etc/php/${PHP_VERSION}/cli/conf.d/tideways_xhprof.ini
-      - ../../common/xhgui:${XHGUI_CODE_PATH_CONTAINER}
-      - ../../common/config/varnish/health_check.php:${DEFAULT_PATH}/health_check.php
       - ./volumes/shared/log/magento/:/var/www/app/var/log
       - ./volumes/composer:/home/laradock/.composer
       - ./volumes/ssh:/home/laradock/.ssh

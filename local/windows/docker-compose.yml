@@ -11,8 +11,6 @@ services:
       - ./config/workspace/ext-xdebug.ini:/etc/php/${PHP_VERSION}/cli/conf.d/20-xdebug.ini
       - ./config/workspace/xdebug.ini:/etc/php/${PHP_VERSION}/cli/conf.d/xdebug.ini
       - ./config/workspace/ext-tideways_xhprof.ini:/etc/php/${PHP_VERSION}/cli/conf.d/tideways_xhprof.ini
-      - ../../common/xhgui:${XHGUI_CODE_PATH_CONTAINER}
-      - ../../common/config/varnish/health_check.php:${DEFAULT_PATH}/health_check.php
       - ./volumes/composer:/home/laradock/.composer
       - ./volumes/ssh:/home/laradock/.ssh
 
@@ -28,7 +26,7 @@ services:
       - ./config/php-fpm/xdebug.ini:/etc/php/${PHP_VERSION}/cli/conf.d/xdebug.ini
       - ./config/php-fpm/ext-tideways_xhprof.ini:/usr/local/etc/php/conf.d/tideways_xhprof.ini
       - ../../common/xhgui:${XHGUI_CODE_PATH_CONTAINER}
-      - ../../common/varnish/health_check.php:${DEFAULT_PATH}/health_check.php
+      - ../../common/config/varnish/health_check.php:${DEFAULT_PATH}/health_check.php
 
 ### SSL ##################################
   ssl:
@@ -46,7 +44,7 @@ services:
     volumes:
       - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER} # will be mounted on to the value of APP_CODE_PATH_CONTAINER
       - ../../common/xhgui:${XHGUI_CODE_PATH_CONTAINER}
-      - ../../common/varnish/health_check.php:${DEFAULT_PATH}/health_check.php
+      - ../../common/config/varnish/health_check.php:${DEFAULT_PATH}/health_check.php
       - ./config/nginx/sites/:/etc/nginx/sites-available
       - ./config/nginx/conf_m2/:/etc/nginx/conf_m2
       - ./volumes/ssl/certs/:/etc/nginx/ssl
