@@ -11,7 +11,6 @@ services:
       - ./config/workspace/ext-xdebug.ini:/etc/php/${PHP_VERSION}/cli/conf.d/20-xdebug.ini:delegated
       - ./config/workspace/xdebug.ini:/etc/php/${PHP_VERSION}/cli/conf.d/xdebug.ini:delegated
       - ./config/workspace/ext-tideways_xhprof.ini:/etc/php/${PHP_VERSION}/cli/conf.d/tideways_xhprof.ini:delegated
-      - ./config/workspace/etc/msmtprc:/etc/msmtprc:delegated
       - ../../common/xhgui:${XHGUI_CODE_PATH_CONTAINER}:delegated
       - ../../common/config/varnish/health_check.php:${DEFAULT_PATH}/health_check.php:delegated
       - ./volumes/composer:/home/laradock/.composer:delegated
@@ -28,7 +27,6 @@ services:
       - ./config/php-fpm/ext-xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini:delegated
       - ./config/php-fpm/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini:delegated
       - ./config/php-fpm/ext-tideways_xhprof.ini:/usr/local/etc/php/conf.d/tideways_xhprof.ini:delegated
-      - ./config/php-fpm/etc/msmtprc:/etc/msmtprc:delegated
       - ../../common/xhgui:${XHGUI_CODE_PATH_CONTAINER}:delegated
       - ../../common/varnish/health_check.php:${DEFAULT_PATH}/health_check.php:delegated
 
@@ -52,6 +50,9 @@ services:
       - ./config/nginx/sites/:/etc/nginx/sites-available
       - ./config/nginx/conf_m2/:/etc/nginx/conf_m2
       - ./volumes/ssl/certs/:/etc/nginx/ssl
+    depends_on:
+      - php-fpm
+      - ssl
 
 ### Varnish ##########################################
   varnish:

@@ -92,9 +92,6 @@ services:
       service: mailhog
     volumes:
       - ./volumes/email:/mnt/storage
-    environment:
-      - MH_STORAGE=${MAILHOG_MH_STORAGE}
-      - MH_MAILDIR_PATH=${MAILHOG_MH_MAILDIR_PATH}
 
 ### ElasticSearch ########################################
   elasticsearch:

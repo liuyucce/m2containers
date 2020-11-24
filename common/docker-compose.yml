@@ -118,6 +118,9 @@ services:
 ### Mailhog Container #####################################
   mailhog:
     image: mailhog/mailhog:latest
+    environment:
+      - MH_STORAGE=${MAILHOG_MH_STORAGE}
+      - MH_MAILDIR_PATH=${MAILHOG_MH_MAILDIR_PATH}
     restart: on-failure:5
     ports:
       - 8025:8025
