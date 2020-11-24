@@ -23,7 +23,7 @@ services:
       - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER} # will be mounted on to the value of APP_CODE_PATH_CONTAINER
       - ./config/php-fpm/php${PHP_VERSION}.ini:/usr/local/etc/php/php.ini
       - ./config/php-fpm/ext-xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
-      - ./config/php-fpm/xdebug.ini:/etc/php/${PHP_VERSION}/cli/conf.d/xdebug.ini
+      - ./config/php-fpm/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
       - ./config/php-fpm/ext-tideways_xhprof.ini:/usr/local/etc/php/conf.d/tideways_xhprof.ini
       - ../../common/xhgui:${XHGUI_CODE_PATH_CONTAINER}
       - ../../common/config/varnish/health_check.php:${DEFAULT_PATH}/health_check.php
