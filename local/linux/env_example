@@ -126,6 +126,7 @@ EMAIL_SERVICE_URL=postfix
 ENABLE_MAILHOG=true
 
 ### MAILHOG  ##########################################################################################################
+MAILHOG_MH_PORT=8027
 MAILHOG_MH_STORAGE=maildir
 MAILHOG_MH_MAILDIR_PATH=/mnt/storage
 

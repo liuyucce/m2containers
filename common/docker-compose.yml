@@ -123,7 +123,7 @@ services:
       - MH_MAILDIR_PATH=${MAILHOG_MH_MAILDIR_PATH}
     restart: on-failure:5
     ports:
-      - 8025:8025
+      - ${MAILHOG_MH_PORT}:8025
     logging:
       driver: "json-file"
       options:
