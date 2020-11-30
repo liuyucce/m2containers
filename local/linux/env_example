@@ -5,7 +5,6 @@
 SYNC_NAME=dockerdemo
 SSL_SUBJECT=demo.local
 SSL_DNS=b2b.demo.local,nz.demo.local
-PHP_FPM_SSH_PORT=9022
 
 ### Paths #################################################
 # Point to the path of your applications code on your host
