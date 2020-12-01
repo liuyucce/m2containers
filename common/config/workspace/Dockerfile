@@ -232,6 +232,11 @@ RUN if [ ${NPM_REGISTRY} ]; then \
     . ~/.bashrc && npm config set registry ${NPM_REGISTRY} \
 ;fi
 
+# Install Grunt
+RUN if [ ${INSTALL_NODE} = true ]; then \
+    npm install -g grunt-cli \
+;fi
+
 ###########################################################################
 # PNPM:
 ###########################################################################
