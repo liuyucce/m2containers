@@ -31,3 +31,5 @@ Website domains should also be configured in /nginx/sites/app.conf when using ng
 Magento 2 multi-websites can be enabled in /nginx/conf_m2/magento2.conf.
 
 Cron job path is configured in /workspace/crontab/laradock.
+
+To not let POSTFIX send emails to Mailhog, remove values of POSTFIX_SMTP_SERVER AND POSTFIX_SMTP_PORT, change value of ENABLE_MAILHOG to false.
