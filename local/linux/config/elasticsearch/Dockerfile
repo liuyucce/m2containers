@@ -1,4 +1,4 @@
-ARG ELK_VERSION=7.5.1
+ARG ELK_VERSION=7.9.3
 FROM docker.elastic.co/elasticsearch/elasticsearch:${ELK_VERSION}
 
 WORKDIR /usr/share/elasticsearch

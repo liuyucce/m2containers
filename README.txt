@@ -4,7 +4,7 @@ To use this environment on your local env, make sure you are using Mac OS 10.14.
 
 The environment config file is /local/<your_env>/.env, most variables including website domains, project path, container ports mapping and PHP version etc. can be changed in this file.
 
-This environment supports PHP 7.3 at the moment.
+This environment supports PHP7.4 AND Magento 2.4.3 by default.
 
 To build project, run "docker-compose build" in corresponding environment to your OS.
 
