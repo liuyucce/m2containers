@@ -66,7 +66,7 @@ services:
       file: ../../common/docker-compose.yml
       service: redis
 #    volumes:
-#      - ${DATA_PATH_HOST}/redis:/data:delegated
+#      - ./volumes/redis:/data:delegated
 
 #### Postfix Server Container ################################
   postfix:
@@ -90,7 +90,7 @@ services:
       file: ../../common/docker-compose.yml
       service: rabbitmq
 #    volumes:
-#      - ${DATA_PATH_HOST}/rabbitmq:/var/lib/rabbitmq:delegated
+#      - ./volumes/rabbitmq:/var/lib/rabbitmq:delegated
 
 ### MongoDB ##############################################
   mongo:
@@ -98,7 +98,7 @@ services:
       file: ../../common/docker-compose.yml
       service: rabbitmq
 #    volumes:
-#      - ${DATA_PATH_HOST}/mongo:/data/db:delegated
+#      - ./volumes/mongo:/data/db:delegated
 
 ### Logrotate Container ####################################
   logrotate:

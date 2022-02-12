@@ -65,8 +65,8 @@ services:
     extends:
       file: ../../common/docker-compose.yml
       service: redis
-#    volumes:
-#      - ${DATA_PATH_HOST}/redis:/data
+    volumes:
+      - ./volumes/redis:/data
 
 #### Postfix Server Container ################################
   postfix:
@@ -89,16 +89,16 @@ services:
     extends:
       file: ../../common/docker-compose.yml
       service: rabbitmq
-#    volumes:
-#      - ${DATA_PATH_HOST}/rabbitmq:/var/lib/rabbitmq
+    volumes:
+      - ./volumes/rabbitmq:/var/lib/rabbitmq
 
 ### MongoDB ##############################################
   mongo:
     extends:
       file: ../../common/docker-compose.yml
       service: mongo
-#    volumes:
-#      - ${DATA_PATH_HOST}/mongo:/data/db
+    volumes:
+      - ./volumes/mongo:/data/db
 
 ### Logrotate Container ####################################
   logrotate:

@@ -72,8 +72,8 @@ services:
     extends:
       file: ../../common/docker-compose.yml
       service: redis
-#    volumes:
-#      - ${DATA_PATH_HOST}/redis:/data
+    volumes:
+      - ./volumes/redis:/data
 
 #### Postfix Server Container ################################
   postfix:
@@ -105,8 +105,8 @@ services:
       memlock:
         soft: -1
         hard: -1
-#    volumes:
-#      - ${DATA_PATH_HOST}/elasticsearch:/usr/share/elasticsearch/data
+    volumes:
+      - ./volumes/elasticsearch:/usr/share/elasticsearch/data
     ports:
       - "${ELASTICSEARCH_HOST_HTTP_PORT}:9200"
       - "${ELASTICSEARCH_HOST_TRANSPORT_PORT}:9300"
@@ -127,8 +127,8 @@ services:
     extends:
       file: ../../common/docker-compose.yml
       service: rabbitmq
-#    volumes:
-#      - ${DATA_PATH_HOST}/rabbitmq:/var/lib/rabbitmq
+    volumes:
+      - ./volumes/rabbitmq:/var/lib/rabbitmq
     depends_on:
       - php-fpm
 
@@ -137,8 +137,8 @@ services:
     extends:
       file: ../../common/docker-compose.yml
       service: mongo
-#    volumes:
-#      - ${DATA_PATH_HOST}/mongo:/data/db
+    volumes:
+      - ./volumes/mongo:/data/db
 
 ### Logrotate Container ####################################
   logrotate:
