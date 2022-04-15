@@ -165,13 +165,15 @@ RUN if [ ${INSTALL_IMAP} = true ]; then \
 # xDebug:
 ###########################################################################
 
-USER root
-
 ARG INSTALL_XDEBUG=true
 
-RUN if [ ${INSTALL_XDEBUG} = true ]; then \
+RUN if [ $(php -r "echo PHP_MAJOR_VERSION;") = "7" ]; then \
     # Install the xdebug extension
-    pecl install xdebug-2.9.7 \
+    pecl install xdebug-2.9.7; \
+  else \
+    if [ $(php -r "echo PHP_MINOR_VERSION;") = "1" ]; then \
+      pecl install xdebug-3.1.4; \
+    fi \
 ;fi
 
 ###########################################################################
@@ -359,7 +361,7 @@ RUN if [ ${INSTALL_INOTIFY} = true ]; then \
 ###########################################################################
 
 ARG INSTALL_AST=true
-ARG AST_VERSION=1.0.3
+ARG AST_VERSION=1.0.16
 ENV AST_VERSION ${AST_VERSION}
 
 RUN if [ ${INSTALL_AST} = true ]; then \
@@ -886,9 +888,9 @@ USER root
 
 WORKDIR /tmp
 
-RUN curl -O https://download.libsodium.org/libsodium/releases/libsodium-1.0.18.tar.gz \
-  && tar xfvz libsodium-1.0.18.tar.gz \
-  && cd libsodium-1.0.18 \
+RUN curl -O https://download.libsodium.org/libsodium/releases/libsodium-1.0.18-stable.tar.gz \
+  && tar xfvz libsodium-1.0.18-stable.tar.gz \
+  && cd libsodium-stable \
   && ./configure \
   && make && make install \
   && pecl install -f libsodium

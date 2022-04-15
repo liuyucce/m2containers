@@ -150,9 +150,13 @@ RUN if [ ${INSTALL_PG_CLIENT} = true ]; then \
 
 ARG INSTALL_XDEBUG=true
 
-RUN if [ ${INSTALL_XDEBUG} = true ]; then \
-  # Install the xdebug extension
-  pecl install xdebug-2.9.7; \
+RUN if [ $(php -r "echo PHP_MAJOR_VERSION;") = "7" ]; then \
+    # Install the xdebug extension
+    pecl install xdebug-2.9.7; \
+  else \
+    if [ $(php -r "echo PHP_MINOR_VERSION;") = "1" ]; then \
+      pecl install xdebug-3.1.4; \
+    fi && \
   docker-php-ext-enable xdebug \
 ;fi
 
@@ -239,7 +243,7 @@ ARG INSTALL_XHPROF=true
 
 RUN if [ ${INSTALL_XHPROF} = true ]; then \
     # Install the php xhprof extension
-    curl -L -o /tmp/xhprof.tar.gz "https://github.com/tideways/php-xhprof-extension/archive/v5.0.2.tar.gz" \
+    curl -L -o /tmp/xhprof.tar.gz "https://github.com/tideways/php-xhprof-extension/archive/v5.0.4.tar.gz" \
     && mkdir -p xhprof \
     && tar -C xhprof -zxvf /tmp/xhprof.tar.gz --strip 1 \
     && ( \
@@ -319,18 +323,6 @@ ARG INSTALL_BCMATH=true
 RUN if [ ${INSTALL_BCMATH} = true ]; then \
     # Install the bcmath extension
     docker-php-ext-install bcmath \
-;fi
-
-###########################################################################
-# PHP Memcached:
-###########################################################################
-
-ARG INSTALL_MEMCACHED=true
-
-RUN if [ ${INSTALL_MEMCACHED} = true ]; then \
-    # Install the php memcached extension
-    pecl install memcached-3.1.3 \
-    && docker-php-ext-enable memcached \
 ;fi
 
 ###########################################################################

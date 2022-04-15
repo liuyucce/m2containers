@@ -1,4 +1,6 @@
 *.swp
+.idea
+.idea/*
 .env
 local/linux/volumes/*
 local/windows/volumes/*

@@ -1,6 +1,4 @@
-FROM rabbitmq:alpine
-
-LABEL maintainer="Mahmoud Zalt <mahmoud@zalt.me>"
+FROM rabbitmq:3.9.15-alpine
 
 RUN rabbitmq-plugins enable --offline rabbitmq_management rabbitmq_shovel rabbitmq_shovel_management
 
