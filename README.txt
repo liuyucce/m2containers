@@ -26,6 +26,10 @@ Xhgui profiling can be enabled by removing comment mark at nginx/conf_m2/magento
 
 Xhgui sampling rate can be changed in xhgui/config/config.php:63
 
+Default Xhgui dashboard URL is http://xhgui.local
+
+Enabling xhgui and xdebug at the same time will result in conflicts.
+
 Website domains should also be configured in /nginx/sites/app.conf when using nginx server.
 
 Magento 2 multi-websites can be enabled in /nginx/conf_m2/magento2.conf.
