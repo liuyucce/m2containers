@@ -4,10 +4,9 @@
         "meta": {
             "url": "/tasks?page=3",
             "simple_url": "/tasks",
-            "get": [],
             "env": [],
-            "SERVER": {"REQUEST_TIME": 1358787612},
-            "request_date": "2013-01-21"
+            "SERVER": {"REQUEST_TIME": 1358787612, "SERVER_NAME": "localhost", "REQUEST_METHOD": "GET"},
+            "request_ts_micro": {"sec": 1358787612, "usec": 123456}
         },
         "profile": {
             "main()==>strpos()": {
@@ -31,10 +30,9 @@
         "meta": {
             "url": "/tasks?page=2",
             "simple_url": "/tasks",
-            "get": [],
             "env": [],
-            "SERVER": {"REQUEST_TIME": 1358701212},
-            "request_date": "2013-01-20"
+            "SERVER": {"REQUEST_TIME": 1358701212, "SERVER_NAME": "localhost", "REQUEST_METHOD": "GET"},
+            "request_ts_micro": {"sec": 1358701212, "usec": 123456}
         },
         "profile": {
             "main()": {
@@ -93,10 +91,9 @@
         "meta": {
             "url": "/tasks?page=1",
             "simple_url": "/tasks",
-            "get": [],
             "env": [],
-            "SERVER": {"REQUEST_TIME": 1358614812},
-            "request_date": "2013-01-19"
+            "SERVER": {"REQUEST_TIME": 1358614812, "SERVER_NAME": "localhost", "REQUEST_METHOD": "GET"},
+            "request_ts_micro": {"sec": 1358614812, "usec": 123456}
         },
         "profile": {
             "main()": {
@@ -148,10 +145,9 @@
         "meta": {
             "url": "/?page=1",
             "simple_url": "/",
-            "get": [],
             "env": [],
-            "SERVER": {"REQUEST_TIME": 1358528412},
-            "request_date": "2013-01-18"
+            "SERVER": {"REQUEST_TIME": 1358528412, "SERVER_NAME": "localhost", "REQUEST_METHOD": "GET"},
+            "request_ts_micro": {"sec": 1358528412, "usec": 123456}
         },
         "profile": {
             "main()": {
@@ -182,10 +178,9 @@
         "meta": {
             "url": "/?page=1",
             "simple_url": "/",
-            "get": [],
             "env": [],
-            "SERVER": {"REQUEST_TIME": 1358614812},
-            "request_date": "2013-01-19"
+            "SERVER": {"REQUEST_TIME": 1358614812, "SERVER_NAME": "localhost", "REQUEST_METHOD": "GET"},
+            "request_ts_micro": {"sec": 1358614812, "usec": 123456}
         },
         "profile": {
             "main()": {
@@ -194,6 +189,71 @@
                 "cpu": 50000,
                 "mu": 355999,
                 "pmu": 375999
+            }
+        }
+    },
+    {
+        "_id": "aaaaaaaaaaaaaaaaaaaaaaaf",
+        "meta": {
+            "url": "/?page=1",
+            "simple_url": "/",
+            "get": [],
+            "env": [],
+            "SERVER": {"REQUEST_TIME": 1358614812, "SERVER_NAME": "localhost", "REQUEST_METHOD": "GET"},
+            "request_ts_micro": {"sec": 1358614812, "usec": 123456}
+        },
+        "profile": {
+            "main()": {
+                "unknown": 2
+            }
+        }
+    },
+    {
+        "_id": "aaaaaaaaaaaaaaaaaaaaaab0",
+        "meta": {
+            "url": "/?page=1",
+            "simple_url": "/",
+            "get": [],
+            "env": [],
+            "SERVER": {"REQUEST_TIME": 1358614812, "SERVER_NAME": "localhost", "REQUEST_METHOD": "GET"},
+            "request_ts_micro": {"sec": 1358614812, "usec": 123456}
+        },
+        "profile": {
+            "strpos()": "",
+            "drink_beer()==>lift_glass()": {},
+            "main()==>drink_beer()": null,
+            "main()==>drink_cerveza()": false,
+            "main()": {
+                "ct": 1,
+                "wt": 10,
+                "cpu": 12,
+                "mu": 3000,
+                "pmu": 3001
+            }
+        }
+    },
+    {
+        "_id": "aaaaaaaaaaaaaaaaaaaaaab1",
+        "meta": {
+            "url": "phpunit-7.5.phar --configuration phpunit.xml",
+            "get": [],
+            "env": [],
+            "SERVER": {
+                "PHP_SELF": "/usr/local/bin/phpunit-7.5.phar",
+                "DOCUMENT_ROOT": "",
+                "REQUEST_TIME_FLOAT": 1587223926.187821,
+                "REQUEST_TIME": 1587223926
+            },
+            "simple_url": "phpunit-7.5.phar --configuration phpunit.xml",
+            "request_ts_micro": {
+                "sec": "1587223926",
+                "usec": "1878"
+            }
+        },
+        "profile": {
+            "main()": {
+                "ct": 1,
+                "wt": 127
             }
         }
     }

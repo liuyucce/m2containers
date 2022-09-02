@@ -1,10 +1,10 @@
 <?php
-require dirname(__DIR__) . '/src/bootstrap.php';
 
-$di = new Xhgui_ServiceContainer();
+use XHGui\Application;
 
-$app = $di['app'];
+require dirname(__DIR__) . '/vendor/autoload.php';
 
-require XHGUI_ROOT_DIR . '/src/routes.php';
+session_start();
 
+$app = new Application();
 $app->run();

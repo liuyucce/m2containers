@@ -3,7 +3,8 @@
 /*
 !/composer.*
 !/config/
-!/docker/
+!/external/
 !/src/
+!/templates/
 !/vendor/
 !/webroot/

@@ -1,17 +1,28 @@
 <?php
 
-class Db_MapperTest extends PHPUnit\Framework\TestCase
+namespace XHGui\Test\Db;
+
+use DateInterval;
+use DateTime;
+use MongoDate;
+use XHGui\Db\Mapper;
+use XHGui\Test\TestCase;
+
+class MapperTest extends TestCase
 {
-    public function setUp()
+    /** @var Mapper */
+    private $mapper;
+
+    public function setUp(): void
     {
         parent::setUp();
-        $this->mapper = new Xhgui_Db_Mapper();
+        $this->mapper = new Mapper();
     }
 
-    public function testConvertConditions()
+    public function testConvertConditions(): void
     {
-        $opts = array(
-            'conditions' => array(
+        $opts = [
+            'conditions' => [
                 'simple_url' => '/tasks',
                 'url' => 'tasks',
                 'date_start' => '2013-01-20',
@@ -19,191 +30,190 @@ class Db_MapperTest extends PHPUnit\Framework\TestCase
                 'request_start' => '2013-02-13 12:22:00',
                 'request_end' => '2013-02-13 14:22:00',
                 'remote_addr' => '127.0.0.1',
-            )
-        );
+            ],
+        ];
         $result = $this->mapper->convert($opts);
-        $expected = array(
+        $expected = [
             'meta.simple_url' => '/tasks',
-            'meta.url' => array(
+            'meta.url' => [
                 '$regex' => 'tasks',
-                '$options' => 'i'
-            ),
-            'meta.request_date' => array(
+                '$options' => 'i',
+            ],
+            'meta.request_date' => [
                 '$gte' => '2013-01-20',
-                '$lte' => '2013-01-21'
-            ),
-            'meta.SERVER.REQUEST_TIME' => array(
+                '$lte' => '2013-01-21',
+            ],
+            'meta.SERVER.REQUEST_TIME' => [
                 '$gte' => strtotime($opts['conditions']['request_start']),
                 '$lte' => strtotime($opts['conditions']['request_end']),
-            ),
+            ],
             'meta.SERVER.REMOTE_ADDR' => '127.0.0.1',
-        );
+        ];
         $this->assertEquals($expected, $result['conditions']);
     }
 
-    public function testConvertConditionsLimit()
+    public function testConvertConditionsLimit(): void
     {
-        $opts = array(
-            'conditions' => array(
+        $opts = [
+            'conditions' => [
                 'simple_url' => '/tasks',
-                'limit' => 'P1D'
-            )
-        );
+                'limit' => 'P1D',
+            ],
+        ];
         $date = new DateTime();
         $date->sub(new DateInterval('P1D'));
 
         $result = $this->mapper->convert($opts);
-        $expected = array(
-            'meta.request_ts' => array(
+        $expected = [
+            'meta.request_ts' => [
                 '$gte' => new MongoDate($date->getTimestamp()),
-            ),
-            'meta.simple_url' => '/tasks'
-        );
+            ],
+            'meta.simple_url' => '/tasks',
+        ];
         $this->assertEquals($expected, $result['conditions']);
     }
 
-    public function testConvertConditionsLimitIgnoreDateStart()
+    public function testConvertConditionsLimitIgnoreDateStart(): void
     {
-        $opts = array(
-            'conditions' => array(
+        $opts = [
+            'conditions' => [
                 'simple_url' => '/tasks',
                 'limit' => 'P1D',
                 'date_start' => '2013-10-16',
-            )
-        );
+            ],
+        ];
         $date = new DateTime();
         $date->sub(new DateInterval('P1D'));
 
         $result = $this->mapper->convert($opts);
-        $expected = array(
-            'meta.request_ts' => array(
+        $expected = [
+            'meta.request_ts' => [
                 '$gte' => new MongoDate($date->getTimestamp()),
-            ),
-            'meta.simple_url' => '/tasks'
-        );
+            ],
+            'meta.simple_url' => '/tasks',
+        ];
         $this->assertEquals($expected, $result['conditions']);
     }
 
-    public function testConditionsPartial()
+    public function testConditionsPartial(): void
     {
-        $result = $this->mapper->convert(array(
-            'conditions' => array(
+        $result = $this->mapper->convert([
+            'conditions' => [
                 'date_start' => '2013-01-15',
-            )
-        ));
-        $expected = array(
-            'meta.request_date' => array(
+            ],
+        ]);
+        $expected = [
+            'meta.request_date' => [
                 '$gte' => '2013-01-15',
-            )
-        );
+            ],
+        ];
         $this->assertEquals($expected, $result['conditions']);
 
-        $result = $this->mapper->convert(array(
-            'conditions' => array(
+        $result = $this->mapper->convert([
+            'conditions' => [
                 'date_end' => '2013-01-20',
-            )
-        ));
-        $expected = array(
-            'meta.request_date' => array(
-                '$lte' => '2013-01-20'
-            )
-        );
+            ],
+        ]);
+        $expected = [
+            'meta.request_date' => [
+                '$lte' => '2013-01-20',
+            ],
+        ];
         $this->assertEquals($expected, $result['conditions']);
 
-        $result = $this->mapper->convert(array(
-            'conditions' => array(
+        $result = $this->mapper->convert([
+            'conditions' => [
                 'date_start' => '2013-01-15',
                 'date_end' => '2013-01-20',
-                'url' => 'tasks'
-            )
-        ));
-        $expected = array(
-            'meta.url' => array(
+                'url' => 'tasks',
+            ],
+        ]);
+        $expected = [
+            'meta.url' => [
                 '$regex' => 'tasks',
-                '$options' => 'i'
-            ),
-            'meta.request_date' => array(
+                '$options' => 'i',
+            ],
+            'meta.request_date' => [
                 '$gte' => '2013-01-15',
-                '$lte' => '2013-01-20'
-            )
-        );
+                '$lte' => '2013-01-20',
+            ],
+        ];
         $this->assertEquals($expected, $result['conditions']);
     }
 
-    public function testConvertSort()
+    public function testConvertSort(): void
     {
-        $options = array(
+        $options = [
             'sort' => 'time',
-        );
+        ];
         $result = $this->mapper->convert($options);
         $this->assertEquals(
-            array('meta.SERVER.REQUEST_TIME' => -1),
+            ['meta.SERVER.REQUEST_TIME' => -1],
             $result['sort']
         );
 
-        $options = array(
+        $options = [
             'sort' => 'wt',
-        );
+        ];
         $result = $this->mapper->convert($options);
         $this->assertEquals(
-            array('profile.main().wt' => -1),
+            ['profile.main().wt' => -1],
             $result['sort']
         );
 
-        $options = array(
+        $options = [
             'sort' => 'wt',
-            'direction' => 'asc'
-        );
+            'direction' => 'asc',
+        ];
         $result = $this->mapper->convert($options);
         $this->assertEquals(
-            array('profile.main().wt' => 1),
+            ['profile.main().wt' => 1],
             $result['sort']
         );
         $this->assertEquals('asc', $result['direction']);
 
-        $options = array(
+        $options = [
             'sort' => 'wt',
-            'direction' => 'desc'
-        );
+            'direction' => 'desc',
+        ];
         $result = $this->mapper->convert($options);
         $this->assertEquals(
-            array('profile.main().wt' => -1),
+            ['profile.main().wt' => -1],
             $result['sort']
         );
         $this->assertEquals('desc', $result['direction']);
 
-        $options = array(
+        $options = [
             'sort' => 'wt',
-            'direction' => 'farts'
-        );
+            'direction' => 'farts',
+        ];
         $result = $this->mapper->convert($options);
         $this->assertEquals(
-            array('profile.main().wt' => -1),
+            ['profile.main().wt' => -1],
             $result['sort']
         );
         $this->assertEquals('desc', $result['direction']);
 
-        $options = array(
+        $options = [
             'sort' => 'barf',
-        );
+        ];
         $result = $this->mapper->convert($options);
         $this->assertEquals(
-            array('meta.SERVER.REQUEST_TIME' => -1),
+            ['meta.SERVER.REQUEST_TIME' => -1],
             $result['sort']
         );
     }
 
-    public function testConvertPerPage()
+    public function testConvertPerPage(): void
     {
-        $options = array();
+        $options = [];
         $result = $this->mapper->convert($options);
         $this->assertEquals(25, $result['perPage']);
 
-        $options = array(
-            'perPage' => 1
-        );
+        $options = [
+            'perPage' => 1,
+        ];
         $result = $this->mapper->convert($options);
         $this->assertEquals(1, $result['perPage']);
     }
-
 }

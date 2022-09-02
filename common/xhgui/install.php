@@ -7,7 +7,8 @@
  * - Downloads composer.
  * - Installs dependencies.
  */
-function out($out) {
+function out($out): void
+{
     if (is_string($out)) {
         echo $out . "\n";
     }
@@ -18,12 +19,13 @@ function out($out) {
     }
 }
 
-function runProcess($cmd, $input = null) {
-    $descriptorSpec = array(
-        0 => array('pipe', 'r'),
-        1 => array('pipe', 'w'),
-        2 => array('pipe', 'w')
-    );
+function runProcess($cmd, $input = null)
+{
+    $descriptorSpec = [
+        0 => ['pipe', 'r'],
+        1 => ['pipe', 'w'],
+        2 => ['pipe', 'w'],
+    ];
     $process = proc_open(
         $cmd,
         $descriptorSpec,
@@ -45,6 +47,7 @@ function runProcess($cmd, $input = null) {
     if (strlen($error)) {
         return 'ERROR - ' . $error;
     }
+
     return $output;
 }
 
@@ -52,12 +55,12 @@ function runProcess($cmd, $input = null) {
  * Composer setup.
  */
 if (!file_exists(__DIR__ . '/composer.phar')) {
-    out("Downloading composer.");
+    out('Downloading composer.');
     $cmd = "php -r \"eval('?>'.file_get_contents('https://getcomposer.org/installer'));\"";
     $output = runProcess($cmd);
     out($output);
 } else {
-    out("Composer already installed.");
+    out('Composer already installed.');
 }
 
 if (!file_exists(__DIR__ . '/composer.phar')) {
@@ -71,11 +74,10 @@ if (!file_exists(__DIR__ . '/composer.phar')) {
     exit(9);
 }
 
-out("Installing dependencies.");
+out('Installing dependencies.');
 $cmd = 'php ' . __DIR__ . '/composer.phar install --prefer-dist';
 $output = runProcess($cmd);
 out($output);
-
 
 /**
  * File permissions.
@@ -87,13 +89,13 @@ $worldWritable = bindec('0000000111');
 $currentPerms = octdec(substr(sprintf('%o', fileperms('./cache')), -4));
 
 if (($currentPerms & $worldWritable) != $worldWritable) {
-	out('Attempting to set permissions on cache/');
-	$result = chmod(__DIR__ . '/cache', $currentPerms | $worldWritable);
-	if ($result) {
-		out('Permissions set on cache/');
-	} else {
-		out('Failed to set permissions on cache/ you must do it yourself.');
-	}
+    out('Attempting to set permissions on cache/');
+    $result = chmod(__DIR__ . '/cache', $currentPerms | $worldWritable);
+    if ($result) {
+        out('Permissions set on cache/');
+    } else {
+        out('Failed to set permissions on cache/ you must do it yourself.');
+    }
 } else {
-	out('Permissions on cache/ are ok.');
+    out('Permissions on cache/ are ok.');
 }

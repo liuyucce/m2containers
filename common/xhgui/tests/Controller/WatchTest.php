@@ -1,54 +1,42 @@
 <?php
-use Slim\Environment;
 
-class Controller_WatchTest extends PHPUnit\Framework\TestCase
+namespace XHGui\Test\Controller;
+
+use Slim\Http\Environment;
+use XHGui\Test\TestCase;
+
+class WatchTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
-        Environment::mock(array(
+        $this->skipIfPdo('Watchers not implemented');
+
+        $this->env = Environment::mock([
            'SCRIPT_NAME' => 'index.php',
-           'PATH_INFO' => '/watch'
-        ));
-        $di = Xhgui_ServiceContainer::instance();
-        unset($di['app']);
+           'PATH_INFO' => '/watch',
+        ]);
+    }
 
-        $mock = $this->getMockBuilder('Slim\Slim')
-            ->setMethods(array('redirect', 'render', 'urlFor'))
-            ->setConstructorArgs(array($di['config']))
-            ->getMock();
-        $di['app'] = $di->share(function ($c) use ($mock) {
-            return $mock;
-        });
-        $this->watches = $di['watchController'];
-        $this->app = $di['app'];
-        $this->searcher = $di['searcher'];
+    public function testGet(): void
+    {
         $this->searcher->truncateWatches();
-    }
-
-    public function testGet()
-    {
         $this->watches->get();
-        $result = $this->watches->templateVars();
-        $this->assertEquals(array(), $result['watched']);
+        $result = $this->view->all();
+        $this->assertEquals([], $result['watched']);
     }
 
-    public function testPostAdd()
+    public function testPostAdd(): void
     {
-        $_POST = array(
-            'watch' => array(
-                array('name' => 'strlen'),
-                array('name' => 'strpos')
-            )
-        );
-        $this->app->expects($this->once())
-            ->method('urlFor')
-            ->with('watch.list');
+        $this->searcher->truncateWatches();
+        $request = $this->createPostRequest([
+            'watch' => [
+                ['name' => 'strlen'],
+                ['name' => 'strpos'],
+            ],
+        ]);
 
-        $this->app->expects($this->once())
-            ->method('redirect');
-
-        $this->watches->post();
+        $this->watches->post($request);
         $result = $this->searcher->getAllWatches();
 
         $this->assertCount(2, $result);
@@ -56,37 +44,39 @@ class Controller_WatchTest extends PHPUnit\Framework\TestCase
         $this->assertEquals('strpos', $result[1]['name']);
     }
 
-    public function testPostModify()
+    public function testPostModify(): void
     {
-        $this->searcher->saveWatch(array('name' => 'strlen'));
-        $saved = $this->searcher->getAllWatches();
+        $searcher = $this->searcher->truncateWatches();
+        $searcher->saveWatch(['name' => 'strlen']);
+        $saved = $searcher->getAllWatches();
 
-        $_POST = array(
-            'watch' => array(
-                array('name' => 'strpos', '_id' => $saved[0]['_id'])
-            )
-        );
-        $this->watches->post();
-        $result = $this->searcher->getAllWatches();
+        $request = $this->createPostRequest([
+            'watch' => [
+                ['name' => 'strpos', '_id' => $saved[0]['_id']],
+            ],
+        ]);
+        $this->watches->post($request);
+        $result = $searcher->getAllWatches();
 
         $this->assertCount(1, $result);
         $this->assertEquals('strpos', $result[0]['name']);
     }
 
-    public function testPostDelete()
+    public function testPostDelete(): void
     {
-        $this->searcher->saveWatch(array('name' => 'strlen'));
+        $this->searcher->truncateWatches();
+        $this->searcher->saveWatch(['name' => 'strlen']);
         $saved = $this->searcher->getAllWatches();
 
-        $_POST = array(
-            'watch' => array(
-                array('removed' => 1, 'name' => 'strpos', '_id' => $saved[0]['_id'])
-            )
-        );
-        $this->watches->post();
+        $request = $this->createPostRequest([
+            'watch' => [
+                ['removed' => 1, 'name' => 'strpos', '_id' => $saved[0]['_id']],
+            ],
+        ]);
+
+        $this->watches->post($request);
         $result = $this->searcher->getAllWatches();
 
         $this->assertCount(0, $result);
     }
-
 }
