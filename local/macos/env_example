@@ -70,7 +70,7 @@ SHELL_OH_MY_ZSH_ALIASES=false
 
 ### WORKSPACE ##########################################################################################################
 
-WORKSPACE_COMPOSER_AUTH=false
+WORKSPACE_COMPOSER_AUTH=
 WORKSPACE_COMPOSER_GLOBAL_INSTALL=true
 WORKSPACE_COMPOSER_REPO_PACKAGIST=false
 WORKSPACE_PUID=1000
