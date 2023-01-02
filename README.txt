@@ -22,13 +22,18 @@ Import /local/<your_env>/volumes/ssl/certs/ca.pem as root certificate for https 
 
 xDebug can be enabled by uncommenting in ext-xdebug.ini in workspace and php-fpm. You canot use vim but editors that won't create a new file after saving like nano to edit the ext-xdebug.ini files to enable or disable xdebug.
 
-Xhgui profiling can be enabled by removing comment mark at nginx/conf_m2/magento2.conf:169 and uncomment workspace/tideways_xhprof.ini or php-fpm/tideways_xhprof.ini to enable tideways module. Note that after containers have been started up, you canot use vim but editors that won't create a new file after saving like nano to edit the config files to enable or disable tideways.
+Xhgui profiling can be enabled by removing comment mark at nginx/conf_m2/magento2.conf:169 and uncomment workspace/xhprof.ini or php-fpm/xhprof.ini to enable tideways module. Note that after containers have been started up, you canot use vim but editors that won't create a new file after saving like nano to edit the config files to enable or disable xhprof.
 
 Xhgui sampling rate can be changed in xhgui/config/config.php:63
 
 Default Xhgui dashboard URL is http://xhgui.local
 
-Enabling xhgui and xdebug at the same time will result in conflicts.
+To use xhprof profiling, run command below in workspace as user laradock.
+composer require perftools/xhgui-collector alcaeus/mongo-php-adapter mongodb/mongodb:1.15.0
+
+Add __serialize and __unserialize to vendor/alcaeus/mongo-php-adapter/lib/Mongo/MongoId.php by copy&pate serialize and unserialize.
+
+Copy common/config/xhgui/config.php to vendor/perftools/xhgui-collector/config/config.php
 
 Website domains should also be configured in /nginx/sites/app.conf when using nginx server.
 

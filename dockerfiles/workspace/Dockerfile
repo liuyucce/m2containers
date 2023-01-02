@@ -231,7 +231,7 @@ ARG INSTALL_MONGO=true
 
 RUN if [ ${INSTALL_MONGO} = true ]; then \
     # Install the mongodb extension
-    pecl install mongodb && \
+    pecl install mongodb-1.15.0 && \
     echo "extension=mongodb.so" >> /etc/php/${PHP_VERSION}/mods-available/mongodb.ini && \
     ln -s /etc/php/${PHP_VERSION}/mods-available/mongodb.ini /etc/php/${PHP_VERSION}/cli/conf.d/30-mongodb.ini \
 ;fi
@@ -867,17 +867,12 @@ RUN if [ ${INSTALL_PROTOC} = true ]; then \
 
 USER root
 
-ARG INSTALL_TIDEWAYS_XHPROF=true
+ARG INSTALL_XHPROF=true
 
 WORKDIR /tmp
 
-RUN if [ ${INSTALL_TIDEWAYS_XHPROF} = true ]; then \
-    git clone https://github.com/tideways/php-profiler-extension.git && \
-    cd php-profiler-extension && \
-    phpize && \
-    ./configure --with-php-config=`which php-config` && \
-    make && \
-    make install \
+RUN if [ ${INSTALL_XHPROF} = true ]; then \
+    pecl install xhprof-2.3.9 \
 ;fi
 
 ###########################################################################

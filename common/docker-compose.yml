@@ -49,6 +49,13 @@ services:
     ports:
       - "${PHP_FPM_SSH_PORT}:22"
 
+### PHP-FPM Container #######################################
+  xhgui:
+    build:
+      context: ./config/xhgui
+      args:
+        - PHP_VERSION=7.4
+
 ### SSL ##################################
   ssl:
     build:

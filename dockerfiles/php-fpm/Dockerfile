@@ -231,7 +231,7 @@ ARG INSTALL_MONGO=true
 
 RUN if [ ${INSTALL_MONGO} = true ]; then \
     # Install the mongodb extension
-    pecl install mongodb && \
+    pecl install mongodb-1.15.0 && \
     docker-php-ext-enable mongodb \
 ;fi
 
@@ -243,18 +243,7 @@ ARG INSTALL_XHPROF=true
 
 RUN if [ ${INSTALL_XHPROF} = true ]; then \
     # Install the php xhprof extension
-    curl -L -o /tmp/xhprof.tar.gz "https://github.com/tideways/php-xhprof-extension/archive/v5.0.4.tar.gz" \
-    && mkdir -p xhprof \
-    && tar -C xhprof -zxvf /tmp/xhprof.tar.gz --strip 1 \
-    && ( \
-        cd xhprof \
-        && phpize \
-        && ./configure \
-        && make \
-        && make install \
-    ) \
-    && rm -r xhprof \
-    && rm /tmp/xhprof.tar.gz \
+    pecl install xhprof-2.3.9 \
 ;fi
 
 ###########################################################################

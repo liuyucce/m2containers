@@ -10,7 +10,7 @@ services:
       - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER} # will be mounted on to the value of APP_CODE_PATH_CONTAINER
       - ./config/workspace/ext-xdebug.ini:/etc/php/${PHP_VERSION}/cli/conf.d/20-xdebug.ini
       - ./config/workspace/xdebug.ini:/etc/php/${PHP_VERSION}/cli/conf.d/xdebug.ini
-      - ./config/workspace/ext-tideways_xhprof.ini:/etc/php/${PHP_VERSION}/cli/conf.d/tideways_xhprof.ini
+      - ./config/workspace/ext-xhprof.ini:/etc/php/${PHP_VERSION}/cli/conf.d/xhprof.ini
       - ./volumes/shared/log/magento/:/var/www/app/var/log
       - ./volumes/composer:/home/laradock/.composer
       - ./volumes/ssh:/home/laradock/.ssh
@@ -24,13 +24,22 @@ services:
       service: php-fpm
     volumes:
       - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER} # will be mounted on to the value of APP_CODE_PATH_CONTAINER
-      - ./config/php-fpm/php${PHP_VERSION}.ini:/etc/php/8.1/cli/php.ini
+      - ./config/php-fpm/php${PHP_VERSION}.ini:/etc/php/${PHP_VERSION}/cli/php.ini
       - ./config/php-fpm/ext-xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
       - ./config/php-fpm/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
-      - ./config/php-fpm/ext-tideways_xhprof.ini:/usr/local/etc/php/conf.d/tideways_xhprof.ini
-      - ../../common/xhgui:${XHGUI_CODE_PATH_CONTAINER}
+      - ./config/php-fpm/ext-xhprof.ini:/usr/local/etc/php/conf.d/xhprof.ini
       - ../../common/config/varnish/health_check.php:${DEFAULT_PATH}/health_check.php
       - ./volumes/shared/log/magento/:/var/www/app/var/log
+    extra_hosts:
+      - "host.docker.internal:${DOCKER_HOST_IP}"
+
+### XHGUI Container #######################################
+  xhgui:
+    extends:
+      file: ../../common/docker-compose.yml
+      service: xhgui
+    volumes:
+      - ../../common/xhgui:${XHGUI_CODE_PATH_CONTAINER}
     extra_hosts:
       - "host.docker.internal:${DOCKER_HOST_IP}"
 
