@@ -110,14 +110,6 @@ RUN if [ ${INSTALL_SSH2} = true ]; then \
 ;fi
 
 ###########################################################################
-# XML
-###########################################################################
-RUN if [ $(php -r "echo PHP_MINOR_VERSION;") = "2" ]; then \
-  # Install the PHP SSH2 extension
-  apt-get -y install php-xml php7.2-xml \
-;fi
-
-###########################################################################
 # SOAP:
 ###########################################################################
 
@@ -148,7 +140,7 @@ RUN if [ ${INSTALL_LDAP} = true ]; then \
 ARG INSTALL_SMB=false
 
 RUN if [ ${INSTALL_SMB} = true ]; then \
-    apt-get install -y smbclient php-smbclient coreutils \
+    apt-get install -y smbclient php${PHP_VERSION}-smbclient coreutils \
 ;fi
 
 ###########################################################################
@@ -171,7 +163,7 @@ RUN if [ $(php -r "echo PHP_MAJOR_VERSION;") = "7" ]; then \
     # Install the xdebug extension
     pecl install xdebug-2.9.7; \
   else \
-    if [ $(php -r "echo PHP_MINOR_VERSION;") = "1" ]; then \
+    if [ $(php -r "echo PHP_MAJOR_VERSION;") = "8" ]; then \
       pecl install xdebug-3.1.4; \
     fi \
 ;fi
@@ -289,7 +281,7 @@ ARG INSTALL_GEARMAN=false
 RUN if [ ${INSTALL_GEARMAN} = true ]; then \
     add-apt-repository -y ppa:ondrej/pkg-gearman && \
     apt-get update && \
-    apt-get install php-gearman -y  \
+    apt-get install php${PHP_VERSION}-gearman -y  \
 ;fi
 
 ###########################################################################
@@ -300,7 +292,7 @@ ARG INSTALL_PHPREDIS=true
 
 RUN if [ ${INSTALL_PHPREDIS} = true ]; then \
     apt-get update -yqq && \
-    apt-get install -yqq php-redis \
+    apt-get install -yqq php${PHP_VERSION}-redis \
 ;fi
 
 ###########################################################################
@@ -361,7 +353,7 @@ RUN if [ ${INSTALL_INOTIFY} = true ]; then \
 ###########################################################################
 
 ARG INSTALL_AST=true
-ARG AST_VERSION=1.0.16
+ARG AST_VERSION=1.1.0
 ENV AST_VERSION ${AST_VERSION}
 
 RUN if [ ${INSTALL_AST} = true ]; then \
@@ -421,31 +413,18 @@ ARG INSTALL_AEROSPIKE=false
 RUN set -xe; \
   if [ ${INSTALL_AEROSPIKE} = true ]; then \
     # Fix dependencies for PHPUnit within aerospike extension
-    apt-get -y install sudo wget && \
+    apt-get -y install sudo wget \
     # Install the php aerospike extension
-    if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
-      curl -L -o /tmp/aerospike-client-php.tar.gz https://github.com/aerospike/aerospike-client-php5/archive/master.tar.gz; \
-    else \
-      curl -L -o /tmp/aerospike-client-php.tar.gz https://github.com/aerospike/aerospike-client-php/archive/master.tar.gz; \
-    fi \
+    && curl -L -o /tmp/aerospike-client-php.tar.gz https://github.com/aerospike/aerospike-client-php/archive/master.tar.gz \
     && mkdir -p /tmp/aerospike-client-php \
     && tar -C /tmp/aerospike-client-php -zxvf /tmp/aerospike-client-php.tar.gz --strip 1 \
     && \
-      if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
-        ( \
-            cd /tmp/aerospike-client-php/src/aerospike \
-            && phpize \
-            && ./build.sh \
-            && make install \
-        ) \
-      else \
         ( \
             cd /tmp/aerospike-client-php/src \
             && phpize \
             && ./build.sh \
             && make install \
         ) \
-      fi \
     && rm /tmp/aerospike-client-php.tar.gz \
     && echo 'extension=aerospike.so' >> /etc/php/${PHP_VERSION}/cli/conf.d/aerospike.ini \
     && echo 'aerospike.udf.lua_system_path=/usr/local/aerospike/lua' >> /etc/php/${PHP_VERSION}/cli/conf.d/aerospike.ini \
@@ -482,13 +461,9 @@ RUN if [ ${INSTALL_OCI8} = true ]; then \
   # Install PHP extensions deps
   && apt-get update \
       && apt-get install --no-install-recommends -y \
-          libaio-dev && \
+          libaio-dev \
   # Install PHP extensions
-  if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
-    echo 'instantclient,/opt/oracle/instantclient_12_1/' | pecl install oci8-2.0.10; \
-  else \
-    echo 'instantclient,/opt/oracle/instantclient_12_1/' | pecl install oci8; \
-  fi \
+  && echo 'instantclient,/opt/oracle/instantclient_12_1/' | pecl install oci8 \
   && echo "extension=oci8.so" >> /etc/php/${PHP_VERSION}/cli/php.ini \
   && php -m | grep -q 'oci8' \
 ;fi
@@ -505,12 +480,8 @@ RUN set -xe; \
   if [ ${INSTALL_V8JS} = true ]; then \
     add-apt-repository -y ppa:pinepain/libv8-archived \
     && apt-get update -yqq \
-    && apt-get install -y libv8-5.4 && \
-    if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
-      pecl install v8js-0.6.4; \
-    else \
-      pecl install v8js; \
-    fi \
+    && apt-get install -y libv8-5.4 \
+    && pecl install v8js \
     && echo "extension=v8js.so" >> /etc/php/${PHP_VERSION}/cli/php.ini \
     && php -m | grep -q 'v8js' \
   ;fi
@@ -568,11 +539,6 @@ ARG INSTALL_MSSQL=false
 
 RUN set -eux; \
   if [ ${INSTALL_MSSQL} = true ]; then \
-    if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
-      apt-get -y install php5.6-sybase freetds-bin freetds-common libsybdb5 \
-      && php -m | grep -q 'mssql' \
-      && php -m | grep -q 'pdo_dblib' \
-    ;else \
       ###########################################################################
       #  The following steps were taken from
       #  https://github.com/Microsoft/msphpsql/wiki/Install-and-configuration
@@ -596,7 +562,6 @@ RUN set -eux; \
       echo "extension=pdo_sqlsrv.so" > /etc/php/${PHP_VERSION}/cli/conf.d/20-pdo_sqlsrv.ini \
       && php -m | grep -q 'sqlsrv' \
       && php -m | grep -q 'pdo_sqlsrv' \
-    ;fi \
   ;fi
 
 ###########################################################################
@@ -651,7 +616,7 @@ USER root
 ARG INSTALL_IMAGEMAGICK=true
 
 RUN if [ ${INSTALL_IMAGEMAGICK} = true ]; then \
-    apt-get install -y imagemagick php-imagick \
+    apt-get install -y imagemagick php${PHP_VERSION}-imagick \
 ;fi
 
 ###########################################################################
@@ -722,11 +687,7 @@ ARG INSTALL_YAML=false
 
 RUN if [ ${INSTALL_YAML} = true ]; then \
     apt-get install libyaml-dev -y ; \
-    if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
-        pecl install -a yaml-1.3.2; \
-    else \
-        pecl install yaml; \
-    fi && \
+    pecl install yaml \
     echo "extension=yaml.so" >> /etc/php/${PHP_VERSION}/mods-available/yaml.ini && \
     ln -s /etc/php/${PHP_VERSION}/mods-available/yaml.ini /etc/php/${PHP_VERSION}/cli/conf.d/35-yaml.ini \
 ;fi
@@ -789,7 +750,7 @@ RUN if [ ${INSTALL_WKHTMLTOPDF} = true ]; then \
 ARG INSTALL_MAILPARSE=false
 
 RUN if [ ${INSTALL_MAILPARSE} = true ]; then \
-    apt-get install -yqq php-mailparse \
+    apt-get install -yqq php${PHP_VERSION}-mailparse \
 ;fi
 
 ###########################################################################

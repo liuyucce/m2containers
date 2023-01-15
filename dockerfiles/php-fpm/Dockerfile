@@ -154,7 +154,7 @@ RUN if [ $(php -r "echo PHP_MAJOR_VERSION;") = "7" ]; then \
     # Install the xdebug extension
     pecl install xdebug-2.9.7; \
   else \
-    if [ $(php -r "echo PHP_MINOR_VERSION;") = "1" ]; then \
+    if [ $(php -r "echo PHP_MAJOR_VERSION;") = "8" ]; then \
       pecl install xdebug-3.1.4; \
     fi && \
   docker-php-ext-enable xdebug \
