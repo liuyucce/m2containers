@@ -159,8 +159,7 @@ RUN cp -rf /root/.ssh /home/laradock \
 USER laradock
 
 # Check if NVM needs to be installed
-ARG NODE_VERSION=stable
-ENV NODE_VERSION ${NODE_VERSION}
+ARG NODE_VERSION=${NODE_VERSION}
 ARG INSTALL_NODE=false
 ARG INSTALL_NPM_GULP=false
 ARG INSTALL_NPM_BOWER=false
