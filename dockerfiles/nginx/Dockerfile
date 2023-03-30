@@ -1,4 +1,4 @@
-FROM nginx:alpine
+FROM nginx:1.18-alpine
 
 LABEL maintainer="Yuchen Liu"
 

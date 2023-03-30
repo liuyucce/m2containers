@@ -155,7 +155,7 @@ RUN if [ $(php -r "echo PHP_MAJOR_VERSION;") = "7" ]; then \
     pecl install xdebug-2.9.7; \
   else \
     if [ $(php -r "echo PHP_MAJOR_VERSION;") = "8" ]; then \
-      pecl install xdebug-3.1.4; \
+      pecl install xdebug-3.2.1; \
     fi && \
   docker-php-ext-enable xdebug \
 ;fi
@@ -382,13 +382,9 @@ RUN if [ ${INSTALL_OCI8} = true ]; then \
     && apt-get update \
         && apt-get install --no-install-recommends -y \
             libaio-dev \
-            freetds-dev && \
+            freetds-dev \
     # Install PHP extensions
-    if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
-      echo 'instantclient,/opt/oracle/instantclient_12_1/' | pecl install oci8-2.0.10; \
-    else \
-      echo 'instantclient,/opt/oracle/instantclient_12_1/' | pecl install oci8; \
-    fi \
+    && echo 'instantclient,/opt/oracle/instantclient_12_1/' | pecl install oci8 \
         && docker-php-ext-configure pdo_oci --with-pdo-oci=instantclient,/opt/oracle/instantclient_12_1,12.1 \
         && docker-php-ext-configure pdo_dblib --with-libdir=/lib/x86_64-linux-gnu \
         && docker-php-ext-install \
@@ -483,37 +479,29 @@ ARG INSTALL_MSSQL=false
 
 RUN set -eux; \
   if [ ${INSTALL_MSSQL} = true ]; then \
-    if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
-      apt-get -y install freetds-dev libsybdb5 \
-      && ln -s /usr/lib/x86_64-linux-gnu/libsybdb.so /usr/lib/libsybdb.so \
-      && docker-php-ext-install mssql pdo_dblib \
-      && php -m | grep -q 'mssql' \
-      && php -m | grep -q 'pdo_dblib' \
+    ###########################################################################
+    # Ref from https://github.com/Microsoft/msphpsql/wiki/Dockerfile-for-adding-pdo_sqlsrv-and-sqlsrv-to-official-php-image
+    ###########################################################################
+    # Add Microsoft repo for Microsoft ODBC Driver 13 for Linux
+    apt-get install -y apt-transport-https gnupg \
+    && curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
+    && curl https://packages.microsoft.com/config/debian/9/prod.list > /etc/apt/sources.list.d/mssql-release.list \
+    && apt-get update -yqq \
+    # Install Dependencies
+    && ACCEPT_EULA=Y apt-get install -y unixodbc unixodbc-dev libgss3 odbcinst msodbcsql17 locales \
+    && echo "en_US.UTF-8 UTF-8" > /etc/locale.gen \
+    # link local aliases
+    && ln -sfn /etc/locale.alias /usr/share/locale/locale.alias \
+    && locale-gen \
+    # Install pdo_sqlsrv and sqlsrv from PECL. Replace pdo_sqlsrv-4.1.8preview with preferred version.
+    && if [ $(php -r "echo PHP_MINOR_VERSION;") = "0" ]; then \
+      pecl install pdo_sqlsrv-5.3.0 sqlsrv-5.3.0 \
     ;else \
-      ###########################################################################
-      # Ref from https://github.com/Microsoft/msphpsql/wiki/Dockerfile-for-adding-pdo_sqlsrv-and-sqlsrv-to-official-php-image
-      ###########################################################################
-      # Add Microsoft repo for Microsoft ODBC Driver 13 for Linux
-      apt-get install -y apt-transport-https gnupg \
-      && curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
-      && curl https://packages.microsoft.com/config/debian/9/prod.list > /etc/apt/sources.list.d/mssql-release.list \
-      && apt-get update -yqq \
-      # Install Dependencies
-      && ACCEPT_EULA=Y apt-get install -y unixodbc unixodbc-dev libgss3 odbcinst msodbcsql17 locales \
-      && echo "en_US.UTF-8 UTF-8" > /etc/locale.gen \
-      # link local aliases
-      && ln -sfn /etc/locale.alias /usr/share/locale/locale.alias \
-      && locale-gen \
-      # Install pdo_sqlsrv and sqlsrv from PECL. Replace pdo_sqlsrv-4.1.8preview with preferred version.
-      && if [ $(php -r "echo PHP_MINOR_VERSION;") = "0" ]; then \
-        pecl install pdo_sqlsrv-5.3.0 sqlsrv-5.3.0 \
-      ;else \
-        pecl install pdo_sqlsrv sqlsrv \
-      ;fi \
-      && docker-php-ext-enable pdo_sqlsrv sqlsrv \
-      && php -m | grep -q 'pdo_sqlsrv' \
-      && php -m | grep -q 'sqlsrv' \
+      pecl install pdo_sqlsrv sqlsrv \
     ;fi \
+    && docker-php-ext-enable pdo_sqlsrv sqlsrv \
+    && php -m | grep -q 'pdo_sqlsrv' \
+    && php -m | grep -q 'sqlsrv' \
   ;fi
 
 ###########################################################################
@@ -612,12 +600,8 @@ RUN if [ $INSTALL_PHALCON = true ]; then \
 ARG INSTALL_APCU=false
 
 RUN if [ ${INSTALL_APCU} = true ]; then \
-    if [ $(php -r "echo PHP_MAJOR_VERSION;") = "5" ]; then \
-        pecl install -a apcu-4.0.11; \
-    else \
-        pecl install apcu; \
-    fi && \
-    docker-php-ext-enable apcu \
+    pecl install apcu \
+    && docker-php-ext-enable apcu \
 ;fi
 
 ###########################################################################
