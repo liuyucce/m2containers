@@ -140,20 +140,20 @@ POSTFIX_SMTP_USERNAME=
 POSTFIX_SMTP_PASSWORD=
 POSTFIX_PORT=25
 
-### ELK Stack #########################################################################################################
+### Opensearch Stack #########################################################################################################
 
-ELK_VERSION=7.9.3
+OPS_VERSION=2.5
 
-### ELASTICSEARCH ######################################################################################################
+### OPENSEARCH ######################################################################################################
 
-ELASTICSEARCH_HOST_HTTP_PORT=9200
-ELASTICSEARCH_HOST_TRANSPORT_PORT=9300
-ELASTICSEARCH_INSTALL_PHONETIC=true
-ELASTICSEARCH_INSTALL_ICU=false
+OPENSEARCH_HOST_HTTP_PORT=9200
+OPENSEARCH_HOST_TRANSPORT_PORT=9600
+OPENSEARCH_INSTALL_PHONETIC=true
+OPENSEARCH_INSTALL_ICU=false
 
-### KIBANA #############################################################################################################
+### OPENSEARCH DASHBOARDS ##############################################################################################
 
-KIBANA_HTTP_PORT=5601
+OPENSERCH_DASHBOARDS_HTTP_PORT=5601
 
 ### RABBITMQ ###########################################################################################################
 

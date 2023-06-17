@@ -1,4 +1,4 @@
-FROM rabbitmq:3.9.15-alpine
+FROM rabbitmq:3.11.18-alpine
 
 RUN rabbitmq-plugins enable --offline rabbitmq_management rabbitmq_shovel rabbitmq_shovel_management
 
