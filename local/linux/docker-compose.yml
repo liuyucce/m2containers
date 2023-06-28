@@ -108,8 +108,11 @@ services:
         - OPS_VERSION=${OPS_VERSION}
         - INSTALL_PHONETIC=${OPENSEARCH_INSTALL_PHONETIC}
         - INSTALL_ICU=${OPENSEARCH_INSTALL_ICU}
+#    volumes:
+#      - ./config/opensearch/opensearch.yml:/usr/share/opensearch/config/opensearch.yml
     environment:
       - discovery.type=single-node
+      - plugins.security.disabled=true
     ulimits:
       memlock:
         soft: -1

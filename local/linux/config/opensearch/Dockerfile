@@ -1,4 +1,4 @@
-ARG OPS_VERSION=2.5
+ARG OPS_VERSION=2.5.0
 FROM opensearchproject/opensearch:${OPS_VERSION}
 
 WORKDIR /usr/share/opensearch
