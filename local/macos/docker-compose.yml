@@ -21,7 +21,7 @@ services:
       service: php-fpm
     volumes:
       - applications-sync:${APP_CODE_PATH_CONTAINER}:nocopy # will be mounted on to the value of APP_CODE_PATH_CONTAINER
-      - ./config/php-fpm/php${PHP_VERSION}.ini:/etc/php/${PHP_VERSION}/cli/php.ini:delegated
+      - ./config/php-fpm/php${PHP_VERSION}.ini:/usr/local/etc/php/php.ini:delegated
       - ./config/php-fpm/ext-xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini:delegated
       - ./config/php-fpm/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini:delegated
       - ./config/php-fpm/ext-xhprof.ini:/usr/local/etc/php/conf.d/xhprof.ini:delegated

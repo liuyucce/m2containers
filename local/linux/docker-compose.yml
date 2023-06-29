@@ -24,7 +24,7 @@ services:
       service: php-fpm
     volumes:
       - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER} # will be mounted on to the value of APP_CODE_PATH_CONTAINER
-      - ./config/php-fpm/php${PHP_VERSION}.ini:/etc/php/${PHP_VERSION}/cli/php.ini
+      - ./config/php-fpm/php${PHP_VERSION}.ini:/usr/local/etc/php/php.ini
       - ./config/php-fpm/ext-xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
       - ./config/php-fpm/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
       - ./config/php-fpm/ext-xhprof.ini:/usr/local/etc/php/conf.d/xhprof.ini
@@ -100,36 +100,42 @@ services:
     volumes:
       - ./volumes/email:/mnt/storage
 
-### ElasticSearch ########################################
-  elasticsearch:
+### Opensearch ########################################
+  opensearch:
     build:
-      context: ./config/elasticsearch
+      context: ./config/opensearch
       args:
-        - ELK_VERSION=${ELK_VERSION}
-        - INSTALL_PHONETIC=${ELASTICSEARCH_INSTALL_PHONETIC}
-        - INSTALL_ICU=${ELASTICSEARCH_INSTALL_ICU}
+        - OPS_VERSION=${OPS_VERSION}
+        - INSTALL_PHONETIC=${OPENSEARCH_INSTALL_PHONETIC}
+        - INSTALL_ICU=${OPENSEARCH_INSTALL_ICU}
+#    volumes:
+#      - ./config/opensearch/opensearch.yml:/usr/share/opensearch/config/opensearch.yml
     environment:
       - discovery.type=single-node
+      - plugins.security.disabled=true
     ulimits:
       memlock:
         soft: -1
         hard: -1
+      nofile:
+        soft: 65536 # maximum number of open files for the OpenSearch user, set to at least 65536 on modern systems
+        hard: 65536
     volumes:
-      - ./volumes/elasticsearch:/usr/share/elasticsearch/data
+      - ./volumes/opensearch:/usr/share/opensearch/data
     ports:
-      - "${ELASTICSEARCH_HOST_HTTP_PORT}:9200"
-      - "${ELASTICSEARCH_HOST_TRANSPORT_PORT}:9300"
+      - "${OPENSEARCH_HOST_HTTP_PORT}:9200"
+      - "${OPENSEARCH_HOST_TRANSPORT_PORT}:9600"
 
-### Kibana ##############################################
-  kibana:
+### Opensearch Dashboard ##############################################
+  opensearch-dashboards:
     build:
-      context: ./config/kibana
+      context: ./config/opensearch-dashboards
       args:
-        - ELK_VERSION=${ELK_VERSION}
+        - OPS_VERSION=${OPS_VERSION}
     ports:
-      - "${KIBANA_HTTP_PORT}:5601"
+      - "${OPENSEARCH_DASHBOARDS_HTTP_PORT}:5601"
     depends_on:
-      - elasticsearch
+      - opensearch
 
 ### RabbitMQ #############################################
   rabbitmq:

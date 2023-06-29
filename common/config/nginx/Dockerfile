@@ -1,4 +1,4 @@
-FROM yushin/nginx:latest
+FROM yushin/nginx:1.22
 
 ARG PHP_UPSTREAM_CONTAINER=php-fpm
 ARG PHP_UPSTREAM_PORT=9000

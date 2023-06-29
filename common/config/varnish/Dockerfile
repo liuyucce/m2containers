@@ -1,4 +1,6 @@
-FROM varnish:7.0
+FROM varnish:7.3
+
+USER root
 
 # Set Environment Variables
 ENV DEBIAN_FRONTEND noninteractive
