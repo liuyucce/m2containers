@@ -1,4 +1,4 @@
-FROM redis:7.0.11
+FROM redis:7.0.10
 
 ## For security settings uncomment, make the dir, copy conf, and also start with the conf, to use it
 #RUN mkdir -p /usr/local/etc/redis
