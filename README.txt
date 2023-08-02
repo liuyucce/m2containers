@@ -1,10 +1,10 @@
 Docker development environment for Magento 2
 
+Checkout the corresponding tag based on your Magento 2 version.
+
 To use this environment on your local env, make sure you are using Mac OS 10.14.2 or above/Windows with WSL2/Linux, at least 8G memory and Core i5 processor.
 
 The environment config file is /local/<your_env>/.env, most variables including website domains, project path, container ports mapping and PHP version etc. can be changed in this file.
-
-This environment supports PHP 8.1 AND Magento 2.4.4 by default.
 
 To build project, run "docker-compose build" in corresponding environment to your OS.
 
