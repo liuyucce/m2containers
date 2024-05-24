@@ -14,8 +14,9 @@ RUN apk update \
 RUN apk add --no-cache curl
 
 RUN set -x ; \
-    addgroup -g 82 -S www-data ; \
-    adduser -u 82 -D -S -G www-data www-data && exit 0 ; exit 1
+    delgroup www-data ; \
+    addgroup -g 5353 -S www-data ; \
+    adduser -u 5353 -D -S -G www-data www-data && exit 0 ; exit 1
 
 # Create 'messages' file used from 'logrotate'
 RUN touch /var/log/messages
