@@ -1,4 +1,4 @@
-FROM varnish:7.3
+FROM varnish:7.5
 
 USER root
 
@@ -22,15 +22,14 @@ ARG INSTALL_GEOIP2=false
 ENV INSTALL_GEOIP2 ${INSTALL_GEOIP2}
 
 RUN if [ ${INSTALL_GEOIP2} = true ]; then \
-    apt-get update && apt-get install -y wget m4 automake libtool make python python-docutils procps varnish-dev && \
-    wget https://github.com/maxmind/geoipupdate/releases/download/v4.1.5/geoipupdate_4.1.5_linux_amd64.deb && \
-    dpkg -i geoipupdate_4.1.5_linux_amd64.deb && \
-    wget https://github.com/maxmind/libmaxminddb/releases/download/1.4.2/libmaxminddb-1.4.2.tar.gz && \
-    tar -zxf libmaxminddb-1.4.2.tar.gz && cd libmaxminddb-1.4.2 && \
+    apt-get update && apt-get install -y wget git m4 automake libtool make python3 python3-docutils procps varnish-dev && \
+    wget https://github.com/maxmind/geoipupdate/releases/download/v7.0.1/geoipupdate_7.0.1_linux_amd64.deb && \
+    dpkg -i geoipupdate_7.0.1_linux_amd64.deb && \
+    wget https://github.com/maxmind/libmaxminddb/releases/download/1.10.0/libmaxminddb-1.10.0.tar.gz && \
+    tar -zxf libmaxminddb-1.10.0.tar.gz && cd libmaxminddb-1.10.0 && \
     ./configure && make && make install && ldconfig && \
-    cd /var/tmp && wget https://github.com/fgsch/libvmod-geoip2/archive/v1.2.1.tar.gz && \
-    tar -zxf v1.2.1.tar.gz && cd libvmod-geoip2-1.2.1 && \
-    export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig && \
+    cd /var/tmp && git clone https://github.com/varnishcache-friends/libvmod-geoip2.git && \
+    cd libvmod-geoip2 && export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig && \
     ./autogen.sh && ./configure && make && make install \
 ;fi
 

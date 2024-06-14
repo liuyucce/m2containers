@@ -34,6 +34,10 @@ sub vcl_init {
 }
 
 sub vcl_recv {
+    if (country.lookup("country/iso_code", client.ip) !~ "AU|NZ|US") {
+        error 503 "Your country has been blocked.";
+    }
+
     if (req.method == "PURGE") {
         if (client.ip !~ purge) {
             return (synth(405, "Method not allowed"));
