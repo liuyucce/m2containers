@@ -143,6 +143,20 @@ services:
         soft: 65536
         hard: 65536
 
+### Mailpit Container #####################################
+  services:
+    mailpit:
+      image: axllent/mailpit:v1.20
+      container_name: mailpit
+      restart: unless-stopped
+      ports:
+        - ${MAILPIT_MP_PORT}:8025
+      environment:
+        MP_MAX_MESSAGES: ${MAILPIT_MP_MAX_MESSAGES}
+        MP_DATABASE: /data/mailpit.db
+        MP_SMTP_AUTH_ACCEPT_ANY: 1
+        MP_SMTP_AUTH_ALLOW_INSECURE: 1
+
 ### RabbitMQ #############################################
   rabbitmq:
     build: ./config/rabbitmq

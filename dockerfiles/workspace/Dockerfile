@@ -164,7 +164,7 @@ RUN if [ $(php -r "echo PHP_MAJOR_VERSION;") = "7" ]; then \
     pecl install xdebug-2.9.7; \
   else \
     if [ $(php -r "echo PHP_MAJOR_VERSION;") = "8" ]; then \
-      pecl install xdebug-3.2.1; \
+      pecl install xdebug-3.3.2; \
     fi \
 ;fi
 

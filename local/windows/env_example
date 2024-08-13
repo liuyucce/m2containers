@@ -45,7 +45,7 @@ COMPOSE_PROJECT_NAME=demo
 ### PHP Version ########################################################################################################
 # Select a PHP version of the Workspace and PHP-FPM containers (Does not apply to HHVM). Accepted values: 71 - 70 - 56
 
-PHP_VERSION=8.2
+PHP_VERSION=8.3
 
 ### Docker Host IP #####################################################################################################
 # Enter your Docker Host IP (will be appended to /etc/hosts). Default is `172.17.0.1`
@@ -128,6 +128,10 @@ ENABLE_MAILHOG=true
 MAILHOG_MH_PORT=8027
 MAILHOG_MH_STORAGE=maildir
 MAILHOG_MH_MAILDIR_PATH=/mnt/storage
+
+### MAILPIT  ##########################################################################################################
+MAILPIT_MP_PORT=8027
+MAILPIT_MP_MAX_MESSAGES=5000
 
 ### POSTFIX ############################################################################################################
 POSTFIX_DOMAIN=demo.local

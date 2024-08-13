@@ -155,7 +155,7 @@ RUN if [ $(php -r "echo PHP_MAJOR_VERSION;") = "7" ]; then \
     pecl install xdebug-2.9.7; \
   else \
     if [ $(php -r "echo PHP_MAJOR_VERSION;") = "8" ]; then \
-      pecl install xdebug-3.2.1; \
+      pecl install xdebug-3.3.2; \
     fi && \
   docker-php-ext-enable xdebug \
 ;fi
@@ -780,16 +780,16 @@ RUN if [ ${DOWNGRADE_OPENSSL_TLS_AND_SECLEVEL} = true ]; then \
 # Sodium for temporary version issue:
 ###########################################################################
 
-USER root
-
-WORKDIR /tmp
-
-RUN curl -O https://download.libsodium.org/libsodium/releases/libsodium-1.0.18.tar.gz \
-  && tar xfvz libsodium-1.0.18.tar.gz \
-  && cd libsodium-1.0.18 \
-  && ./configure \
-  && make && make install \
-  && pecl install -f libsodium
+#USER root
+#
+#WORKDIR /tmp
+#
+#RUN curl -O https://download.libsodium.org/libsodium/releases/libsodium-1.0.18.tar.gz \
+#  && tar xfvz libsodium-1.0.18.tar.gz \
+#  && cd libsodium-1.0.18 \
+#  && ./configure \
+#  && make && make install \
+#  && pecl install -f libsodium
 
 ###########################################################################
 # Check PHP version:
