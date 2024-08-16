@@ -96,13 +96,13 @@ services:
     volumes:
       - ./volumes/postfix/Maildir:/root/Maildir
 
-### Mailhog Container #####################################
-  mailhog:
+### Mailpit Container #####################################
+  mailpit:
     extends:
       file: ../../common/docker-compose.yml
-      service: mailhog
+      service: mailpit
     volumes:
-      - ./volumes/email:/mnt/storage
+      - ./volumes/email:/data
 
 ### Opensearch ########################################
   opensearch:

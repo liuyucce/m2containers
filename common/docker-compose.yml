@@ -111,7 +111,7 @@ services:
       - DOMAIN=${POSTFIX_DOMAIN}
       - SERVER_HOSTNAME=${POSTFIX_HOSTNAMES}
       - MYNETWORKS=${POSTFIX_MYNETWORKS}
-      - ENABLE_MAILHOG=${ENABLE_MAILHOG}
+      - ENABLE_MAILPIT=${ENABLE_MAILPIT}
     restart: on-failure:5
     logging:
       driver: "json-file"
@@ -121,41 +121,18 @@ services:
     ports:
       - "${POSTFIX_PORT}:25"
 
-### Mailhog Container #####################################
-  mailhog:
-    image: mailhog/mailhog:latest
-    environment:
-      - MH_STORAGE=${MAILHOG_MH_STORAGE}
-      - MH_MAILDIR_PATH=${MAILHOG_MH_MAILDIR_PATH}
-    restart: on-failure:5
-    ports:
-      - ${MAILHOG_MH_PORT}:8025
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "100M"
-        max-file: "3"
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-      nofile:
-        soft: 65536
-        hard: 65536
-
 ### Mailpit Container #####################################
-  services:
-    mailpit:
-      image: axllent/mailpit:v1.20
-      container_name: mailpit
-      restart: unless-stopped
-      ports:
-        - ${MAILPIT_MP_PORT}:8025
-      environment:
-        MP_MAX_MESSAGES: ${MAILPIT_MP_MAX_MESSAGES}
-        MP_DATABASE: /data/mailpit.db
-        MP_SMTP_AUTH_ACCEPT_ANY: 1
-        MP_SMTP_AUTH_ALLOW_INSECURE: 1
+  mailpit:
+    image: axllent/mailpit:v1.20
+    container_name: mailpit
+    restart: unless-stopped
+    ports:
+      - ${MAILPIT_MP_PORT}:8025
+    environment:
+      MP_MAX_MESSAGES: ${MAILPIT_MP_MAX_MESSAGES}
+      MP_DATABASE: /data/mailpit.db
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
 
 ### RabbitMQ #############################################
   rabbitmq:

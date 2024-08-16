@@ -30,7 +30,7 @@ add_config_value "home_mailbox" "Maildir/"
 add_config_value "local_recipient_maps" ""
 add_config_value "luser_relay" "root@${SERVER_HOSTNAME}"
 
-if [ "${ENABLE_MAILHOG}" = "true" ]; then
+if [ "${ENABLE_MAILPIT}" = "true" ]; then
   add_config_value "relayhost" "[${SMTP_SERVER}]:${SMTP_PORT}"
 elif [ -n "${SMTP_SERVER}" ]; then
   add_config_value "relayhost" "[${SMTP_SERVER}]:${SMTP_PORT}"

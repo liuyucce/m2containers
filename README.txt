@@ -41,6 +41,6 @@ Magento 2 multi-websites can be enabled in /nginx/conf_m2/magento2.conf.
 
 Cron job path is configured in /workspace/crontab/laradock.
 
-To not let POSTFIX send emails to Mailhog, remove values of POSTFIX_SMTP_SERVER AND POSTFIX_SMTP_PORT, change value of ENABLE_MAILHOG to false.
+To not let POSTFIX send emails to Mailhog, remove values of POSTFIX_SMTP_SERVER AND POSTFIX_SMTP_PORT, change value of ENABLE_MAILPIT to false.
 
 Sometimes the self-generated SSL may have issue with integrations. In this case, change 'verifypeer' => false, 'verifyhost' => 0 in vendor/magento/framework/HTTP/Adapter/Curl.php->_config.

@@ -122,12 +122,7 @@ REDIS_PORT=6379
 ### EMAIL SERVICE  ####################################################################################################
 
 EMAIL_SERVICE_URL=postfix
-ENABLE_MAILHOG=true
-
-### MAILHOG  ##########################################################################################################
-MAILHOG_MH_PORT=8027
-MAILHOG_MH_STORAGE=maildir
-MAILHOG_MH_MAILDIR_PATH=/mnt/storage
+ENABLE_MAILPIT=true
 
 ### MAILPIT  ##########################################################################################################
 MAILPIT_MP_PORT=8027
@@ -138,7 +133,7 @@ POSTFIX_DOMAIN=demo.local
 POSTFIX_HOSTNAMES=email.demo.local
 POSTFIX_MESSAGE_SIZE_LIMIT=50000000
 POSTFIX_MYNETWORKS=192.168.0.0/16,172.0.0.0/8,127.0.0.0/8
-POSTFIX_SMTP_SERVER=mailhog
+POSTFIX_SMTP_SERVER=mailpit
 POSTFIX_SMTP_PORT=1025
 POSTFIX_SMTP_USERNAME=
 POSTFIX_SMTP_PASSWORD=
