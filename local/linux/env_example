@@ -45,7 +45,7 @@ COMPOSE_PROJECT_NAME=demo
 ### PHP Version ########################################################################################################
 # Select a PHP version of the Workspace and PHP-FPM containers (Does not apply to HHVM). Accepted values: 71 - 70 - 56
 
-PHP_VERSION=8.2
+PHP_VERSION=8.3
 
 ### Docker Host IP #####################################################################################################
 # Enter your Docker Host IP (will be appended to /etc/hosts). Default is `172.17.0.1`
@@ -141,7 +141,7 @@ POSTFIX_PORT=25
 
 ### Opensearch Stack #########################################################################################################
 
-OPS_VERSION=2.5.0
+OPS_VERSION=2.12.0
 
 ### OPENSEARCH ######################################################################################################
 

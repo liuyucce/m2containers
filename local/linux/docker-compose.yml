@@ -1,5 +1,3 @@
-version: '2'
-
 services:
 ### Workspace Utilities Container ###########################
   workspace:
@@ -11,8 +9,8 @@ services:
       - ./config/workspace/ext-xdebug.ini:/etc/php/${PHP_VERSION}/cli/conf.d/20-xdebug.ini
       - ./config/workspace/xdebug.ini:/etc/php/${PHP_VERSION}/cli/conf.d/xdebug.ini
       - ./config/workspace/ext-xhprof.ini:/etc/php/${PHP_VERSION}/cli/conf.d/xhprof.ini
-      - ../../common/config/app/debug.php:${APP_CODE_PATH_CONTAINER}/pub/debug.php
-      - ../../common/config/app/DebugApp.php:${APP_CODE_PATH_CONTAINER}/pub/DebugApp.php
+      - ../../common/app/pub/debug.php:${APP_CODE_PATH_CONTAINER}/pub/debug.php
+      - ../../common/app/pub/DebugApp.php:${APP_CODE_PATH_CONTAINER}/pub/DebugApp.php
       - ./volumes/shared/log/magento/:/var/www/app/var/log
       - ./volumes/composer:/home/laradock/.composer
       - ./volumes/ssh:/home/laradock/.ssh
@@ -31,8 +29,8 @@ services:
       - ./config/php-fpm/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
       - ./config/php-fpm/ext-xhprof.ini:/usr/local/etc/php/conf.d/xhprof.ini
       - ../../common/config/varnish/health_check.php:${DEFAULT_PATH}/health_check.php
-      - ../../common/config/app/MagePsycho:${APP_CODE_PATH_CONTAINER}/MagePsycho
-      - ../../common/config/app/Thienphucvx:${APP_CODE_PATH_CONTAINER}/Thienphucvx
+      - ../../common/app/MagePsycho:${APP_CODE_PATH_CONTAINER}/app/code/MagePsycho
+      - ../../common/app/Thienphucvx:${APP_CODE_PATH_CONTAINER}/app/code/Thienphucvx
       - ./volumes/shared/log/magento/:/var/www/app/var/log
     extra_hosts:
       - "host.docker.internal:${DOCKER_HOST_IP}"

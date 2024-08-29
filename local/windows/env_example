@@ -139,21 +139,6 @@ POSTFIX_SMTP_USERNAME=
 POSTFIX_SMTP_PASSWORD=
 POSTFIX_PORT=25
 
-### ELK Stack #########################################################################################################
-
-ELK_VERSION=7.9.3
-
-### ELASTICSEARCH ######################################################################################################
-
-ELASTICSEARCH_HOST_HTTP_PORT=9200
-ELASTICSEARCH_HOST_TRANSPORT_PORT=9300
-ELASTICSEARCH_INSTALL_PHONETIC=true
-ELASTICSEARCH_INSTALL_ICU=false
-
-### KIBANA #############################################################################################################
-
-KIBANA_HTTP_PORT=5601
-
 ### RABBITMQ ###########################################################################################################
 
 RABBITMQ_NODE_HOST_PORT=5672
