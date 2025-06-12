@@ -22,20 +22,20 @@ ENV DEBIAN_FRONTEND noninteractive
 USER root
 
 ###########################################################################
-# Laradock non-root user:
+# Web non-root user:
 ###########################################################################
 
 # Add a non-root user to prevent files being created with root permissions on host machine.
-ARG PUID=1000
+ARG PUID=5353
 ENV PUID ${PUID}
-ARG PGID=1000
+ARG PGID=5353
 ENV PGID ${PGID}
 
 # always run apt update when start and after add new source list, then clean up at end.
 RUN apt-get update -yqq && \
-    groupadd -g ${PGID} laradock && \
-    useradd -u ${PUID} -g laradock -m laradock -G docker_env && \
-    usermod -p "*" laradock -s /bin/bash
+    groupadd -g ${PGID} www && \
+    useradd -u ${PUID} -g www -m www -G docker_env && \
+    usermod -p "*" www -s /bin/bash
 
 #
 #--------------------------------------------------------------------------
@@ -64,12 +64,12 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 USER root
 
-COPY ./aliases.sh /home/laradock/aliases.sh
+COPY ./aliases.sh /home/ubuntu/aliases.sh
 
-RUN sed -i 's/\r//' /home/laradock/aliases.sh && \
-    chown laradock:laradock /home/laradock/aliases.sh
+RUN sed -i 's/\r//' /home/ubuntu/aliases.sh && \
+    chown ubuntu:ubuntu /home/ubuntu/aliases.sh
 
-USER laradock
+USER ubuntu
 
 RUN echo "" >> ~/.bashrc && \
     echo "# Load Custom Aliases" >> ~/.bashrc && \
@@ -83,19 +83,19 @@ RUN echo "" >> ~/.bashrc && \
 USER root
 
 # Add the composer.json
-COPY ./composer.json /home/laradock/.composer/composer.json
+COPY ./composer.json /home/ubuntu/.composer/composer.json
 
 # Add the auth.json for magento 2 credentials
-COPY ./auth.json /home/laradock/.composer/auth.json
+COPY ./auth.json /home/ubuntu/.composer/auth.json
 
-# Make sure that ~/.composer belongs to laradock
-RUN chown -R laradock:laradock /home/laradock/.composer
+# Make sure that ~/.composer belongs to ubuntu
+RUN chown -R ubuntu:ubuntu /home/ubuntu/.composer
 
 # Export composer vendor path
 RUN echo "" >> ~/.bashrc && \
     echo 'export PATH="$HOME/.composer/vendor/bin:$PATH"' >> ~/.bashrc
 
-USER laradock
+USER ubuntu
 
 # Check if global install need to be ran
 ARG COMPOSER_GLOBAL_INSTALL=false
@@ -112,7 +112,7 @@ ENV COMPOSER_AUTH ${COMPOSER_AUTH}
 
 RUN if [ ${COMPOSER_AUTH} = false ]; then \
     # remove the file
-    rm /home/laradock/.composer/auth.json \
+    rm /home/ubuntu/.composer/auth.json \
 ;fi
 
 ARG COMPOSER_REPO_PACKAGIST
@@ -131,7 +131,7 @@ RUN echo "" >> ~/.bashrc && \
 ###########################################################################
 
 # add ./vendor/bin to non-root user's bashrc (needed for phpunit)
-USER laradock
+USER ubuntu
 
 RUN echo "" >> ~/.bashrc && \
     echo 'export PATH="/var/www/vendor/bin:$PATH"' >> ~/.bashrc
@@ -149,14 +149,14 @@ RUN chmod -R 644 /etc/cron.d
 # ssh:
 ###########################################################################
 
-RUN cp -rf /root/.ssh /home/laradock \
-    && chown -R laradock:laradock /home/laradock/.ssh
+RUN cp -rf /root/.ssh /home/ubuntu \
+    && chown -R ubuntu:ubuntu /home/ubuntu/.ssh
 
 ###########################################################################
 # Node / NVM:
 ###########################################################################
 
-USER laradock
+USER ubuntu
 
 # Check if NVM needs to be installed
 ARG NODE_VERSION=${NODE_VERSION}
@@ -166,7 +166,7 @@ ARG INSTALL_NPM_BOWER=false
 ARG INSTALL_NPM_VUE_CLI=false
 ARG NPM_REGISTRY
 ENV NPM_REGISTRY ${NPM_REGISTRY}
-ENV NVM_DIR /home/laradock/.nvm
+ENV NVM_DIR /home/ubuntu/.nvm
 ARG NVM_NODEJS_ORG_MIRROR
 ENV NVM_NODEJS_ORG_MIRROR ${NVM_NODEJS_ORG_MIRROR}
 
@@ -190,7 +190,7 @@ RUN if [ ${INSTALL_NODE} = true ]; then \
         && if [ ${INSTALL_NPM_VUE_CLI} = true ]; then \
         npm install -g @vue/cli \
         ;fi \
-        && ln -s `npm bin --global` /home/laradock/.node-bin \
+        && ln -s `npm bin --global` /home/ubuntu/.node-bin \
 ;fi
 
 # Wouldn't execute when added to the RUN statement in the above block
@@ -206,12 +206,12 @@ USER root
 
 RUN if [ ${INSTALL_NODE} = true ]; then \
     echo "" >> ~/.bashrc && \
-    echo 'export NVM_DIR="/home/laradock/.nvm"' >> ~/.bashrc && \
+    echo 'export NVM_DIR="/home/ubuntu/.nvm"' >> ~/.bashrc && \
     echo '[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm' >> ~/.bashrc \
 ;fi
 
 # Add PATH for node
-ENV PATH $PATH:/home/laradock/.node-bin
+ENV PATH $PATH:/home/ubuntu/.node-bin
 
 # Make it so the node modules can be executed with 'docker-compose exec'
 # We'll create symbolic links into '/usr/local/bin'.
@@ -240,7 +240,7 @@ RUN if [ ${INSTALL_NODE} = true ]; then \
 # YARN:
 ###########################################################################
 
-USER laradock
+USER ubuntu
 
 ARG INSTALL_YARN=false
 ARG YARN_VERSION=latest
@@ -262,12 +262,12 @@ USER root
 
 RUN if [ ${INSTALL_YARN} = true ]; then \
     echo "" >> ~/.bashrc && \
-    echo 'export YARN_DIR="/home/laradock/.yarn"' >> ~/.bashrc && \
+    echo 'export YARN_DIR="/home/ubuntu/.yarn"' >> ~/.bashrc && \
     echo 'export PATH="$YARN_DIR/bin:$PATH"' >> ~/.bashrc \
 ;fi
 
 # Add PATH for YARN
-ENV PATH $PATH:/home/laradock/.yarn/bin
+ENV PATH $PATH:/home/ubuntu/.yarn/bin
 
 ###########################################################################
 # Minio:
@@ -346,10 +346,10 @@ RUN if [ ${SHELL_OH_MY_ZSH} = true ]; then \
 ARG SHELL_OH_MY_ZSH_AUTOSUGESTIONS=false
 ARG SHELL_OH_MY_ZSH_ALIASES=false
 
-USER laradock
+USER ubuntu
 RUN if [ ${SHELL_OH_MY_ZSH} = true ]; then \
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh) --keep-zshrc" && \
-    sed -i -r 's/^plugins=\(.*?\)$/plugins=(laravel5)/' /home/laradock/.zshrc && \
+    sed -i -r 's/^plugins=\(.*?\)$/plugins=(laravel5)/' /home/ubuntu/.zshrc && \
     echo '\n\
 bindkey "^[OB" down-line-or-search\n\
 bindkey "^[OC" forward-char\n\
@@ -361,20 +361,20 @@ bindkey "^[[3~" delete-char\n\
 bindkey "^[[4~" end-of-line\n\
 bindkey "^[[5~" up-line-or-history\n\
 bindkey "^[[6~" down-line-or-history\n\
-bindkey "^?" backward-delete-char\n' >> /home/laradock/.zshrc && \
+bindkey "^?" backward-delete-char\n' >> /home/ubuntu/.zshrc && \
   if [ ${SHELL_OH_MY_ZSH_AUTOSUGESTIONS} = true ]; then \
-    sh -c "git clone https://github.com/zsh-users/zsh-autosuggestions /home/laradock/.oh-my-zsh/custom/plugins/zsh-autosuggestions" && \
-    sed -i 's~plugins=(~plugins=(zsh-autosuggestions ~g' /home/laradock/.zshrc && \
-    sed -i '1iZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20' /home/laradock/.zshrc && \
-    sed -i '1iZSH_AUTOSUGGEST_STRATEGY=(history completion)' /home/laradock/.zshrc && \
-    sed -i '1iZSH_AUTOSUGGEST_USE_ASYNC=1' /home/laradock/.zshrc && \
-    sed -i '1iTERM=xterm-256color' /home/laradock/.zshrc \
+    sh -c "git clone https://github.com/zsh-users/zsh-autosuggestions /home/ubuntu/.oh-my-zsh/custom/plugins/zsh-autosuggestions" && \
+    sed -i 's~plugins=(~plugins=(zsh-autosuggestions ~g' /home/ubuntu/.zshrc && \
+    sed -i '1iZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20' /home/ubuntu/.zshrc && \
+    sed -i '1iZSH_AUTOSUGGEST_STRATEGY=(history completion)' /home/ubuntu/.zshrc && \
+    sed -i '1iZSH_AUTOSUGGEST_USE_ASYNC=1' /home/ubuntu/.zshrc && \
+    sed -i '1iTERM=xterm-256color' /home/ubuntu/.zshrc \
   ;fi && \
   if [ ${SHELL_OH_MY_ZSH_ALIASES} = true ]; then \
-    echo "" >> /home/laradock/.zshrc && \
-    echo "# Load Custom Aliases" >> /home/laradock/.zshrc && \
-    echo "source /home/laradock/aliases.sh" >> /home/laradock/.zshrc && \
-    echo "" >> /home/laradock/.zshrc \
+    echo "" >> /home/ubuntu/.zshrc && \
+    echo "# Load Custom Aliases" >> /home/ubuntu/.zshrc && \
+    echo "source /home/ubuntu/aliases.sh" >> /home/ubuntu/.zshrc && \
+    echo "" >> /home/ubuntu/.zshrc \
   ;fi \
 ;fi
 
@@ -387,19 +387,19 @@ USER root
 USER root
 
 COPY ./aliases.sh /root/aliases.sh
-COPY ./aliases.sh /home/laradock/aliases.sh
+COPY ./aliases.sh /home/ubuntu/aliases.sh
 
 RUN if [ ${SHELL_OH_MY_ZSH} = true ]; then \
     sed -i 's/\r//' /root/aliases.sh && \
-    sed -i 's/\r//' /home/laradock/aliases.sh && \
-    chown laradock:laradock /home/laradock/aliases.sh && \
+    sed -i 's/\r//' /home/ubuntu/aliases.sh && \
+    chown ubuntu:ubuntu /home/ubuntu/aliases.sh && \
     echo "" >> ~/.zshrc && \
     echo "# Load Custom Aliases" >> ~/.zshrc && \
     echo "source ~/aliases.sh" >> ~/.zshrc && \
           echo "" >> ~/.zshrc \
 ;fi
 
-USER laradock
+USER ubuntu
 
 RUN if [ ${SHELL_OH_MY_ZSH} = true ]; then \
     echo "" >> ~/.zshrc && \

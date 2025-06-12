@@ -580,18 +580,6 @@ RUN if [ ${INSTALL_IMAGE_OPTIMIZERS} = true ]; then \
 ;fi
 
 ###########################################################################
-# PYTHON3:
-###########################################################################
-
-ARG INSTALL_PYTHON3=true
-
-RUN if [ ${INSTALL_PYTHON3} = true ]; then \
-  apt-get -y install python3 python3-pip python3-dev build-essential  \
-  && python3 -m pip install --upgrade --force-reinstall pip  \
-  && python3 -m pip install --upgrade virtualenv \
-;fi
-
-###########################################################################
 # SUPERVISOR:
 ###########################################################################
 ARG INSTALL_SUPERVISOR=false
@@ -835,21 +823,6 @@ WORKDIR /tmp
 RUN if [ ${INSTALL_XHPROF} = true ]; then \
     pecl install xhprof-2.3.9 \
 ;fi
-
-###########################################################################
-# Sodium for temporary version issue:
-###########################################################################
-
-USER root
-
-WORKDIR /tmp
-
-RUN curl -O https://download.libsodium.org/libsodium/releases/libsodium-1.0.18-stable.tar.gz \
-  && tar xfvz libsodium-1.0.18-stable.tar.gz \
-  && cd libsodium-stable \
-  && ./configure \
-  && make && make install \
-  && pecl install -f libsodium
 
 ###########################################################################
 # MSMTP:
