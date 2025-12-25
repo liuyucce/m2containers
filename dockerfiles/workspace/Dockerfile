@@ -164,7 +164,7 @@ RUN if [ $(php -r "echo PHP_MAJOR_VERSION;") = "7" ]; then \
     pecl install xdebug-2.9.7; \
   else \
     if [ $(php -r "echo PHP_MAJOR_VERSION;") = "8" ]; then \
-      pecl install xdebug-3.3.2; \
+      pecl install xdebug-3.5.0; \
     fi \
 ;fi
 
@@ -223,7 +223,7 @@ ARG INSTALL_MONGO=true
 
 RUN if [ ${INSTALL_MONGO} = true ]; then \
     # Install the mongodb extension
-    pecl install mongodb-1.15.0 && \
+    pecl install mongodb-2.1.4 && \
     echo "extension=mongodb.so" >> /etc/php/${PHP_VERSION}/mods-available/mongodb.ini && \
     ln -s /etc/php/${PHP_VERSION}/mods-available/mongodb.ini /etc/php/${PHP_VERSION}/cli/conf.d/30-mongodb.ini \
 ;fi
@@ -353,7 +353,7 @@ RUN if [ ${INSTALL_INOTIFY} = true ]; then \
 ###########################################################################
 
 ARG INSTALL_AST=true
-ARG AST_VERSION=1.1.0
+ARG AST_VERSION=1.1.3
 ENV AST_VERSION ${AST_VERSION}
 
 RUN if [ ${INSTALL_AST} = true ]; then \
@@ -821,7 +821,7 @@ ARG INSTALL_XHPROF=true
 WORKDIR /tmp
 
 RUN if [ ${INSTALL_XHPROF} = true ]; then \
-    pecl install xhprof-2.3.9 \
+    pecl install xhprof-2.3.10 \
 ;fi
 
 ###########################################################################

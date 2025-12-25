@@ -86,7 +86,7 @@ ARG INSTALL_SSH2=false
 RUN if [ ${INSTALL_SSH2} = true ]; then \
     # Install the ssh2 extension
     apt-get -y install libssh2-1-dev && \
-    pecl install -a ssh2-1.2 && \
+    pecl install -a ssh2-1.4.1 && \
     docker-php-ext-enable ssh2 \
 ;fi
 
@@ -155,7 +155,7 @@ RUN if [ $(php -r "echo PHP_MAJOR_VERSION;") = "7" ]; then \
     pecl install xdebug-2.9.7; \
   else \
     if [ $(php -r "echo PHP_MAJOR_VERSION;") = "8" ]; then \
-      pecl install xdebug-3.3.2; \
+      pecl install xdebug-3.5.0; \
     fi && \
   docker-php-ext-enable xdebug \
 ;fi
@@ -231,7 +231,7 @@ ARG INSTALL_MONGO=true
 
 RUN if [ ${INSTALL_MONGO} = true ]; then \
     # Install the mongodb extension
-    pecl install mongodb-1.15.0 && \
+    pecl install mongodb-2.1.4 && \
     docker-php-ext-enable mongodb \
 ;fi
 
@@ -243,7 +243,7 @@ ARG INSTALL_XHPROF=true
 
 RUN if [ ${INSTALL_XHPROF} = true ]; then \
     # Install the php xhprof extension
-    pecl install xhprof-2.3.9 \
+    pecl install xhprof-2.3.10 \
 ;fi
 
 ###########################################################################
@@ -808,7 +808,7 @@ USER root
 # Clean up
 RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
-    rm /var/log/lastlog /var/log/faillog
+    rm /var/log/lastlog
 
 # Adding the faketime library to the preload file needs to be done last
 # otherwise it will preload it for all commands that follow in this file

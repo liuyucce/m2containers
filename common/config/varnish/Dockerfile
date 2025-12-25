@@ -1,4 +1,4 @@
-FROM varnish:7.5
+FROM varnish:7.7
 
 USER root
 
