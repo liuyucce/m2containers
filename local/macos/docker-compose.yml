@@ -65,13 +65,13 @@ services:
     depends_on:
       - php-fpm
 
-### Redis Container #########################################
-  redis:
+### Valkey Container #########################################
+  valkey:
     extends:
       file: ../../common/docker-compose.yml
-      service: redis
+      service: valkey
 #    volumes:
-#      - ./volumes/redis:/data:delegated
+#      - ./volumes/valkey:/data:delegated
 
 #### Postfix Server Container ################################
   postfix:

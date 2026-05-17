@@ -1,4 +1,4 @@
-ARG OPS_VERSION=3.6.0
-FROM opensearchproject/opensearch-dashboards:${OPS_VERSION}
+ARG OPENSEARCH_VERSION=3.0.0
+FROM opensearchproject/opensearch-dashboards:${OPENSEARCH_VERSION}
 
 EXPOSE 5601

@@ -23,6 +23,7 @@ acl purge {
     # ACL we'll use later to allow purges
     "${PURGE_HOST_WORKSPACE}";
     "${PURGE_HOST_PHP_FPM}";
+    "${PURGE_HOST_SERVER}";
     "localhost";
     "127.0.0.1";
     "::1";

@@ -78,13 +78,13 @@ services:
     depends_on:
       - php-fpm
 
-### Redis Container #########################################
-  redis:
+### Valkey Container #########################################
+  valkey:
     extends:
       file: ../../common/docker-compose.yml
-      service: redis
+      service: valkey
     volumes:
-      - ./volumes/redis:/data
+      - ./volumes/valkey:/data
 
 #### Postfix Server Container ################################
   postfix:
@@ -102,38 +102,35 @@ services:
     volumes:
       - ./volumes/email:/data
 
-### Opensearch ########################################
+### OpenSearch ########################################
   opensearch:
     build:
       context: ./config/opensearch
       args:
-        - OPS_VERSION=${OPS_VERSION}
-        - INSTALL_PHONETIC=${OPENSEARCH_INSTALL_PHONETIC}
-        - INSTALL_ICU=${OPENSEARCH_INSTALL_ICU}
-#    volumes:
-#      - ./config/opensearch/opensearch.yml:/usr/share/opensearch/config/opensearch.yml
+        - OPENSEARCH_VERSION=${OPENSEARCH_VERSION}
+        - INSTALL_ANALYSIS_PHONETIC=${OPENSEARCH_INSTALL_ANALYSIS_PHONETIC}
+        - INSTALL_ANALYSIS_ICU=${OPENSEARCH_INSTALL_ANALYSIS_ICU}
     environment:
       - discovery.type=single-node
-      - plugins.security.disabled=true
+      - DISABLE_SECURITY_PLUGIN=true
     ulimits:
       memlock:
         soft: -1
         hard: -1
-      nofile:
-        soft: 65536 # maximum number of open files for the OpenSearch user, set to at least 65536 on modern systems
-        hard: 65536
     volumes:
       - ./volumes/opensearch:/usr/share/opensearch/data
     ports:
       - "${OPENSEARCH_HOST_HTTP_PORT}:9200"
-      - "${OPENSEARCH_HOST_TRANSPORT_PORT}:9600"
+      - "${OPENSEARCH_HOST_TRANSPORT_PORT}:9300"
 
-### Opensearch Dashboard ##############################################
+### OpenSearch Dashboards ##############################################
   opensearch-dashboards:
     build:
       context: ./config/opensearch-dashboards
       args:
-        - OPS_VERSION=${OPS_VERSION}
+        - OPENSEARCH_VERSION=${OPENSEARCH_VERSION}
+    environment:
+      - DISABLE_SECURITY_DASHBOARDS_PLUGIN=true
     ports:
       - "${OPENSEARCH_DASHBOARDS_HTTP_PORT}:5601"
     depends_on:

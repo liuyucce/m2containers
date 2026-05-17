@@ -1,5 +1,5 @@
-FROM rabbitmq:4.2.6-management-alpine
+FROM rabbitmq:4.3.0-management-alpine
 
-RUN rabbitmq-plugins enable --offline rabbitmq_management rabbitmq_shovel rabbitmq_shovel_management
+RUN rabbitmq-plugins enable --offline rabbitmq_shovel rabbitmq_shovel_management rabbitmq_prometheus
 
-EXPOSE 4369 5671 5672 15671 15672 25672
+EXPOSE 4369 5671 5672 15671 15672 15692 25672

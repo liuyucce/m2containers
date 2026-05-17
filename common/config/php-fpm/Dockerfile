@@ -20,8 +20,23 @@ ARG PHP_VERSION
 # Set Environment Variables
 ENV DEBIAN_FRONTEND noninteractive
 
+# Start as root
+USER root
+
+###########################################################################
+# non-root user:
+###########################################################################
+
+# Configure non-root user.
+ARG PUID=1000
+ENV PUID ${PUID}
+ARG PGID=1000
+ENV PGID ${PGID}
+
 # always run apt update when start and after add new source list, then clean up at end.
-RUN apt-get update -yqq
+RUN apt-get update -yqq && \
+    groupmod -o -g ${PGID} www-data && \
+    usermod -o -u ${PUID} -g www-data www-data
 
 ###########################################################################
 # MSMTP:
@@ -38,7 +53,6 @@ COPY ./etc/msmtprc /etc/msmtprc
 RUN if [ ${INSTALL_MSMTP} = true ]; then \
     sed -ri -e "s/demo.local/${MSMTP_DOMAIN}/" -e "s/postfix/${EMAIL_SERVICE_URL}/" /etc/msmtprc \
 ;fi
-
 
 ###########################################################################
 # Check PHP version:
@@ -57,15 +71,6 @@ USER root
 # Clean up
 RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-# Configure non-root user.
-ARG PUID=1000
-ENV PUID ${PUID}
-ARG PGID=1000
-ENV PGID ${PGID}
-
-RUN groupmod -o -g ${PGID} www-data && \
-    usermod -o -u ${PUID} -g www-data www-data
 
 WORKDIR /var/www
 

@@ -1,19 +1,14 @@
-ARG OPS_VERSION=3.6.0
-FROM opensearchproject/opensearch:${OPS_VERSION}
+ARG OPENSEARCH_VERSION=3.0.0
+FROM opensearchproject/opensearch:${OPENSEARCH_VERSION}
 
-WORKDIR /usr/share/opensearch
-
-ARG INSTALL_PHONETIC=false
-
-RUN if [ ${INSTALL_PHONETIC} = true ]; then \
-    bin/opensearch-plugin install analysis-phonetic \
+ARG INSTALL_ANALYSIS_PHONETIC=false
+RUN if [ ${INSTALL_ANALYSIS_PHONETIC} = true ]; then \
+    bin/opensearch-plugin install --batch analysis-phonetic \
 ;fi
 
-ARG INSTALL_ICU=false
-
-RUN if [ ${INSTALL_ICU} = true ]; then \
-    bin/opensearch-plugin install analysis-icu \
+ARG INSTALL_ANALYSIS_ICU=false
+RUN if [ ${INSTALL_ANALYSIS_ICU} = true ]; then \
+    bin/opensearch-plugin install --batch analysis-icu \
 ;fi
 
-
-EXPOSE 9200 9600
+EXPOSE 9200 9300

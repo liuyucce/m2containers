@@ -13,7 +13,7 @@
 #
 
 ARG PHP_VERSION
-FROM yushin/php-fpm:7.4
+FROM yushin/php-fpm:${PHP_VERSION}
 
 ARG PHP_VERSION
 
