@@ -1,4 +1,4 @@
-FROM nginx:1.28-alpine
+FROM nginx:1.28.3-alpine3.23
 
 LABEL maintainer="Yuchen Liu"
 

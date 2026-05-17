@@ -1,12 +1,12 @@
-FROM redis:7.2.5
+FROM valkey/valkey:9.0.4-alpine3.23
 
 ## For security settings uncomment, make the dir, copy conf, and also start with the conf, to use it
-#RUN mkdir -p /usr/local/etc/redis
-#COPY redis.conf /usr/local/etc/redis/redis.conf
+#RUN mkdir -p /usr/local/etc/valkey
+#COPY redis.conf /usr/local/etc/valkey/valkey.conf
 
 VOLUME /data
 
 EXPOSE 6379
 
-#CMD ["redis-server", "/usr/local/etc/redis/redis.conf"]
-CMD ["redis-server"]
+#CMD ["valkey-server", "/usr/local/etc/valkey/valkey.conf"]
+CMD ["valkey-server"]
