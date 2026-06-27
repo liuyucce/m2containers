@@ -1,24 +1,26 @@
-#Dockerfile for a Postfix email relay service
-FROM centos:centos7
-MAINTAINER Yuchen Liu
+FROM debian:bookworm-slim
 
-COPY etc/yum.repos.d/gf.repo /etc/yum.repos.d/
-COPY etc/pki/rpm-gpg/RPM-GPG-KEY-gf.el7 etc/pki/rpm-gpg/
+ENV DEBIAN_FRONTEND=noninteractive
 
-RUN yum clean all && \
-    yum makecache fast && \
-    yum install -y epel-release && yum update -y && \
-    yum install -y cyrus-sasl cyrus-sasl-plain cyrus-sasl-md5 mailx \
-    perl supervisor postfix3 rsyslog \
-    && rm -rf /var/cache/yum/* \
-    && yum clean all
-RUN sed -i -e "s/^nodaemon=false/nodaemon=true/" /etc/supervisord.conf
-RUN sed -i -e 's/inet_interfaces = localhost/inet_interfaces = all/g' /etc/postfix/main.cf
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        postfix \
+        supervisor \
+        rsyslog \
+        ca-certificates \
+        libsasl2-modules \
+    && rm -rf /var/lib/apt/lists/*
 
-COPY etc/*.conf /etc/
-COPY etc/rsyslog.d/* /etc/rsyslog.d
-COPY etc/supervisord.d/*.ini /etc/supervisord.d/
+# Debian non-interactive install defaults to loopback-only
+RUN postconf -e 'inet_interfaces = all'
+
+# run.sh (in consumer images) hardcodes /etc/ssl/certs/ca-bundle.crt for SES TLS
+RUN ln -s /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-bundle.crt
+
+# Pre-create mail log so the readlog tail doesn't race rsyslog at startup
+RUN touch /var/log/mail.log
+
+COPY etc/supervisor/conf.d/ /etc/supervisor/conf.d/
 RUN newaliases
 
 EXPOSE 25
-CMD ["supervisord"]
+CMD ["supervisord", "-n", "-c", "/etc/supervisor/supervisord.conf"]
