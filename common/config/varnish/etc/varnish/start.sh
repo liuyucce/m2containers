@@ -5,6 +5,7 @@ for name in BACKEND_PORT BACKEND_HOST PURGE_HOST_WORKSPACE PURGE_HOST_PHP_FPM PU
 do
     eval value=\$$name
     sed -i "s|\${${name}}|${value}|g" /etc/varnish/default.vcl
+    sed -i "s|\${${name}}|${value}|g" /etc/varnish/geoip.vcl
 done
 
 exec bash -c \

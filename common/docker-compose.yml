@@ -160,7 +160,7 @@ services:
 
 ### Logrotate Container ####################################
   logrotate:
-    image: tutum/logrotate:latest
+    build: ./config/logrotate
     restart: on-failure:5
     logging:
       driver: "json-file"

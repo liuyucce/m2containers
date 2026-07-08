@@ -1,10 +1,10 @@
-# VCL version 5.0 is not supported so it should be 4.0 even though actually used Varnish version is 6
-vcl 4.0;
+# Varnish 8 requires VCL 4.1
+vcl 4.1;
 
 import std;
 import geoip2;
 
-# The minimal Varnish version is 6.0
+# The minimal Varnish version is 8.0
 # For SSL offloading, pass the following header in your proxy server or load balancer: 'X-Forwarded-Proto: https'
 
 backend default {
@@ -14,7 +14,7 @@ backend default {
     .probe = {
         .url = "/health_check.php";
         .timeout = 5s;
-        .interval = 20s;
+        .interval = 30s;
         .window = 10;
         .threshold = 6;
    }
@@ -24,9 +24,12 @@ acl purge {
     # ACL we'll use later to allow purges
     "${PURGE_HOST_WORKSPACE}";
     "${PURGE_HOST_PHP_FPM}";
+    "${PURGE_HOST_SERVER}";
     "localhost";
-    "127.0.0.1";
-    "::1";
+    "127.0.0.1"/32;       # local
+    "10.0.0.0"/8;         # local
+    "172.16.0.0"/12;      # local
+    "192.168.0.0"/16;     # local
 }
 
 sub vcl_init {
@@ -34,8 +37,8 @@ sub vcl_init {
 }
 
 sub vcl_recv {
-    if (country.lookup("country/iso_code", client.ip) !~ "AU|NZ|US") {
-        error 503 "Your country has been blocked.";
+    if (req.restarts > 0) {
+        return (pass(0s));
     }
 
     if (req.method == "PURGE") {
@@ -68,20 +71,20 @@ sub vcl_recv {
           return (pipe);
     }
 
+    set req.http.X-Country-Code = country.lookup("country/iso_code", std.ip(regsub(req.http.X-Forwarded-For, "[\s,].*", ""), client.ip));
+
     # We only deal with GET and HEAD by default
     if (req.method != "GET" && req.method != "HEAD") {
         return (pass);
     }
 
-    # Bypass health check requests
-    if (req.url ~ "/pub/health_check.php") {
+    # Bypass customer, shopping cart, checkout
+    if (req.url ~ "/customer" || req.url ~ "/checkout") {
         return (pass);
     }
 
-    set req.http.X-Country-Code = country.lookup("country/iso_code", client.ip);
-
-    # Bypass shopping cart, checkout and search requests
-    if (req.url ~ "/checkout" || req.url ~ "/catalogsearch") {
+    # Bypass health check requests
+    if (req.url ~ "^/(pub/)?(health_check.php)$") {
         return (pass);
     }
 
@@ -126,26 +129,24 @@ sub vcl_recv {
         #unset req.http.Cookie;
     }
 
+    # Bypass authenticated GraphQL requests without a X-Magento-Cache-Id
+    if (req.url ~ "/graphql" && !req.http.X-Magento-Cache-Id && req.http.Authorization ~ "^Bearer") {
+        return (pass);
+    }
+
     return (hash);
 }
 
 sub vcl_hash {
-    if (req.http.cookie ~ "X-Magento-Vary=") {
+    if ((req.url !~ "/graphql" || !req.http.X-Magento-Cache-Id) && req.http.cookie ~ "X-Magento-Vary=") {
         hash_data(regsub(req.http.cookie, "^.*?X-Magento-Vary=([^;]+);*.*$", "\1"));
-    }
-
-    # For multi site configurations to not cache each other's content
-    if (req.http.host) {
-        hash_data(req.http.host);
-    } else {
-        hash_data(server.ip);
     }
 
     # To make sure http users don't see ssl warning
     if (req.http.X-Forwarded-Proto) {
         hash_data(req.http.X-Forwarded-Proto);
     }
-    
+
 
     if (req.url ~ "/graphql") {
         call process_graphql_headers;
@@ -153,9 +154,19 @@ sub vcl_hash {
 }
 
 sub process_graphql_headers {
+    if (req.http.X-Magento-Cache-Id) {
+        hash_data(req.http.X-Magento-Cache-Id);
+
+        # When the frontend stops sending the auth token, make sure users stop getting results cached for logged-in users
+        if (req.http.Authorization ~ "^Bearer") {
+            hash_data("Authorized");
+        }
+    }
+
     if (req.http.Store) {
         hash_data(req.http.Store);
     }
+
     if (req.http.Content-Currency) {
         hash_data(req.http.Content-Currency);
     }
@@ -177,12 +188,10 @@ sub vcl_backend_response {
         set beresp.http.X-Magento-Cache-Control = beresp.http.Cache-Control;
     }
 
-    # cache only successfully responses and 404s
-    if (beresp.status != 200 && beresp.status != 404) {
-        set beresp.ttl = 0s;
-        set beresp.uncacheable = true;
-        return (deliver);
-    } elsif (beresp.http.Cache-Control ~ "private") {
+    # cache only successfully responses and 404s that are not marked as private
+    if (beresp.status != 200 &&
+            beresp.status != 404 &&
+            beresp.http.Cache-Control ~ "private") {
         set beresp.uncacheable = true;
         set beresp.ttl = 86400s;
         return (deliver);
@@ -202,21 +211,23 @@ sub vcl_backend_response {
         # Mark as Hit-For-Pass for the next 2 minutes
         set beresp.ttl = 120s;
         set beresp.uncacheable = true;
-    }
+   }
+
+   # If the cache key in the Magento response doesn't match the one that was sent in the request, don't cache under the request's key
+   if (bereq.url ~ "/graphql" && bereq.http.X-Magento-Cache-Id && bereq.http.X-Magento-Cache-Id != beresp.http.X-Magento-Cache-Id) {
+      set beresp.ttl = 0s;
+      set beresp.uncacheable = true;
+   }
 
     return (deliver);
 }
 
 sub vcl_deliver {
-    if (resp.http.X-Magento-Debug) {
-        if (resp.http.x-varnish ~ " ") {
-            set resp.http.X-Magento-Cache-Debug = "HIT";
-            set resp.http.Grace = req.http.grace;
-        } else {
-            set resp.http.X-Magento-Cache-Debug = "MISS";
-        }
+    if (resp.http.x-varnish ~ " ") {
+        set resp.http.X-Magento-Cache-Debug = "HIT";
+        set resp.http.Grace = req.http.grace;
     } else {
-        unset resp.http.Age;
+        set resp.http.X-Magento-Cache-Debug = "MISS";
     }
 
     # Not letting browser to cache non-static files.
@@ -226,6 +237,9 @@ sub vcl_deliver {
         set resp.http.Cache-Control = "no-store, no-cache, must-revalidate, max-age=0";
     }
 
+    if (!resp.http.X-Magento-Debug) {
+        unset resp.http.Age;
+    }
     unset resp.http.X-Magento-Debug;
     unset resp.http.X-Magento-Tags;
     unset resp.http.X-Powered-By;

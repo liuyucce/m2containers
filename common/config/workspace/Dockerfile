@@ -173,7 +173,7 @@ ENV NVM_NODEJS_ORG_MIRROR ${NVM_NODEJS_ORG_MIRROR}
 RUN if [ ${INSTALL_NODE} = true ]; then \
     # Install nvm (A Node Version Manager)
     mkdir -p $NVM_DIR && \
-    curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash \
+    curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.40.3/install.sh | bash \
         && . $NVM_DIR/nvm.sh \
         && nvm install ${NODE_VERSION} \
         && nvm use ${NODE_VERSION} \
@@ -190,7 +190,7 @@ RUN if [ ${INSTALL_NODE} = true ]; then \
         && if [ ${INSTALL_NPM_VUE_CLI} = true ]; then \
         npm install -g @vue/cli \
         ;fi \
-        && ln -s `npm bin --global` /home/ubuntu/.node-bin \
+        && ln -s $(npm config get prefix)/bin /home/ubuntu/.node-bin \
 ;fi
 
 # Wouldn't execute when added to the RUN statement in the above block

@@ -26,6 +26,7 @@ add_config_value "mydomain" ${DOMAIN}
 add_config_value "mydestination" '$myhostname, localhost.$mydomain, localhost'
 add_config_value "myorigin" '$mydomain'
 add_config_value "mynetworks" ${MYNETWORKS}
+add_config_value "inet_protocols" "all"
 add_config_value "home_mailbox" "Maildir/"
 add_config_value "local_recipient_maps" ""
 add_config_value "luser_relay" "root@${SERVER_HOSTNAME}"
@@ -35,6 +36,7 @@ if [ "${ENABLE_MAILPIT}" = "true" ]; then
 elif [ -n "${SMTP_SERVER}" ]; then
   add_config_value "relayhost" "[${SMTP_SERVER}]:${SMTP_PORT}"
   add_config_value "smtp_use_tls" "yes"
+  add_config_value "smtp_tls_CAfile" "/etc/ssl/certs/ca-bundle.crt"
   add_config_value "smtp_sasl_auth_enable" "yes"
   add_config_value "smtp_sasl_password_maps" "hash:/etc/postfix/sasl_passwd"
   add_config_value "smtp_sasl_security_options" "noanonymous"
@@ -57,5 +59,14 @@ if [ ! -z "${SMTP_HEADER_TAG}" ]; then
   echo "Setting configuration option SMTP_HEADER_TAG with value: ${SMTP_HEADER_TAG}"
 fi
 
+
+# Populate postfix chroot so its internal DNS resolver can read /etc/resolv.conf.
+# Docker generates resolv.conf at runtime so this must run on every container start.
+mkdir -p /var/spool/postfix/etc
+cp /etc/resolv.conf   /var/spool/postfix/etc/resolv.conf
+cp /etc/hosts         /var/spool/postfix/etc/hosts
+cp /etc/services      /var/spool/postfix/etc/services
+cp /etc/nsswitch.conf /var/spool/postfix/etc/nsswitch.conf
+
 #Start services
-supervisord
+exec supervisord -n -c /etc/supervisor/supervisord.conf

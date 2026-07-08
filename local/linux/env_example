@@ -5,6 +5,8 @@
 SYNC_NAME=dockerdemo
 SSL_SUBJECT=demo.local
 SSL_DNS=b2b.demo.local,nz.demo.local
+CA_EXPIRE=730
+SSL_EXPIRE=730
 PHP_FPM_SSH_PORT=9022
 
 ### Paths #################################################
@@ -80,7 +82,7 @@ WORKSPACE_INSTALL_DUSK_DEPS=false
 WORKSPACE_CHROME_DRIVER_VERSION=86.0.4240.22
 WORKSPACE_INSTALL_MSMTP=true
 WORKSPACE_INSTALL_NODE=true
-WORKSPACE_NODE_VERSION=14
+WORKSPACE_NODE_VERSION=22
 WORKSPACE_NPM_REGISTRY=
 WORKSPACE_NVM_NODEJS_ORG_MIRROR=
 WORKSPACE_INSTALL_NPM_GULP=true
@@ -95,6 +97,8 @@ WORKSPACE_SSH_PORT=2222
 
 PHP_FPM_INSTALL_MSMTP=true
 PHP_FPM_MSMTP_DOMAIN=postfix
+PHP_FPM_PUID=1000
+PHP_FPM_PGID=1000
 
 ### NGINX ##############################################################################################################
 
@@ -112,12 +116,13 @@ VARNISHD_PARAMS=-p default_ttl=3600 -p default_grace=3600 -p timeout_idle=20 -p 
 VARNISH_CACHE_SIZE=128m
 VARNISH_BACKEND_HOST=nginx
 VARNISH_PURGE_HOST_WORKSPACE=workspace
+VARNISH_PURGE_HOST_SERVER=172.17.0.1
 VARNISH_PURGE_HOST_PHP_FPM=php-fpm
 VARNISH_INSTALL_GEOIP2=false
 
-### REDIS ##############################################################################################################
+### VALKEY ##############################################################################################################
 
-REDIS_PORT=6379
+VALKEY_PORT=6379
 
 ### EMAIL SERVICE  ####################################################################################################
 
@@ -133,22 +138,19 @@ POSTFIX_DOMAIN=demo.local
 POSTFIX_HOSTNAMES=email.demo.local
 POSTFIX_MESSAGE_SIZE_LIMIT=50000000
 POSTFIX_MYNETWORKS=192.168.0.0/16,172.0.0.0/8,127.0.0.0/8
-POSTFIX_SMTP_SERVER=mailhog
+POSTFIX_SMTP_SERVER=mailpit
 POSTFIX_SMTP_PORT=1025
 POSTFIX_SMTP_USERNAME=
 POSTFIX_SMTP_PASSWORD=
 POSTFIX_PORT=25
 
-### Opensearch Stack #########################################################################################################
-
-OPS_VERSION=3.6.0
-
 ### OPENSEARCH ######################################################################################################
 
+OPENSEARCH_VERSION=3.6.0
 OPENSEARCH_HOST_HTTP_PORT=9200
-OPENSEARCH_HOST_TRANSPORT_PORT=9600
-OPENSEARCH_INSTALL_PHONETIC=true
-OPENSEARCH_INSTALL_ICU=false
+OPENSEARCH_HOST_TRANSPORT_PORT=9300
+OPENSEARCH_INSTALL_ANALYSIS_PHONETIC=true
+OPENSEARCH_INSTALL_ANALYSIS_ICU=false
 
 ### OPENSEARCH DASHBOARDS ##############################################################################################
 
@@ -159,6 +161,7 @@ OPENSEARCH_DASHBOARDS_HTTP_PORT=5601
 RABBITMQ_NODE_HOST_PORT=5672
 RABBITMQ_MANAGEMENT_HTTP_HOST_PORT=15672
 RABBITMQ_MANAGEMENT_HTTPS_HOST_PORT=15671
+RABBITMQ_PROMETHEUS_PORT=15692
 RABBITMQ_DEFAULT_USER=guest
 RABBITMQ_DEFAULT_PASS=guest
 
