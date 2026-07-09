@@ -31,13 +31,13 @@ add_config_value "home_mailbox" "Maildir/"
 add_config_value "local_recipient_maps" ""
 add_config_value "luser_relay" "root@${SERVER_HOSTNAME}"
 
-if [ "${ENABLE_MAILPIT}" = "true" ]; then
+if [ "${ENABLE_MAILHOG}" = "true" ]; then
   add_config_value "relayhost" "[${SMTP_SERVER}]:${SMTP_PORT}"
 elif [ -n "${SMTP_SERVER}" ]; then
   add_config_value "relayhost" "[${SMTP_SERVER}]:${SMTP_PORT}"
   add_config_value "smtp_use_tls" "yes"
-  add_config_value "smtp_tls_CAfile" "/etc/ssl/certs/ca-bundle.crt"
   add_config_value "smtp_sasl_auth_enable" "yes"
+  add_config_value "smtp_tls_CAfile" "/etc/ssl/certs/ca-bundle.crt"
   add_config_value "smtp_sasl_password_maps" "hash:/etc/postfix/sasl_passwd"
   add_config_value "smtp_sasl_security_options" "noanonymous"
 fi
@@ -58,7 +58,6 @@ if [ ! -z "${SMTP_HEADER_TAG}" ]; then
   echo -e "/^MIME-Version:/i PREPEND RelayTag: $SMTP_HEADER_TAG\n/^Content-Transfer-Encoding:/i PREPEND RelayTag: $SMTP_HEADER_TAG" > /etc/postfix/header_tag
   echo "Setting configuration option SMTP_HEADER_TAG with value: ${SMTP_HEADER_TAG}"
 fi
-
 
 # Populate postfix chroot so its internal DNS resolver can read /etc/resolv.conf.
 # Docker generates resolv.conf at runtime so this must run on every container start.

@@ -11,8 +11,8 @@ services:
       - ./config/workspace/ext-xhprof.ini:/etc/php/${PHP_VERSION}/cli/conf.d/xhprof.ini
       - ../../common/app/pub/debug.php:${APP_CODE_PATH_CONTAINER}/pub/debug.php
       - ../../common/app/pub/DebugApp.php:${APP_CODE_PATH_CONTAINER}/pub/DebugApp.php
-      - ./volumes/composer:/home/laradock/.composer
-      - ./volumes/ssh:/home/laradock/.ssh
+      - ./volumes/composer:/home/ubuntu/.composer
+      - ./volumes/ssh:/home/ubuntu/.ssh
 
 ### PHP-FPM Container #######################################
   php-fpm:
