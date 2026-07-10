@@ -20,7 +20,7 @@ Varnish is configured to only serve https requests for the purpose of mimicking 
 
 Import /local/<your_env>/volumes/ssl/certs/ca.pem as root certificate for https access.
 
-xDebug can be enabled by uncommenting in ext-xdebug.ini in workspace and php-fpm. You canot use vim but editors that won't create a new file after saving like nano to edit the ext-xdebug.ini files to enable or disable xdebug.
+xDebug can be enabled by uncommenting in ext-xdebug.ini in workspace and php-fpm. You canot use vim but editors that won't create a new file after saving like nano to edit the ext-xdebug.ini files to enable or disable xdebug. If you use WSL in Windows with Docker Desktop, you may have to update the xdebug.client_host to the exact IP address of the WSL instance. 
 
 Xhgui profiling can be enabled by removing comment mark at nginx/conf_m2/magento2.conf:169 and uncomment workspace/xhprof.ini or php-fpm/xhprof.ini to enable tideways module. Note that after containers have been started up, you canot use vim but editors that won't create a new file after saving like nano to edit the config files to enable or disable xhprof.
 
