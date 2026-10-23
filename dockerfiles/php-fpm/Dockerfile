@@ -24,6 +24,7 @@ ENV DEBIAN_FRONTEND noninteractive
 # always run apt update when start and after add new source list, then clean up at end.
 RUN set -xe; \
     apt-get update -yqq && \
+    apt-get upgrade -yqq && \
     pecl channel-update pecl.php.net && \
     apt-get install -yqq \
       apt-utils vim iputils-ping \
